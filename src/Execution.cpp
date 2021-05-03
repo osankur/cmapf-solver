@@ -32,13 +32,13 @@ size_t Execution::size() const
 
 std::ostream& operator<<(std::ostream& os, const Execution& e)
 {
-	os << "[";
+	os << "{";
 	for (auto it = e.m_exec.cbegin(); it != e.m_exec.cend(); ++it)
 	{
 		os << **it;
 		if (std::distance(it, e.m_exec.cend()) > 1)
 			os << ", ";
 	}
-	os << "]";
+	os << "}";
 	return os;
 }

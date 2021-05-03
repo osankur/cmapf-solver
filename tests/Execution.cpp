@@ -1,5 +1,6 @@
 #include "doctest.h"
 
+#include <sstream>
 #include <Execution.hpp>
 
 TEST_CASE("Testing of Execution class") {
@@ -42,4 +43,8 @@ TEST_CASE("Testing of Execution class") {
 	CHECK(e.getConfiguration(3).size() == 2);
 	CHECK(e.getConfiguration(3)[0] == 17);
 	CHECK(e.getConfiguration(3)[1] == 7);
+
+	std::stringstream out;
+	out << e;
+	CHECK(out.str() == "{[15, 16, 17], [9, 8, 7]}");
 }
