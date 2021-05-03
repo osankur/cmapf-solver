@@ -2,6 +2,7 @@
 
 #include <Path.hpp>
 #include <Configuration.hpp>
+#include <memory>
 
 class Execution {
 private:
