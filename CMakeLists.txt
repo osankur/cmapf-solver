@@ -28,7 +28,7 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
     src/Path.cpp
-)
+ "src/Configuration.cpp" "src/Execution.cpp")
 set(TESTFILES        # All .cpp files in tests/
     tests/Path.cpp
 )
