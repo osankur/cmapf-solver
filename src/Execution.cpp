@@ -25,7 +25,7 @@ const std::shared_ptr<const Path> Execution::getPath(Agent a) const
 	return m_exec[a];
 }
 
-const size_t Execution::size() const
+size_t Execution::size() const
 {
 	return m_exec.size();
 }

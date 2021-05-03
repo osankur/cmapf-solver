@@ -16,7 +16,7 @@ public:
 	const std::shared_ptr<const Path> getPath(Agent) const;
 
 	// Properties
-	const size_t size() const;
+	size_t size() const;
 
 	// Friends
 	friend std::ostream& operator<<(std::ostream&, const Execution&);
