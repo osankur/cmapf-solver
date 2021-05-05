@@ -35,7 +35,7 @@ jobs:
           submodules: true
 
     - name: Configure (${{ matrix.configuration }})
-      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_ROOT=$BOOST_ROOT_1_72_0
 
     - name: Build with ${{ matrix.compiler }}
       run: cmake --build build
