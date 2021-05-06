@@ -14,7 +14,7 @@ jobs:
       matrix:
         toolchain:
           - linux-gcc
-          - windows-msvc
+          #- windows-msvc
 
         configuration:
           - Debug
@@ -24,9 +24,9 @@ jobs:
             os: ubuntu-latest
             compiler: gcc
 
-          - toolchain: windows-msvc
-            os: windows-latest
-            compiler: msvc
+          #- toolchain: windows-msvc
+          #  os: windows-latest
+          #  compiler: msvc
 
     steps:
     - name: Checkout Code
