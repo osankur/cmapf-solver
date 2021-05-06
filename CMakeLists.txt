@@ -21,7 +21,7 @@ include(LTO)
 include(Misc)
 include(Warnings)
 
-FIND_PACKAGE( Boost 1.72 COMPONENTS program_options REQUIRED )
+FIND_PACKAGE( Boost 1.71 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 add_library(rapidxml INTERFACE)
