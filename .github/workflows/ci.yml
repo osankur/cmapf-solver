@@ -36,7 +36,7 @@ jobs:
 
     - name: Setup Boost
       run: |
-        sudo apt install libboost-dev-all
+        sudo apt update && sudo apt install libboost-log-dev
 
     - name: Configure (${{ matrix.configuration }})
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_ROOT=$BOOST_ROOT_1_71_0
