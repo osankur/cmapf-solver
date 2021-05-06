@@ -34,11 +34,6 @@ jobs:
       with:
           submodules: true
 
-#    - name: boost
-#      run: sudo apt-get update && sudo apt-get install -yq libboost-all-dev
-    - run: |
-        echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
-
     - name: Configure (${{ matrix.configuration }})
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_ROOT=$BOOST_ROOT_1_72_0
 
