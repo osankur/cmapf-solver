@@ -4,4 +4,4 @@ else()
     ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 endif()
 
-find_package(Boost 1.72.0 COMPONENTS log REQUIRED)
+find_package(Boost 1.71.0 COMPONENTS log REQUIRED)
