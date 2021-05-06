@@ -34,6 +34,9 @@ jobs:
       with:
           submodules: true
 
+    - name: List of the GitHub Actions environment variables on Windows
+      run : env
+
     - name: Configure (${{ matrix.configuration }})
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_ROOT=$BOOST_ROOT_1_72_0
 
