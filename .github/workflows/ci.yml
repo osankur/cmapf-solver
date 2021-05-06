@@ -34,8 +34,8 @@ jobs:
       with:
           submodules: true
 
-    - name: List of the GitHub Actions environment variables on Windows
-      run : env
+    - name: install dependencies
+      run: wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.gz && tar -zxvf boost_1_72_0.tar.gz && cd boost_1_72_0/ && ./bootstrap.sh && ./b2
 
     - name: Configure (${{ matrix.configuration }})
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_ROOT=$BOOST_ROOT_1_72_0
