@@ -35,6 +35,7 @@ jobs:
           submodules: true
 
     - name: Cache boost
+      id: cache-boost
       uses: actions/cache@v2
       with:
         path: |
@@ -42,6 +43,7 @@ jobs:
         key: ${{ runner.os }}
 
     - name: Setup Boost
+      if: steps.cache-boost.outputs.cache-hit != 'true'
       run: |
         wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && mkdir build-dir && ./bootstrap.sh --prefix=./build-dir && ./b2 install
         
