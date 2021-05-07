@@ -36,10 +36,10 @@ jobs:
 
     - name: Setup Boost
       run: |
-        sudo apt update && sudo apt install libboost-log-dev
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && ./bootstrap.sh && ./b2 install
 
     - name: Configure (${{ matrix.configuration }})
-      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_ROOT=$BOOST_ROOT_1_71_0
+      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
 
     - name: Build with ${{ matrix.compiler }}
       run: cmake --build build
