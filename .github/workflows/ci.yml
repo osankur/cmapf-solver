@@ -47,7 +47,7 @@ jobs:
 
     - name: Setting Env
       run: |
-        echo "${HOME}/.local/bin" >> ${HOME}/boost_1_72_0
+        echo "${HOME}/.local/bin" >> /home/runner/work/cmapf-solver/cmapf-solver/boost_1_72_0/build-dir
 
 #    - name: Setting Env
 #      env: 
