@@ -38,8 +38,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          boost_1_72_0
-        key: ${{ hashFiles('CMakeLists.txt') }}
+          /home/runner/work/cmapf-solver/cmapf-solver/boost_1_72_0/build-dir
+        key: ${{ runner.os }}
 
     - name: Setup Boost
       run: |
