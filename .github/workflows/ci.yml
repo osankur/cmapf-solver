@@ -36,8 +36,14 @@ jobs:
 
     - name: Setup Boost
       run: |
-        wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && ./bootstrap.sh && mkdir build-dir && ./b2 install --prefix=./build-dir
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && mkdir build-dir && ./bootstrap.sh --prefix=./build-dir && ./b2 install && - run: echo "${HOME}/.local/bin" >> $(pwd)
 
+#    - name: Setting Env
+#      env: 
+#        BOOST_ROOT: "/usr/local/src/boost_1_45_0"
+#        Boost_LIBRARY_DIRS: "/usr/local/lib"
+#        BOOST_INCLUDEDIR: "/usr/local/src/boost_1_45_0"
+        
     - name: Configure (${{ matrix.configuration }})
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
 
