@@ -6,14 +6,14 @@
 
 class Execution {
 private:
-	std::vector<std::shared_ptr<const Path>> m_exec;
+	std::vector<std::shared_ptr<const Path>> exec_;
 public:
-	void pushBack(std::shared_ptr<const Path>);
+	void PushBack(std::shared_ptr<const Path>);
 
-	Configuration getConfiguration(uint64_t) const;
+	Configuration get_configuration(uint64_t) const;
 	
-	void setPath(Agent, std::shared_ptr<const Path>);
-	const std::shared_ptr<const Path> getPath(Agent) const;
+	void set_path(Agent, std::shared_ptr<const Path>);
+	const std::shared_ptr<const Path> get_path(Agent) const;
 
 	// Properties
 	size_t size() const;

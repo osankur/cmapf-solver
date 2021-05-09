@@ -4,26 +4,26 @@
 
 TEST_CASE("Testing of ExplicitGraph class") {
 	ExplicitGraph eg;
-	CHECK(eg.getNodeCount() == 0);
-	eg.addNode(0);
-	CHECK(eg.getNodeCount() == 1);
-	eg.addNode(1);
-	CHECK(eg.getNodeCount() == 2);
-	eg.addEdge(0, 1);
-	CHECK(eg.getNodeCount() == 2);
-	CHECK(eg.getEdgeCount() == 1);
-	eg.addEdge(1, 0);
-	CHECK(eg.getNodeCount() == 2);
-	CHECK(eg.getEdgeCount() == 2);
-	eg.addEdge(1, 0);
-	CHECK(eg.getNodeCount() == 2);
-	CHECK(eg.getEdgeCount() == 2);
-	eg.addEdge(1, 1);
-	CHECK(eg.getNodeCount() == 2);
-	CHECK(eg.getEdgeCount() == 3);
-	eg.addEdge(0, 0);
-	CHECK(eg.getNodeCount() == 2);
-	CHECK(eg.getEdgeCount() == 4);
-	CHECK(eg.getNeighbors(0).size() == 2);
-	CHECK(eg.getNeighbors(1).size() == 2);
+	CHECK(eg.node_count() == 0);
+	eg.AddNode(0);
+	CHECK(eg.node_count() == 1);
+	eg.AddNode(1);
+	CHECK(eg.node_count() == 2);
+	eg.AddEdge(0, 1);
+	CHECK(eg.node_count() == 2);
+	CHECK(eg.edge_count() == 1);
+	eg.AddEdge(1, 0);
+	CHECK(eg.node_count() == 2);
+	CHECK(eg.edge_count() == 2);
+	eg.AddEdge(1, 0);
+	CHECK(eg.node_count() == 2);
+	CHECK(eg.edge_count() == 2);
+	eg.AddEdge(1, 1);
+	CHECK(eg.node_count() == 2);
+	CHECK(eg.edge_count() == 3);
+	eg.AddEdge(0, 0);
+	CHECK(eg.node_count() == 2);
+	CHECK(eg.edge_count() == 4);
+	CHECK(eg.get_neighbors(0).size() == 2);
+	CHECK(eg.get_neighbors(1).size() == 2);
 }

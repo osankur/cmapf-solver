@@ -6,20 +6,11 @@
 
 class Path {
 private:
-	std::vector<Node> m_path;
+	std::vector<Node> path_;
 
 public:
-	/*
-	Path();											// Constructor
-	~Path();										// Deconstructor
-	Path(const Path& other);						// Copy constructor
-	Path(Path&& other);								// Move constructor
-	Path& operator=(const Path& other) noexcept;	// Copy assignement
-	Path& operator=(Path&& other) noexcept;			// Move assignement
-	*/
-
-	void pushBack(Node);
-	const Node& getAtTimeOrLast(size_t) const;
+	void PushBack(Node);
+	const Node& GetAtTimeOrLast(size_t) const;
 	
 	// Operators
 	Node& operator[](size_t);
@@ -29,5 +20,5 @@ public:
 	size_t size() const;
 
 	// Friends
-	friend std::ostream& operator<<(std::ostream& os, const Path&);
+	friend std::ostream& operator<<(std::ostream&, const Path&);
 };

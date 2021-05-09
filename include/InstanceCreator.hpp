@@ -7,9 +7,9 @@ namespace instance {
 	template<class GraphMove, class GraphComm>
 	class InstanceCreator {
 	protected:
-		Instance<GraphMove, GraphComm> m_instance;
+		Instance<GraphMove, GraphComm> instance_;
 	public:
-		const Instance<GraphMove, GraphComm>& instance() const { return m_instance; };
+		const Instance<GraphMove, GraphComm>& instance() const { return instance_; };
 	};
 
 	template<class GraphMove, class GraphComm>

@@ -3,11 +3,11 @@
 
 namespace instance {
 
-	XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath, const std::string& location) : m_filepath(filepath), m_location(location) {}
+	XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath, const std::string& location) : file_path_(filepath), graph_folder_(location) {}
 
-	void XMLInstanceLoader::load()
+	void XMLInstanceLoader::Load()
 	{
-        std::ifstream infile(m_filepath);
+        std::ifstream infile(file_path_);
 
         std::string line;
         std::string type;
@@ -17,11 +17,11 @@ namespace instance {
         std::getline(infile, line);
         std::istringstream iss1(line);
         iss1 >> type >> sMovFile;
-        sMovFile = m_location + sMovFile;
+        sMovFile = graph_folder_ + sMovFile;
         std::getline(infile, line);
         std::istringstream iss2(line);
         iss2 >> type >> sComFile;
-        sComFile = m_location + sComFile;
+        sComFile = graph_folder_ + sComFile;
 
         char* movFile = sMovFile.data();
         char* comFile = sComFile.data();
@@ -46,12 +46,12 @@ namespace instance {
             float y = std::stof(data->value());
             const XMLNode n(id, x, y);
 
-            m_nodes.push_back(n);
+            nodes_.push_back(n);
             Node graphNode = (Node)std::stoi(id.c_str());
-            m_instance.graph().movement().addNode(graphNode);
-            m_instance.graph().movement().addEdge(graphNode, graphNode);
-            m_instance.graph().communication().addNode(graphNode);
-            m_instance.graph().communication().addEdge(graphNode, graphNode);
+            instance_.graph().movement().AddNode(graphNode);
+            instance_.graph().movement().AddEdge(graphNode, graphNode);
+            instance_.graph().communication().AddNode(graphNode);
+            instance_.graph().communication().AddEdge(graphNode, graphNode);
         }
 
         // Creating the movement edges
@@ -63,8 +63,8 @@ namespace instance {
             Node source = (Node)std::stoi(attr->value() + 1);
             attr = attr->next_attribute("target");
             Node target = (Node)std::stoi(attr->value() + 1);
-            m_instance.graph().movement().addEdge(source, target);
-            m_instance.graph().movement().addEdge(target, source);
+            instance_.graph().movement().AddEdge(source, target);
+            instance_.graph().movement().AddEdge(target, source);
         }
 
         xmlFile = rapidxml::file<>(comFile);
@@ -82,8 +82,8 @@ namespace instance {
             Node source = (Node)std::stoi(attr->value() + 1);
             attr = attr->next_attribute("target");
             Node target = (Node)std::stoi(attr->value() + 1);
-            m_instance.graph().communication().addEdge(source, target);
-            m_instance.graph().communication().addEdge(target, source);
+            instance_.graph().communication().AddEdge(source, target);
+            instance_.graph().communication().AddEdge(target, source);
         }
 
         std::string startConf;
@@ -97,7 +97,7 @@ namespace instance {
         {
             std::string s = startConf.substr(startI, endI - startI);
             if (s != "start")
-                m_instance.start().pushBack(std::stoi(s));
+                instance_.start().PushBack(std::stoi(s));
             startI = endI + 1;
             endI = startConf.find(" ", startI);
         }
@@ -113,12 +113,12 @@ namespace instance {
         {
             std::string s = goalConf.substr(startI, endI - startI);
             if (s != "goal")
-                m_instance.goal().pushBack(std::stoi(s));
+                instance_.goal().PushBack(std::stoi(s));
             startI = endI + 1;
             endI = goalConf.find(" ", startI);
         }
 
-        m_instance.setNbAgents(m_instance.start().size());
+        instance_.set_nb_agents(instance_.start().size());
 
 	}
 

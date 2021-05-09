@@ -4,15 +4,15 @@
 
 class Objective {
 public:
-	virtual size_t getCost(const Execution&) const = 0;
+	virtual size_t cost(const Execution&) const = 0;
 };
 
 class MaxObjective : public Objective {
 public:
-	size_t getCost(const Execution& e) const override {
+	size_t cost(const Execution& e) const override {
 		size_t max = 0;
 		for (Agent i = 0; i < static_cast<Agent>(e.size()); i++) {
-			size_t size = e.getPath(i)->size();
+			size_t size = e.get_path(i)->size();
 			if (max < size)
 				max = size;
 		}
@@ -22,10 +22,10 @@ public:
 
 class SumObjective : public Objective {
 public:
-	size_t getCost(const Execution& e) const override {
+	size_t cost(const Execution& e) const override {
 		size_t sum = 0;
 		for (Agent i = 0; i < static_cast<Agent>(e.size()); i++)
-			sum += e.getPath(i)->size();
+			sum += e.get_path(i)->size();
 		return sum;
 	}
 };

@@ -12,39 +12,39 @@ namespace instance {
 	class InstanceLoader : public InstanceCreator<GraphMove, GraphComm> {
 	public:
 		InstanceLoader(){};
-		virtual void load() = 0;
+		virtual void Load() = 0;
 	};
 
 	class XMLInstanceLoader : public InstanceLoader<ExplicitGraph, ExplicitGraph> {
 	private:
-		const std::string m_filepath;
-		const std::string m_location;
+		const std::string file_path_;
+		const std::string graph_folder_;
 
 		struct XMLNode
 		{
 		private:
-			const std::string m_id;
-			const float m_x;
-			const float m_y;
+			const std::string id_;
+			const float x_;
+			const float y_;
 
 		public:
-			XMLNode(const std::string& id, float x, float y) : m_id(id), m_x(x), m_y(y) {};
-			const std::string& id() const { return m_id; };
+			XMLNode(const std::string& id, float x, float y) : id_(id), x_(x), y_(y) {};
+			const std::string& id() const { return id_; };
 		};
 
-		std::vector<XMLNode> m_nodes;
+		std::vector<XMLNode> nodes_;
 
 	public:
 		XMLInstanceLoader(const std::string& filepath, const std::string& location);
-		void load() override;
+		void Load() override;
 	};
 
 	class JSONInstanceLoader : public InstanceLoader<ExplicitGraph, ExplicitGraph> {
 	private:
-		const std::string m_filepath;
+		const std::string file_path_;
 	public:
-		JSONInstanceLoader(const std::string& filepath);
-		void load() override;
+		explicit JSONInstanceLoader(const std::string& filepath);
+		void Load() override;
 	};
 	
 }

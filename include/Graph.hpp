@@ -6,27 +6,27 @@
 
 class Graph {
 public:
-	virtual const std::set<Node>& getNeighbors(Node) const = 0;
+	virtual const std::set<Node>& get_neighbors(Node) const = 0;
 };
 
 class ExplicitGraph : public Graph {
 private:
-	std::vector<std::set<Node>> m_adjacency;
+	std::vector<std::set<Node>> adjacency_;
 public:
-	void addNode(Node);
-	void addEdge(Node, Node);
+	void AddNode(Node);
+	void AddEdge(Node, Node);
 
-	size_t getNodeCount() const;
-	size_t getEdgeCount() const;
-	const std::set<Node>& getNeighbors(Node) const override;
+	size_t node_count() const;
+	size_t edge_count() const;
+	const std::set<Node>& get_neighbors(Node) const override;
 };
 
 class RadiusGraph : public Graph {
 public:
-	const std::set<Node>& getNeighbors(Node) const override;
+	const std::set<Node>& get_neighbors(Node) const override;
 };
 
 class GridGraph : public Graph {
 public:
-	const std::set<Node>& getNeighbors(Node) const override;
+	const std::set<Node>& get_neighbors(Node) const override;
 };

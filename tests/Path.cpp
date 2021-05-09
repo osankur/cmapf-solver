@@ -7,9 +7,9 @@
 TEST_CASE("Testing of Path class") {
 	Path p;
 	CHECK(p.size() == 0);
-	p.pushBack(1);
+	p.PushBack(1);
 	CHECK(p.size() == 1);
-	p.pushBack(2);
+	p.PushBack(2);
 	CHECK(p.size() == 2);
 	CHECK(p[0] == 1);
 	CHECK(p[1] == 2);
@@ -24,7 +24,7 @@ TEST_CASE("Testing of Path class") {
 	std::stringstream out;
 	out << p;
 	CHECK(out.str() == "[3, 2]");
-	p.pushBack(6);
+	p.PushBack(6);
 	out.str(std::string());
 	out.clear();
 	out << p;

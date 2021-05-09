@@ -6,26 +6,26 @@
 template<class GraphMove, class GraphComm>
 class TopologicalGraph {
 private:
-	GraphMove m_movementGraph;
-	GraphComm m_communicationGraph;
+	GraphMove movement_graph_;
+	GraphComm communication_graph_;
 public:
 	GraphMove& movement()
 	{
-		return m_movementGraph;
+		return movement_graph_;
 	}
 
 	GraphComm& communication()
 	{
-		return m_communicationGraph;
+		return communication_graph_;
 	}
 
 	const GraphMove& movement() const
 	{
-		return m_movementGraph;
+		return movement_graph_;
 	}
 
 	const GraphComm& communication() const
 	{
-		return m_communicationGraph;
+		return communication_graph_;
 	}
 };

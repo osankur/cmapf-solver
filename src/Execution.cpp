@@ -1,42 +1,42 @@
 #include <Execution.hpp>
 
-void Execution::pushBack(std::shared_ptr<const Path> p)
+void Execution::PushBack(std::shared_ptr<const Path> p)
 {
-	m_exec.push_back(p);
+	exec_.push_back(p);
 }
 
-Configuration Execution::getConfiguration(uint64_t time) const
+Configuration Execution::get_configuration(uint64_t time) const
 {
 	Configuration c;
-	for (Agent a = 0; a < static_cast<Agent>(m_exec.size()); a++)
+	for (Agent a = 0; a < static_cast<Agent>(exec_.size()); a++)
 	{
-		c.pushBack(m_exec[a]->getAtTimeOrLast(time));
+		c.PushBack(exec_[a]->GetAtTimeOrLast(time));
 	}
 	return c;
 }
 
-void Execution::setPath(Agent a, std::shared_ptr<const Path> p)
+void Execution::set_path(Agent a, std::shared_ptr<const Path> p)
 {
-	m_exec[a] = p;
+	exec_[a] = p;
 }
 
-const std::shared_ptr<const Path> Execution::getPath(Agent a) const
+const std::shared_ptr<const Path> Execution::get_path(Agent a) const
 {
-	return m_exec[a];
+	return exec_[a];
 }
 
 size_t Execution::size() const
 {
-	return m_exec.size();
+	return exec_.size();
 }
 
 std::ostream& operator<<(std::ostream& os, const Execution& e)
 {
 	os << "{";
-	for (auto it = e.m_exec.cbegin(); it != e.m_exec.cend(); ++it)
+	for (auto it = e.exec_.cbegin(); it != e.exec_.cend(); ++it)
 	{
 		os << **it;
-		if (std::distance(it, e.m_exec.cend()) > 1)
+		if (std::distance(it, e.exec_.cend()) > 1)
 			os << ", ";
 	}
 	os << "}";

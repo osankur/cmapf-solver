@@ -5,14 +5,14 @@
 
 TEST_CASE("Testing of XMLInstanceLoader class") {
 	instance::XMLInstanceLoader il(std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp", std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
-	il.load();
+	il.Load();
 
-	CHECK(il.instance().graph().movement().getNodeCount() == 1750);
-	CHECK(il.instance().graph().movement().getEdgeCount() == 3168*2 + 1750);
-	CHECK(il.instance().graph().communication().getNodeCount() == 1750);
-	CHECK(il.instance().graph().communication().getEdgeCount() == 19494 * 2 + 1750);
+	CHECK(il.instance().graph().movement().node_count() == 1750);
+	CHECK(il.instance().graph().movement().edge_count() == 3168*2 + 1750);
+	CHECK(il.instance().graph().communication().node_count() == 1750);
+	CHECK(il.instance().graph().communication().edge_count() == 19494 * 2 + 1750);
 
-	CHECK(il.instance().nbAgents() == 4);
+	CHECK(il.instance().nb_agents() == 4);
 
 	CHECK(il.instance().start().size() == 4);
 	CHECK(il.instance().start()[0] == 639);

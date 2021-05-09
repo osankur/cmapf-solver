@@ -1,29 +1,29 @@
 #include <Graph.hpp>
 
-size_t ExplicitGraph::getNodeCount() const {
-	return m_adjacency.size();
+size_t ExplicitGraph::node_count() const {
+	return adjacency_.size();
 }
 
-size_t ExplicitGraph::getEdgeCount() const {
+size_t ExplicitGraph::edge_count() const {
 	size_t sum = 0;
-	for (auto& edges : m_adjacency)
+	for (auto& edges : adjacency_)
 		sum += edges.size();
 	return sum;
 }
 
-void ExplicitGraph::addNode(Node n)
+void ExplicitGraph::AddNode(Node n)
 {
-	if (m_adjacency.size() <= n)
-		m_adjacency.resize(n);
-	m_adjacency.insert(m_adjacency.begin() + n, std::set<Node>());
+	if (adjacency_.size() <= n)
+		adjacency_.resize(n);
+	adjacency_.insert(adjacency_.begin() + n, std::set<Node>());
 }
 
-void ExplicitGraph::addEdge(Node source, Node target)
+void ExplicitGraph::AddEdge(Node source, Node target)
 {
-	m_adjacency[source].insert(target);
+	adjacency_[source].insert(target);
 }
 
-const std::set<Node>& ExplicitGraph::getNeighbors(Node n) const
+const std::set<Node>& ExplicitGraph::get_neighbors(Node n) const
 {
-	return m_adjacency[n];
+	return adjacency_[n];
 }

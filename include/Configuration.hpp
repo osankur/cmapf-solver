@@ -6,18 +6,10 @@
 
 class Configuration {
 private:
-	std::vector<Node> m_config;
-public:
-	/*
-	Configuration();													// Constructor
-	~Configuration();													// Deconstructor
-	Configuration(const Configuration& other);							// Copy constructor
-	Configuration(Configuration&& other);								// Move constructor
-	Configuration& operator=(const Configuration& other) noexcept;		// Copy assignement
-	Configuration& operator=(Configuration&& other) noexcept;			// Move assignement
-	*/
+	std::vector<Node> config_;
 
-	void pushBack(Node);
+public:
+	void PushBack(Node);
 
 	// Operators
 	Node& operator[](Agent);
