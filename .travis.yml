@@ -18,11 +18,21 @@ matrix:
       env:
         - MATRIX_EVAL="CXX_COMPILER=g++-7; sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90"
     
+cache:
+   directories:
+    - /home/travis/build/arqueffe/cmapf-solver/boost_1_72_0/build-dir
 
 before_install:
   - eval "${MATRIX_EVAL}"
   - PARENTDIR=$(pwd)
   - mkdir $PARENTDIR/build
+  - wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2
+  - tar --bzip2 -xf boost_1_72_0.tar.bz2
+  - cd boost_1_72_0
+  - mkdir build-dir
+  - ./bootstrap.sh --prefix=./build-dir
+  - ./b2 install
+  - cd ..
 
 install: 
   - cd $PARENTDIR/build
