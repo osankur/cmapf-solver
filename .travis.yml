@@ -26,7 +26,7 @@ before_install:
   - eval "${MATRIX_EVAL}"
   - PARENTDIR=$(pwd)
   - mkdir $PARENTDIR/build
-  - if ! [ ls -1qA /home/travis/build/arqueffe/cmapf-solver/boost_1_72_0/build-dir | grep -q . ]; then rm -rf boost_1_72_0 && wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && ./bootstrap.sh --prefix=./build-dir && ./b2 install && cd ..; else echo "Boost Cache Hit"; fi
+  - if ! ls -1qA /home/travis/build/arqueffe/cmapf-solver/boost_1_72_0/build-dir | grep -q .; then rm -rf boost_1_72_0 && wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && ./bootstrap.sh --prefix=./build-dir && ./b2 install && cd ..; else echo "Boost Cache Hit"; fi
 
 install: 
   - cd $PARENTDIR/build
