@@ -29,7 +29,6 @@ before_install:
   - wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2
   - tar --bzip2 -xf boost_1_72_0.tar.bz2
   - cd boost_1_72_0
-  - mkdir build-dir
   - ./bootstrap.sh --prefix=./build-dir
   - ./b2 install
   - cd ..
