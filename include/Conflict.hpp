@@ -12,8 +12,36 @@
  */
 #pragma once
 
+#include <list>
+#include <set>
+#include <Common.hpp>
+
 namespace decoupled {
 
 class Conflict {};
+
+class CollisionConflict : public Conflict {
+ private:
+  std::list<std::set<Agent>> clusters_;
+
+ public:
+  void PushBack(const std::set<Agent>& cluster) {
+    clusters_.push_back(cluster);
+  }
+  const std::set<Agent>& back() { return clusters_.back(); }
+  const size_t size() { return clusters_.size(); }
+};
+
+class DisconnectionConflict : public Conflict {
+ private:
+  std::list<std::set<Agent>> clusters_;
+
+ public:
+  void PushBack(const std::set<Agent>& cluster) {
+    clusters_.push_back(cluster);
+  }
+  const std::set<Agent>& back() { return clusters_.back(); }
+  const size_t size() { return clusters_.size(); }
+};
 
 }  // namespace decoupled

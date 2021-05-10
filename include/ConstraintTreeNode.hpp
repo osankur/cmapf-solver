@@ -12,9 +12,9 @@
  */
 #pragma once
 
+#include <list>
 #include <map>
 #include <memory>
-#include <list>
 #include <Conflict.hpp>
 #include <Constraint.hpp>
 #include <Execution.hpp>
@@ -37,18 +37,23 @@ class ConstraintTreeNode
   ConstraintTreeNode(const std::shared_ptr<ConstraintTreeNode>,
                      const Constraint, const Agent,
                      std::shared_ptr<const Path>);
-  ~ConstraintTreeNode()                                             = default;
-  ConstraintTreeNode(const ConstraintTreeNode& other)               = delete;
-  ConstraintTreeNode(ConstraintTreeNode&& other)                    = delete;
-  ConstraintTreeNode& operator=(const ConstraintTreeNode& other)    = delete;
-  ConstraintTreeNode& operator=(ConstraintTreeNode&& other)         = delete;
+  ~ConstraintTreeNode() = default;
+  ConstraintTreeNode(const ConstraintTreeNode& other) = delete;
+  ConstraintTreeNode(ConstraintTreeNode&& other) = delete;
+  ConstraintTreeNode& operator=(const ConstraintTreeNode& other) = delete;
+  ConstraintTreeNode& operator=(ConstraintTreeNode&& other) = delete;
+
+  void set_conflict(uint64_t, std::shared_ptr<const Conflict>);
+  void remove_conflict(uint64_t);
 
   const Constraint constraint;
   const Agent agent;
   const std::map<uint64_t, std::shared_ptr<const Conflict>>& get_conflicts()
       const;
-  std::map<uint64_t, std::list<Constraint>> get_constraints(
-      Agent) const;
+  std::map<uint64_t, std::list<Constraint>> get_constraints(Agent) const;
+  const std::shared_ptr<const Path> get_path(Agent) const;
+  const std::shared_ptr<ConstraintTreeNode> get_parent() const;
+  const Execution& get_execution() const;
 };
 
 }  // namespace decoupled

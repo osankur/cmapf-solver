@@ -68,4 +68,18 @@ TEST_CASE("Testing of ConstraintTreeNode class") {
 
   CHECK_EQ(child3->get_constraints(0).size(), 1);
   CHECK_EQ(child3->get_constraints(1).size(), 2);
+
+  CHECK_EQ(root->get_conflicts().size(), 0);
+
+  root->set_conflict(2, std::make_shared<decoupled::CollisionConflict>());
+
+  CHECK_EQ(root->get_conflicts().size(), 1);
+
+  root->remove_conflict(1);
+
+  CHECK_EQ(root->get_conflicts().size(), 1);
+
+  root->remove_conflict(2);
+
+  CHECK_EQ(root->get_conflicts().size(), 0);
 }
