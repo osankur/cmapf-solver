@@ -38,7 +38,7 @@ set(SOURCES          # All .cpp files in src/
     "src/Configuration.cpp"
     "src/Execution.cpp"
     "src/InstanceLoader.cpp"
- "src/Graph.cpp")
+ "src/Graph.cpp" "src/ConstraintTreeNode.cpp")
 set(TESTFILES        # All .cpp files in tests/
     "tests/Path.cpp"
 )

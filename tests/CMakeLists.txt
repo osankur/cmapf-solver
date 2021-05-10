@@ -5,7 +5,7 @@ set(TESTFILES        # All .cpp files in tests/
     "Path.cpp"
     "Execution.cpp"
     "Configuration.cpp"
- "Graph.cpp" "InstanceLoader.cpp" "Objective.cpp")
+ "Graph.cpp" "InstanceLoader.cpp" "Objective.cpp" "ConstraintTreeNode.cpp")
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
 set(TEST_RUNNER_PARAMS "")  # Any arguemnts to feed the test runner (change as needed).
