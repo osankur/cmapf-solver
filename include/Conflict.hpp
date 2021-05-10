@@ -29,7 +29,7 @@ class CollisionConflict : public Conflict {
     clusters_.push_back(cluster);
   }
   const std::set<Agent>& back() { return clusters_.back(); }
-  const size_t size() { return clusters_.size(); }
+  size_t size() { return clusters_.size(); }
 };
 
 class DisconnectionConflict : public Conflict {
@@ -41,7 +41,7 @@ class DisconnectionConflict : public Conflict {
     clusters_.push_back(cluster);
   }
   const std::set<Agent>& back() { return clusters_.back(); }
-  const size_t size() { return clusters_.size(); }
+  size_t size() { return clusters_.size(); }
 };
 
 }  // namespace decoupled
