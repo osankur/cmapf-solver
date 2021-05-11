@@ -96,11 +96,10 @@ class NegativeAStar : public decoupled::LowLevel<GraphMove, GraphComm> {
 
   Path compute(const std::map<uint64_t, std::list<Constraint>> &cons, const Constraint &c, Node source, Node target,
                uint64_t time) override {
-    HeapComparator cmp(instance_);
+    HeapComparator cmp(this->instance_);
     boost::heap::fibonacci_heap<std::shared_ptr<AStarNode>, boost::heap::compare<HeapComparator>> open(cmp);
 
     std::shared_ptr<AStarNode> start = std::make_shared<AStarNode>(source, time, nullptr);
-
     open.push(start);
 
     while (!open.empty()) {
@@ -109,7 +108,7 @@ class NegativeAStar : public decoupled::LowLevel<GraphMove, GraphComm> {
 
       if (current->node == target) return RetrievePath(current);
 
-      for (Node neighbor : instance_.graph().movement().get_neighbors(current->node)) {
+      for (Node neighbor : this->instance_.graph().movement().get_neighbors(current->node)) {
         if (IsNegativelyConstrained(cons, current->time + 1, neighbor) ||
             (c.type == false && current->time + 1 == c.time && neighbor == c.node))
           continue;
