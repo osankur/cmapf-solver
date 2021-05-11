@@ -15,6 +15,7 @@
 #include <list>
 #include <memory>
 #include <set>
+#include <map>
 #include <stack>
 #include <vector>
 #include <CTNOrderingStrategy.hpp>
@@ -26,6 +27,10 @@
 #include <boost/heap/fibonacci_heap.hpp>
 
 namespace decoupled {
+
+struct BypassException : public std::exception {
+  std::shared_ptr<ConstraintTreeNode> child;
+};
 
 template <class GraphMove, class GraphComm, class LowLevel>
 class HighLevel {
@@ -158,8 +163,8 @@ class HighLevel {
   void CreateChild(std::list<std::shared_ptr<ConstraintTreeNode>>* children,
                    std::shared_ptr<ConstraintTreeNode> parent, Agent agt,
                    const Constraint& c) {
-    std::list<std::set<Constraint>> agt_cons = parent->get_constraints(agt);
-    Path new_path = low_level_.compute(agt, agt_cons);
+    std::map<uint64_t, std::list<Constraint>> agt_cons = parent->get_constraints(agt);
+    Path new_path = low_level_.compute(agt_cons, c);
 
     if (new_path.size() == 0) return;
 
@@ -168,6 +173,14 @@ class HighLevel {
         std::make_shared<ConstraintTreeNode>(parent, c, agt, new_path_ptr);
 
     RecomputeConflicts(child, agt);
+
+#ifdef BYPASS
+    // TODO(arqueffe): Count conflicts size depending on the type
+    if (child->get_path(agt)->size() == parent->get_path(agt)->size() &&
+        child->get_conflicts().size() < parent->get_conflicts().size()) {
+      throw BypassException(child);
+    }
+#endif
 
     children.push_back(child);
   }

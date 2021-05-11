@@ -19,6 +19,7 @@
 class Graph {
  public:
   virtual const std::set<Node>& get_neighbors(Node) const = 0;
+  virtual size_t node_count() const = 0;
 };
 
 class ExplicitGraph : public Graph {

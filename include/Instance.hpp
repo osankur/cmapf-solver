@@ -15,8 +15,6 @@
 #include <Configuration.hpp>
 #include <TopologicalGraph.hpp>
 
-namespace instance {
-
 template <class GraphMove, class GraphComm>
 class Instance {
  private:
@@ -45,5 +43,3 @@ class Instance {
   const Configuration& goal() const { return goal_; }
   size_t nb_agents() const { return nb_agents_; }
 };
-
-}  // namespace instance
