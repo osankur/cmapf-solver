@@ -86,7 +86,7 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
       current = current->pred;
     }
     reverse_path.push_back(current);
-    for (std::vector<std::shared_ptr<AStarNode>>::reverse_iterator r_it = reverse_path.rbegin();
+    for (auto r_it = reverse_path.rbegin();
          r_it != reverse_path.rend(); ++r_it)
       p.PushBack((*r_it)->node);
     return p;
