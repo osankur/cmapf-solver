@@ -86,14 +86,12 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
       current = current->pred;
     }
     reverse_path.push_back(current);
-    for (auto r_it = reverse_path.rbegin();
-         r_it != reverse_path.rend(); ++r_it)
-      p.PushBack((*r_it)->node);
+    for (auto r_it = reverse_path.rbegin(); r_it != reverse_path.rend(); ++r_it) p.PushBack((*r_it)->node);
     return p;
   }
 
  public:
-  explicit NegativeAStar(const Instance<GraphMove, GraphComm> &instance) : LowLevel(instance) {}
+  explicit NegativeAStar(const Instance<GraphMove, GraphComm> &instance) : LowLevel<GraphMove, GraphComm>(instance) {}
 
   Path compute(const std::map<uint64_t, std::list<Constraint>> &cons, const Constraint &c, Node source, Node target,
                uint64_t time) override {
