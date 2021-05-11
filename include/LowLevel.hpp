@@ -53,7 +53,7 @@ class LowLevel {
 namespace low_level {
 
 template <class GraphMove, class GraphComm>
-class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
+class NegativeAStar : public decoupled::LowLevel<GraphMove, GraphComm> {
  private:
   struct AStarNode : std::enable_shared_from_this<AStarNode> {
    public:
@@ -91,7 +91,8 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
   }
 
  public:
-  explicit NegativeAStar(const Instance<GraphMove, GraphComm> &instance) : LowLevel<GraphMove, GraphComm>(instance) {}
+  explicit NegativeAStar(const Instance<GraphMove, GraphComm> &instance)
+      : decoupled::LowLevel<GraphMove, GraphComm>(instance) {}
 
   Path compute(const std::map<uint64_t, std::list<Constraint>> &cons, const Constraint &c, Node source, Node target,
                uint64_t time) override {
