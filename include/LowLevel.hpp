@@ -109,7 +109,7 @@ class NegativeAStar : public decoupled::LowLevel<GraphMove, GraphComm> {
       if (current->node == target) return RetrievePath(current);
 
       for (Node neighbor : this->instance_.graph().movement().get_neighbors(current->node)) {
-        if (IsNegativelyConstrained(cons, current->time + 1, neighbor) ||
+        if (this->IsNegativelyConstrained(cons, current->time + 1, neighbor) ||
             (c.type == false && current->time + 1 == c.time && neighbor == c.node))
           continue;
 
