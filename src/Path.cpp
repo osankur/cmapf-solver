@@ -13,11 +13,13 @@
 #include <string>
 #include <Path.hpp>
 
+Path::Path() : path_() {}
+
+Path::Path(const Path& rhs) : path_(rhs.path_) {}
+
 void Path::PushBack(Node node) { path_.push_back(node); }
 
-const Node& Path::GetAtTimeOrLast(size_t time) const {
-  return time < path_.size() ? path_[time] : path_.back();
-}
+const Node& Path::GetAtTimeOrLast(size_t time) const { return time < path_.size() ? path_[time] : path_.back(); }
 
 Node& Path::operator[](size_t time) { return path_[time]; }
 

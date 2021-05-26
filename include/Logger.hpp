@@ -48,20 +48,12 @@ class Logger {
     boost::log::core::get()->set_filter(severity >= level);
   }
 
-  static boost::log::sources::severity_logger<SeverityLevel>& get_logger() {
-    return get_singleton().logger_;
-  }
+  static boost::log::sources::severity_logger<SeverityLevel>& get_logger() { return get_singleton().logger_; }
 };
 
-#define LOG_TRACE(s) \
-  BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kTrace) << s
-#define LOG_DEBUG(s) \
-  BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kDebug) << s
-#define LOG_INFO(s) \
-  BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kInfo) << s
-#define LOG_WARNING(s) \
-  BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kWarning) << s
-#define LOG_ERROR(s) \
-  BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kError) << s
-#define LOG_FATAL(s) \
-  BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kFatal) << s
+#define LOG_TRACE(s) BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kTrace) << s
+#define LOG_DEBUG(s) BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kDebug) << s
+#define LOG_INFO(s) BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kInfo) << s
+#define LOG_WARNING(s) BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kWarning) << s
+#define LOG_ERROR(s) BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kError) << s
+#define LOG_FATAL(s) BOOST_LOG_SEV(Logger::get_logger(), SeverityLevel::kFatal) << s

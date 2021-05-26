@@ -20,6 +20,8 @@ class Path {
   std::vector<Node> path_;
 
  public:
+  Path();
+  Path(const Path&);
   void PushBack(Node);
   const Node& GetAtTimeOrLast(size_t) const;
 

@@ -38,4 +38,11 @@ TEST_CASE("Testing of ExplicitGraph class") {
   CHECK_EQ(eg.edge_count(), 4);
   CHECK_EQ(eg.get_neighbors(0).size(), 2);
   CHECK_EQ(eg.get_neighbors(1).size(), 2);
+
+  eg.AddPosition(0, 0, 0);
+  eg.AddPosition(1, 0, 1);
+  CHECK_EQ(eg.get_distance(0, 0), 0);
+  CHECK_EQ(eg.get_distance(1, 1), 0);
+  CHECK_EQ(eg.get_distance(1, 0), 1);
+  CHECK_EQ(eg.get_distance(0, 1), 1);
 }

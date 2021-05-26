@@ -12,8 +12,33 @@
  */
 #pragma once
 
+#include <map>
+#include <memory>
+
 namespace decoupled {
 
-class ConflictSelectionStrategy {};
+class ConflictSelectionStrategy {
+ public:
+  virtual uint64_t SelectConflict(const std::map<uint64_t, std::shared_ptr<const decoupled::Conflict>>&) const = 0;
+};
+
+namespace conflict_selection {
+
+class FirstConflictStrategy : public ConflictSelectionStrategy {
+ public:
+  uint64_t SelectConflict(
+      const std::map<uint64_t, std::shared_ptr<const decoupled::Conflict>>& conflicts) const override {
+    return conflicts.begin()->first;
+  }
+};
+
+class LastConflictStrategy : public ConflictSelectionStrategy {
+ public:
+  uint64_t SelectConflict(
+      const std::map<uint64_t, std::shared_ptr<const decoupled::Conflict>>& conflicts) const override {
+    return conflicts.rbegin()->first;
+  }
+};
+}  // namespace conflict_selection
 
 }  // namespace decoupled

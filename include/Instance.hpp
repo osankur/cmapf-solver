@@ -36,9 +36,7 @@ class Instance {
   Configuration& goal() { return goal_; }
   void set_nb_agents(size_t nb) { nb_agents_ = nb; }
 
-  const TopologicalGraph<GraphMove, GraphComm>& graph() const {
-    return topo_graph_;
-  }
+  const TopologicalGraph<GraphMove, GraphComm>& graph() const { return topo_graph_; }
   const Configuration& start() const { return start_; }
   const Configuration& goal() const { return goal_; }
   size_t nb_agents() const { return nb_agents_; }

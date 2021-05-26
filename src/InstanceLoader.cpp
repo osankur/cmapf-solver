@@ -15,8 +15,7 @@
 
 namespace instance {
 
-XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath,
-                                     const std::string& location)
+XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath, const std::string& location)
     : file_path_(filepath), graph_folder_(location) {}
 
 void XMLInstanceLoader::Load() {
@@ -43,12 +42,10 @@ void XMLInstanceLoader::Load() {
   rapidxml::xml_document<> movDoc;
   movDoc.parse<0>(xmlFile.data());
 
-  const rapidxml::xml_node<>* movGraph =
-      movDoc.first_node("graphml")->first_node("graph");
+  const rapidxml::xml_node<>* movGraph = movDoc.first_node("graphml")->first_node("graph");
 
   // Creating the nodes
-  for (const rapidxml::xml_node<>* node = movGraph->first_node("node");
-       node != NULL; node = node->next_sibling()) {
+  for (const rapidxml::xml_node<>* node = movGraph->first_node("node"); node != NULL; node = node->next_sibling()) {
     rapidxml::xml_attribute<>* attr = node->first_attribute("id");
     if (attr == NULL) continue;
     std::string id(attr->value());
@@ -63,13 +60,13 @@ void XMLInstanceLoader::Load() {
     Node graphNode = (Node)std::stoi(id.c_str());
     instance_.graph().movement().AddNode(graphNode);
     instance_.graph().movement().AddEdge(graphNode, graphNode);
+    instance_.graph().movement().AddPosition(graphNode, static_cast<int>(x), static_cast<int>(y));
     instance_.graph().communication().AddNode(graphNode);
     instance_.graph().communication().AddEdge(graphNode, graphNode);
   }
 
   // Creating the movement edges
-  for (const rapidxml::xml_node<>* edge = movGraph->first_node("edge");
-       edge != NULL; edge = edge->next_sibling()) {
+  for (const rapidxml::xml_node<>* edge = movGraph->first_node("edge"); edge != NULL; edge = edge->next_sibling()) {
     rapidxml::xml_attribute<>* attr = edge->first_attribute("source");
     if (attr == NULL) continue;
     Node source = (Node)std::stoi(attr->value() + 1);
@@ -83,12 +80,10 @@ void XMLInstanceLoader::Load() {
   rapidxml::xml_document<> comDoc;
   comDoc.parse<0>(xmlFile.data());
 
-  rapidxml::xml_node<>* comGraph =
-      comDoc.first_node("graphml")->first_node("graph");
+  rapidxml::xml_node<>* comGraph = comDoc.first_node("graphml")->first_node("graph");
 
   // Creating the communication edges
-  for (rapidxml::xml_node<>* edge = comGraph->first_node("edge"); edge != NULL;
-       edge = edge->next_sibling()) {
+  for (rapidxml::xml_node<>* edge = comGraph->first_node("edge"); edge != NULL; edge = edge->next_sibling()) {
     rapidxml::xml_attribute<>* attr = edge->first_attribute("source");
     if (attr == NULL) continue;
     Node source = (Node)std::stoi(attr->value() + 1);

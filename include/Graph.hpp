@@ -14,25 +14,31 @@
 
 #include <set>
 #include <vector>
+#include <tuple>
+#include <utility>
 #include <Common.hpp>
 
 class Graph {
  public:
   virtual const std::set<Node>& get_neighbors(Node) const = 0;
   virtual size_t node_count() const = 0;
+  virtual size_t get_distance(Node, Node) const = 0;
 };
 
 class ExplicitGraph : public Graph {
  private:
   std::vector<std::set<Node>> adjacency_;
+  std::vector<std::pair<int, int>> positions_;
 
  public:
   void AddNode(Node);
   void AddEdge(Node, Node);
+  void AddPosition(Node, int x, int y);
 
-  size_t node_count() const;
+  size_t node_count() const override;
   size_t edge_count() const;
   const std::set<Node>& get_neighbors(Node) const override;
+  size_t get_distance(Node, Node) const override;
 };
 
 class RadiusGraph : public Graph {

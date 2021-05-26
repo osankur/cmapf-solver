@@ -25,10 +25,16 @@ void ExplicitGraph::AddNode(Node n) {
   adjacency_.insert(adjacency_.begin() + n, std::set<Node>());
 }
 
-void ExplicitGraph::AddEdge(Node source, Node target) {
-  adjacency_[source].insert(target);
+void ExplicitGraph::AddEdge(Node source, Node target) { adjacency_[source].insert(target); }
+
+void ExplicitGraph::AddPosition(Node n, int x, int y) {
+  if (positions_.size() <= n) positions_.resize(n);
+  positions_.insert(positions_.begin() + n, std::make_pair(x, y));
 }
 
-const std::set<Node>& ExplicitGraph::get_neighbors(Node n) const {
-  return adjacency_[n];
+const std::set<Node>& ExplicitGraph::get_neighbors(Node n) const { return adjacency_[n]; }
+
+size_t ExplicitGraph::get_distance(Node a, Node b) const {
+  return static_cast<size_t>(abs(positions_[a].first - positions_[b].first) +
+                             abs(positions_[a].second - positions_[b].second));
 }

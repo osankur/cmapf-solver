@@ -21,8 +21,7 @@
 
 namespace decoupled {
 
-class ConstraintTreeNode
-    : public std::enable_shared_from_this<ConstraintTreeNode> {
+class ConstraintTreeNode : public std::enable_shared_from_this<ConstraintTreeNode> {
  private:
   const std::shared_ptr<ConstraintTreeNode> parent_;
   uint64_t additional_cost_;
@@ -31,11 +30,9 @@ class ConstraintTreeNode
 
  public:
   // Root Constructor
-  ConstraintTreeNode(Execution&,
-                     std::map<uint64_t, std::shared_ptr<const Conflict>>);
+  explicit ConstraintTreeNode(Execution&);
   // Child Constructor
-  ConstraintTreeNode(const std::shared_ptr<ConstraintTreeNode>,
-                     const Constraint, const Agent,
+  ConstraintTreeNode(const std::shared_ptr<ConstraintTreeNode>, const Constraint, const Agent,
                      std::shared_ptr<const Path>);
   ~ConstraintTreeNode() = default;
   ConstraintTreeNode(const ConstraintTreeNode& other) = delete;
@@ -48,8 +45,7 @@ class ConstraintTreeNode
 
   const Constraint constraint;
   const Agent agent;
-  const std::map<uint64_t, std::shared_ptr<const Conflict>>& get_conflicts()
-      const;
+  const std::map<uint64_t, std::shared_ptr<const Conflict>>& get_conflicts() const;
   std::map<uint64_t, std::list<Constraint>> get_constraints(Agent) const;
   const std::shared_ptr<const Path> get_path(Agent) const;
   const std::shared_ptr<ConstraintTreeNode> get_parent() const;

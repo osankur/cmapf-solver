@@ -26,7 +26,6 @@ class InstanceCreator {
 };
 
 template <class GraphMove, class GraphComm>
-class InteractiveInstanceCreator
-    : public InstanceCreator<GraphMove, GraphComm> {};
+class InteractiveInstanceCreator : public InstanceCreator<GraphMove, GraphComm> {};
 
 }  // namespace instance

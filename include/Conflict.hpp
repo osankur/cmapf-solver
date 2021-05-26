@@ -18,18 +18,20 @@
 
 namespace decoupled {
 
-class Conflict {};
+class Conflict {
+ public:
+  virtual size_t size() const = 0;
+};
 
 class CollisionConflict : public Conflict {
  private:
   std::list<std::set<Agent>> clusters_;
 
  public:
-  void PushBack(const std::set<Agent>& cluster) {
-    clusters_.push_back(cluster);
-  }
-  const std::set<Agent>& back() { return clusters_.back(); }
-  size_t size() { return clusters_.size(); }
+  size_t size() const override { return clusters_.size(); }
+  void PushBack(const std::set<Agent>& cluster) { clusters_.push_back(cluster); }
+  const std::set<Agent>& back() const { return clusters_.back(); }
+  std::set<Agent>& back() { return clusters_.back(); }
 };
 
 class DisconnectionConflict : public Conflict {
@@ -37,11 +39,10 @@ class DisconnectionConflict : public Conflict {
   std::list<std::set<Agent>> clusters_;
 
  public:
-  void PushBack(const std::set<Agent>& cluster) {
-    clusters_.push_back(cluster);
-  }
-  const std::set<Agent>& back() { return clusters_.back(); }
-  size_t size() { return clusters_.size(); }
+  size_t size() const override { return clusters_.size() - 1; }
+  void PushBack(const std::set<Agent>& cluster) { clusters_.push_back(cluster); }
+  const std::set<Agent>& back() const { return clusters_.back(); }
+  std::set<Agent>& back() { return clusters_.back(); }
 };
 
 }  // namespace decoupled

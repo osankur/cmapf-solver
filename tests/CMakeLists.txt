@@ -5,7 +5,7 @@ set(TESTFILES        # All .cpp files in tests/
     "Path.cpp"
     "Execution.cpp"
     "Configuration.cpp"
- "Graph.cpp" "InstanceLoader.cpp" "Objective.cpp" "ConstraintTreeNode.cpp" "LowLevel.cpp")
+ "Graph.cpp" "InstanceLoader.cpp" "Objective.cpp" "ConstraintTreeNode.cpp" "LowLevel.cpp" "CBS.cpp")
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
 set(TEST_RUNNER_PARAMS "")  # Any arguemnts to feed the test runner (change as needed).
@@ -19,8 +19,10 @@ set_target_properties(${TEST_MAIN} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT
 target_set_warnings(${TEST_MAIN} ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 
 set_target_properties(${TEST_MAIN} PROPERTIES 
-    CXX_STANDARD 17 
+    CXX_STANDARD 20 
     CXX_STANDARD_REQUIRED YES 
+    CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest"
+    CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest"
     CXX_EXTENSIONS NO
 )
 

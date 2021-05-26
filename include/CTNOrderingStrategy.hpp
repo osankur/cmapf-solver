@@ -12,16 +12,27 @@
  */
 #pragma once
 
+#include <memory>
 #include <ConstraintTreeNode.hpp>
 
 namespace decoupled {
 
-namespace ctn_ordering {
-
 class CTNOrderingStrategy {
  public:
-  virtual bool operator()(const ConstraintTreeNode& first,
-                          const ConstraintTreeNode& second) const = 0;
+  virtual bool operator()(const std::shared_ptr<ConstraintTreeNode> &,
+                          const std::shared_ptr<ConstraintTreeNode> &) const {
+    return true;
+  }
+};
+
+namespace ctn_ordering {
+
+class LeastConflictStrategy : public CTNOrderingStrategy {
+ public:
+  bool operator()(const std::shared_ptr<ConstraintTreeNode> &first,
+                  const std::shared_ptr<ConstraintTreeNode> &second) const override {
+    return first->get_conflicts().size() < second->get_conflicts().size();
+  }
 };
 
 }  // namespace ctn_ordering
