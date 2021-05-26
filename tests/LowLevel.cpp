@@ -37,8 +37,6 @@ TEST_CASE("Testing of NegativeAStar class") {
                                  std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
   il.Load();
   decoupled::low_level::NegativeAStar<ExplicitGraph, ExplicitGraph> astar(il.instance());
-  std::map<uint64_t, std::list<decoupled::Constraint>> cons;
-  decoupled::Constraint cNone{0, 0, false};
   for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
     Path p = astar.ComputeShortestPath(il.instance().start()[agt], il.instance().goal()[agt]);
     std::cout << p << std::endl;
