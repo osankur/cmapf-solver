@@ -17,20 +17,20 @@
 #include "AppConfig.h"
 #include "doctest.h"
 
-TEST_CASE("Testing of MAS class") {
-  instance::XMLInstanceLoader il(std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp",
-                                 std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
-  il.Load();
-
-  SumObjective obj;
-
-  decoupled::MAS<ExplicitGraph, ExplicitGraph> mas(il.instance(), obj);
-
-  Execution e = mas.Compute();
-  std::cout << e << std::endl;
-  for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
-    auto p = e.get_path(agt);
-    CHECK_EQ(p->GetAtTimeOrLast(0), il.instance().start()[agt]);
-    CHECK_EQ(p->GetAtTimeOrLast(p->size()), il.instance().goal()[agt]);
-  }
-}
+//TEST_CASE("Testing of MAS class") {
+//  instance::XMLInstanceLoader il(std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp",
+//                                 std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
+//  il.Load();
+//
+//  SumObjective obj;
+//
+//  decoupled::MAS<ExplicitGraph, ExplicitGraph> mas(il.instance(), obj);
+//
+//  Execution e = mas.Compute();
+//  std::cout << e << std::endl;
+//  for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
+//    auto p = e.get_path(agt);
+//    CHECK_EQ(p->GetAtTimeOrLast(0), il.instance().start()[agt]);
+//    CHECK_EQ(p->GetAtTimeOrLast(p->size()), il.instance().goal()[agt]);
+//  }
+//}
