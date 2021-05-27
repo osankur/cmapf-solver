@@ -14,6 +14,7 @@
 
 #include <map>
 #include <stack>
+#include <limits>
 #include <utility>
 #include <Solver.hpp>
 #include <LowLevel.hpp>
@@ -24,14 +25,14 @@ template <class GraphMove, class GraphComm>
 class MAS : public Solver<GraphMove, GraphComm> {
  private:
   std::map<std::pair<Node, size_t>, float> pheromone_map_;
+  decoupled::low_level::NegativeAStar<GraphMove, GraphComm> astar;
   float evaporation_ = 0.8f;
   int max_iteration_ = 200;
 
  public:
   MAS(const Instance<GraphMove, GraphComm>& instance, const Objective& objective)
-      : Solver<GraphMove, GraphComm>(instance, objective) {
+      : Solver<GraphMove, GraphComm>(instance, objective), astar(this->instance_) {
     Execution exec;
-    decoupled::low_level::NegativeAStar<ExplicitGraph, ExplicitGraph> astar(this->instance_);
     for (Agent agt = 0; agt < static_cast<Agent>(this->instance_.nb_agents()); agt++) {
       Path p = astar.ComputeShortestPath(this->instance_.start()[agt], this->instance_.goal()[agt]);
       exec.PushBack(std::make_shared<const Path>(p));
@@ -71,11 +72,11 @@ class MAS : public Solver<GraphMove, GraphComm> {
     }
   }
 
-  Node SelectStep(Agent agt, Node current, size_t time) const {
+  Node SelectStep(Agent agt, Node current, size_t time) {
     size_t good_strategy = (size_t)rand() % 2;
     const std::set<Node>& neighbors = this->instance_.graph().movement().get_neighbors(current);
     if (good_strategy == 0) {
-      double choice = (double)rand() / RAND_MAX;
+      double choice = (double)rand() / std::numeric_limits<int>::max();
       float sum_pheromone = 0.0f;
       for (auto n : neighbors) {
         auto found = pheromone_map_.find(std::make_pair(n, time));
@@ -96,14 +97,15 @@ class MAS : public Solver<GraphMove, GraphComm> {
         current_pheromone = pheromone_value;
       }
     } else {
-      return this->execution_.get_path(agt)->GetAtTimeOrLast(time);
+      Path p = astar.ComputeShortestPath(current, this->instance_.goal()[agt]);
+      return p[1];
     }
 
     // No pheromone pick random
     size_t random_strategy = (size_t)rand() % 2;
     if (random_strategy == 0) {
-      Node min_node = UINT_MAX;
-      size_t min_dist = UINT_MAX;
+      Node min_node = std::numeric_limits<Node>::max();
+      size_t min_dist = std::numeric_limits<size_t>::max();
       for (auto n : neighbors) {
         size_t current_dist = this->instance_.graph().movement().get_distance(n, this->instance_.goal()[agt]);
         if (current_dist < min_dist) {
@@ -111,7 +113,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
           min_node = n;
         }
       }
-      if (min_node == UINT_MAX) throw "Potential error of node selection";
+      if (min_node == std::numeric_limits<Node>::max()) throw "Potential error of node selection";
       return min_node;
     } else {
       size_t default_choice = (size_t)rand() % neighbors.size();
