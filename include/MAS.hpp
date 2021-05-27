@@ -131,7 +131,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
       if (exec_max_size < exec.get_path(agt)->size()) exec_max_size = exec.get_path(agt)->size();
 
     for (size_t time = 0; time < exec_max_size; time++) {
-      int agent_count = 0;
+      siez_t agent_count = 0;
       std::stack<Agent> agent_stack;
       std::vector<bool> agent_treated = std::vector<bool>(this->instance_.nb_agents(), false);
       agent_stack.push(0);
