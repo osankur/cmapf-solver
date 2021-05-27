@@ -33,6 +33,4 @@ TEST_CASE("Testing of MAS class") {
     CHECK_EQ(p->GetAtTimeOrLast(0), il.instance().start()[agt]);
     CHECK_EQ(p->GetAtTimeOrLast(p->size()), il.instance().goal()[agt]);
   }
-
-  
 }

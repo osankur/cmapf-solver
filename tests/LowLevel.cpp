@@ -39,7 +39,6 @@ TEST_CASE("Testing of NegativeAStar class") {
   decoupled::low_level::NegativeAStar<ExplicitGraph, ExplicitGraph> astar(il.instance());
   for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
     Path p = astar.ComputeShortestPath(il.instance().start()[agt], il.instance().goal()[agt]);
-    //std::cout << p << std::endl;
     CHECK_EQ(p[0], il.instance().start()[agt]);
     CHECK_EQ(p[p.size() - 1], il.instance().goal()[agt]);
   }

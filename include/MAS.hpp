@@ -15,9 +15,13 @@
 #include <map>
 #include <stack>
 #include <limits>
+#include <vector>
+#include <set>
+#include <memory>
 #include <utility>
 #include <Solver.hpp>
 #include <LowLevel.hpp>
+
 
 namespace decoupled {
 
@@ -76,7 +80,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
     size_t good_strategy = (size_t)rand() % 2;
     const std::set<Node>& neighbors = this->instance_.graph().movement().get_neighbors(current);
     if (good_strategy == 0) {
-      double choice = (double)rand() / std::numeric_limits<int>::max();
+      double choice = static_cast<double>(rand() / std::numeric_limits<int>::max());
       float sum_pheromone = 0.0f;
       for (auto n : neighbors) {
         auto found = pheromone_map_.find(std::make_pair(n, time));
@@ -131,7 +135,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
       if (exec_max_size < exec.get_path(agt)->size()) exec_max_size = exec.get_path(agt)->size();
 
     for (size_t time = 0; time < exec_max_size; time++) {
-      siez_t agent_count = 0;
+      size_t agent_count = 0;
       std::stack<Agent> agent_stack;
       std::vector<bool> agent_treated = std::vector<bool>(this->instance_.nb_agents(), false);
       agent_stack.push(0);
@@ -183,7 +187,6 @@ class MAS : public Solver<GraphMove, GraphComm> {
       std::cout << "Execution Size: " << this->objective_.cost(exec) << std::endl;
       std::cout << "Disconnection Count: " << CountDisconnection(exec) << std::endl;
       this->execution_ = exec;
-      
     }
     UpdatePheromoneMap(exec);
     max_iteration_--;
