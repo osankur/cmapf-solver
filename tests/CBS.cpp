@@ -36,5 +36,5 @@ TEST_CASE("Testing of CBS class") {
     CHECK_EQ(p->GetAtTimeOrLast(p->size()), il.instance().goal()[agt]);
   }
 
-  std::cout << e << std::endl;
+  std::cout << "CBS :" << obj.cost(e) << std::endl;
 }
