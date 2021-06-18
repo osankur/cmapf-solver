@@ -43,6 +43,15 @@ class LowLevel {
     return false;
   }
 
+  bool IsLaterNegativelyConstrained(const std::map<uint64_t, std::list<Constraint>> &cons, uint64_t time,
+                                    Node n) const {
+    for (auto &lc : cons)
+      if (lc.first >= time)
+        for (auto &c : lc.second)
+          if (c.type == false && c.node == n) return true;
+    return false;
+  }
+
  public:
   explicit LowLevel(const Instance<GraphMove, GraphComm> &instance) : instance_(instance) {}
   virtual ~LowLevel() {}
@@ -123,12 +132,14 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
 
     std::shared_ptr<AStarNode> start = std::make_shared<AStarNode>(source, time, nullptr);
     open.push(start);
-
+    closed.insert(start);
     while (!open.empty()) {
       std::shared_ptr<AStarNode> current = open.top();
       open.pop();
 
-      if (current->node == target) return RetrievePath(current);
+      if (current->node == target && !this->IsLaterNegativelyConstrained(cons, current->time, current->node) &&
+          !(c.type == false && c.time >= current->time && c.node == current->node))
+        return RetrievePath(current);
 
       for (Node neighbor : this->instance_.graph().movement().get_neighbors(current->node)) {
         if (this->IsNegativelyConstrained(cons, current->time + 1, neighbor) ||
@@ -138,10 +149,11 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
 
         std::shared_ptr<AStarNode> next = std::make_shared<AStarNode>(neighbor, current->time + 1, current);
 
-        if (closed.find(next) == closed.end()) open.push(next);
+        if (closed.find(next) == closed.end()) {
+          open.push(next);
+          closed.insert(next);
+        }
       }
-
-      closed.insert(current);
     }
     return Path();
   }

@@ -35,6 +35,16 @@ TEST_CASE("Testing of CBS class") {
     CHECK_EQ(p->GetAtTimeOrLast(0), il.instance().start()[agt]);
     CHECK_EQ(p->GetAtTimeOrLast(p->size()), il.instance().goal()[agt]);
   }
+  MaxObjective max;
+  size_t len = max.cost(e);
+  for (size_t time = 0; time < len; time++) {
+    for (Agent agtA = 0; agtA < static_cast<Agent>(il.instance().nb_agents()); agtA++) {
+      for (Agent agtB = agtA+1; agtB < static_cast<Agent>(il.instance().nb_agents()); agtB++) {
+        auto config = e.get_configuration(time);
+        CHECK_NE(config[agtA], config[agtB]);
+      }   
+    }
+  }
 
   std::cout << "CBS :" << obj.cost(e) << std::endl;
 }

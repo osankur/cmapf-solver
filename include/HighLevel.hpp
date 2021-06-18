@@ -56,7 +56,7 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     std::vector<bool> agent_treated = std::vector<bool>(this->instance_.nb_agents(), false);
 
     for (Agent a = 0; a < static_cast<Agent>(this->instance_.nb_agents()); a++) {
-      if (std::find(agent_treated.begin(), agent_treated.end(), a) == agent_treated.end()) {
+      if (!agent_treated[a]) {
         std::set<Agent> cluster;
         cluster.insert(a);
         Node aPos = ctn->get_path(a)->GetAtTimeOrLast(time);
@@ -124,11 +124,15 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     auto prev_path = ctn->get_parent()->get_path(agt);
     auto new_path = ctn->get_path(agt);
 
-    for (uint64_t i = 0; i < new_path->size(); i++) {
+    for (uint64_t i = 0; i < prev_path->size(); i++) {
       if ((*prev_path)[i] == (*new_path)[i]) continue;
 
       ComputeCollision(ctn, i);
-      ComputeDisconnection(ctn, i);
+      //ComputeDisconnection(ctn, i);
+    }
+    for (uint64_t i = prev_path->size()-1; i < new_path->size(); i++) {
+      ComputeCollision(ctn, i);
+      // ComputeDisconnection(ctn, i);
     }
   }
 
@@ -188,7 +192,7 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
       start_exec.PushBack(std::make_shared<const Path>(p));
     }
     auto start_node = std::make_shared<ConstraintTreeNode>(start_exec);
-    // ComputeConflicts(start_node);
+    ComputeConflicts(start_node);
     open_.push(start_node);
   }
 

@@ -10,9 +10,23 @@
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  */
+
+#include <Window.hpp>
 #include <iostream>
+#include <functional>
 
 int main() {
   std::cout << "Hello CMake." << std::endl;
   return 0;
+}
+
+int uimain(std::function<int()> run) {
+  sciter::archive::instance().open(
+      aux::elements_of(resources));
+  sciter::om::hasset<Frame> pwin = new Frame();
+  pwin->load(WSTR("this://app/index.htm"));
+
+  pwin->expand();
+
+  return run();
 }
