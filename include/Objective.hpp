@@ -35,7 +35,8 @@ class SumObjective : public Objective {
  public:
   size_t cost(const Execution& e) const override {
     size_t sum = 0;
-    for (Agent i = 0; i < static_cast<Agent>(e.size()); i++) sum += e.get_path(i)->size();
+    for (Agent i = 0; i < static_cast<Agent>(e.size()); i++)
+      if (e.get_path(i) != nullptr) sum += e.get_path(i)->size();
     return sum;
   }
 };

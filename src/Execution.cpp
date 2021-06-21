@@ -22,7 +22,10 @@ Configuration Execution::get_configuration(uint64_t time) const {
   return c;
 }
 
-void Execution::set_path(Agent a, std::shared_ptr<const Path> p) { exec_[a] = p; }
+void Execution::set_path(Agent a, std::shared_ptr<const Path> p) {
+  if (exec_.size() <= static_cast <size_t>(a)) exec_.resize(a + 1);
+  exec_[a] = p;
+}
 
 const std::shared_ptr<const Path> Execution::get_path(Agent a) const { return exec_[a]; }
 
