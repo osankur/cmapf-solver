@@ -19,6 +19,8 @@ Node& Configuration::operator[](Agent a) { return config_[a]; }
 
 const Node& Configuration::operator[](Agent a) const { return config_[a]; }
 
+const Node& Configuration::at(Agent a) const { return config_[a]; }
+
 size_t Configuration::size() const { return config_.size(); }
 
 // Friends

@@ -29,6 +29,7 @@ class Configuration {
 
   // Properties
   size_t size() const;
+  const Node& at(Agent) const;
 
   // Friends
   friend std::ostream& operator<<(std::ostream&, const Configuration&);

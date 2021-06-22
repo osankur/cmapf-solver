@@ -12,7 +12,8 @@ set(TESTFILES        # All .cpp files in tests/
     "LowLevel.cpp"
     "CBS.cpp"
     "MAS.cpp"
- "LRAStar.cpp")
+ "LRAStar.cpp"
+ "DFS.cpp")
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
 set(TEST_RUNNER_PARAMS "")  # Any arguemnts to feed the test runner (change as needed).

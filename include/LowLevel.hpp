@@ -57,12 +57,12 @@ class LowLevel {
   virtual ~LowLevel() {}
 
   virtual Path ComputeShiftedConstrainedPath(const std::map<uint64_t, std::list<Constraint>> &, const Constraint &,
-                                             const Node &, const Node &, uint64_t) = 0;
+                                             const Node &, const Node &, uint64_t) const = 0;
   Path ComputeConstrainedPath(const std::map<uint64_t, std::list<Constraint>> &cons, const Constraint &c,
-                              const Node &source, const Node &target) {
+                              const Node &source, const Node &target) const  {
     return ComputeShiftedConstrainedPath(cons, c, source, target, 0);
   }
-  Path ComputeShortestPath(const Node &source, const Node &target) {
+  Path ComputeShortestPath(const Node &source, const Node &target) const {
     return ComputeConstrainedPath(std::map<uint64_t, std::list<Constraint>>(), Constraint{0, 0, false}, source, target);
   }
 };
@@ -125,7 +125,7 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
   explicit NegativeAStar(const Instance<GraphMove, GraphComm> &instance) : LowLevel<GraphMove, GraphComm>(instance) {}
 
   Path ComputeShiftedConstrainedPath(const std::map<uint64_t, std::list<Constraint>> &cons, const Constraint &c,
-                                     const Node &source, const Node &target, uint64_t time) override {
+                                     const Node &source, const Node &target, uint64_t time) const override {
     HeapComparator cmp(this->instance_, target);
     boost::heap::fibonacci_heap<std::shared_ptr<AStarNode>, boost::heap::compare<HeapComparator>> open(cmp);
     std::unordered_set<std::shared_ptr<AStarNode>, AStarNodePtrHash, AStarNodePtrEqual> closed;
