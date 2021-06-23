@@ -27,7 +27,7 @@ template <class GraphMove, class GraphComm>
 bool IsConfigurationConnected(const Configuration& config, const Instance<GraphMove, GraphComm>& instance) {
   std::vector<bool> agent_treated = std::vector<bool>(instance.nb_agents(), false);
   std::stack<Agent> agent_stack;
-  int agent_count = 0;
+  size_t agent_count = 0;
   std::vector<bool>::iterator it;
 
   while ((it = find(agent_treated.begin(), agent_treated.end(), false)) != agent_treated.end()) {
