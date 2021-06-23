@@ -128,7 +128,7 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
       if ((*prev_path)[i] == (*new_path)[i]) continue;
 
       ComputeCollision(ctn, i);
-      //ComputeDisconnection(ctn, i);
+      // ComputeDisconnection(ctn, i);
     }
     for (uint64_t i = prev_path->size()-1; i < new_path->size(); i++) {
       ComputeCollision(ctn, i);

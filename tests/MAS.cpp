@@ -17,7 +17,7 @@
 #include "AppConfig.h"
 #include "doctest.h"
 
-//TEST_CASE("Testing of MAS class") {
+// TEST_CASE("Testing of MAS class") {
 //  instance::XMLInstanceLoader il(std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp",
 //                                 std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
 //  il.Load();

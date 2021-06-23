@@ -47,6 +47,6 @@ TEST_CASE("Testing of DFS(Tateo) class") {
       }
     }
   }*/
-  
+
   std::cout << "DFS :" << obj.cost(e) << std::endl;
 }

@@ -19,6 +19,7 @@
 #include <stack>
 #include <vector>
 #include <utility>
+#include <unordered_set>
 #include <CTNOrderingStrategy.hpp>
 #include <ConflictSelectionStrategy.hpp>
 #include <ConstraintTreeNode.hpp>
@@ -38,17 +39,17 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
     Execution execution_;
 
    public:
-    LRANode() : execution_(){};
-    LRANode(Agent agt, std::shared_ptr<const Path> path) : execution_() { execution_.set_path(agt, path); };
+    LRANode() : execution_() {}
+    LRANode(Agent agt, std::shared_ptr<const Path> path) : execution_() { execution_.set_path(agt, path); }
     LRANode(const std::shared_ptr<LRANode>& node, Agent agt, std::shared_ptr<const Path> path)
         : execution_(node->execution_) {
       execution_.set_path(agt, path);
-    };
-    ~LRANode(){};
-    LRANode(const LRANode& other) : execution_(other.execution_){};
-    LRANode(LRANode&& other) : execution_(other.execution_){};
-    LRANode& operator=(const LRANode& other) { execution_ = other.execution_; };
-    LRANode& operator=(LRANode&& other) { execution_ = other.execution_; };
+    }
+    ~LRANode() {}
+    LRANode(const LRANode& other) : execution_(other.execution_) {}
+    LRANode(LRANode&& other) : execution_(other.execution_) {}
+    LRANode& operator=(const LRANode& other) { execution_ = other.execution_; }
+    LRANode& operator=(LRANode&& other) { execution_ = other.execution_; }
 
     const std::shared_ptr<const Path> path(Agent a) const { return execution_.get_path(a); }
     bool IsAgentSet(Agent a) const {

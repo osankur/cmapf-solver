@@ -19,6 +19,7 @@
 #include <stack>
 #include <vector>
 #include <utility>
+#include <unordered_set>
 #include <CTNOrderingStrategy.hpp>
 #include <ConflictSelectionStrategy.hpp>
 #include <ConstraintTreeNode.hpp>

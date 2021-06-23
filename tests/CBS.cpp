@@ -39,10 +39,10 @@ TEST_CASE("Testing of CBS class") {
   size_t len = max.cost(e);
   for (size_t time = 0; time < len; time++) {
     for (Agent agtA = 0; agtA < static_cast<Agent>(il.instance().nb_agents()); agtA++) {
-      for (Agent agtB = agtA+1; agtB < static_cast<Agent>(il.instance().nb_agents()); agtB++) {
+      for (Agent agtB = agtA + 1; agtB < static_cast<Agent>(il.instance().nb_agents()); agtB++) {
         auto config = e.get_configuration(time);
         CHECK_NE(config[agtA], config[agtB]);
-      }   
+      }
     }
   }
 
