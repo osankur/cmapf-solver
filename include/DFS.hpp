@@ -69,12 +69,14 @@ class DFS : public Solver<GraphMove, GraphComm> {
       costB += b->size();
       for (size_t agt = 0; agt < config_->size(); agt++) {
         if (agt < a->size()) costA += 1 + n_astart_.ComputeShortestPath(a->at(agt), instance_.goal()[agt]).size();
-        // instance_.graph().movement().get_distance(a->at(agt), instance_.goal()[agt]);
+        /*instance_.graph().movement().get_distance(config_->at(agt), a->at(agt)) +
+        instance_.graph().movement().get_distance(a->at(agt), instance_.goal()[agt]);*/
         else
           costA += n_astart_.ComputeShortestPath(config_->at(agt), instance_.goal()[agt]).size();
         // instance_.graph().movement().get_distance(config_->at(agt), instance_.goal()[agt]);
         if (agt < b->size()) costB += 1 + n_astart_.ComputeShortestPath(b->at(agt), instance_.goal()[agt]).size();
-        // instance_.graph().movement().get_distance(b->at(agt), instance_.goal()[agt]);
+        /*instance_.graph().movement().get_distance(config_->at(agt), b->at(agt)) +
+        instance_.graph().movement().get_distance(b->at(agt), instance_.goal()[agt]);*/
         else
           costB += n_astart_.ComputeShortestPath(config_->at(agt), instance_.goal()[agt]).size();
         // instance_.graph().movement().get_distance(config_->at(agt), instance_.goal()[agt]);
@@ -144,7 +146,7 @@ class DFS : public Solver<GraphMove, GraphComm> {
           continue;
       }
 
-      for (Node neighbor : this->instance_.graph().communication().get_neighbors(config->at(current->size()))) {
+      for (Node neighbor : this->instance_.graph().movement().get_neighbors(config->at(current->size()))) {
         std::shared_ptr<Configuration> next = std::make_shared<Configuration>();
         for (Agent agt = 0; agt < static_cast<Agent>(current->size()); agt++) next->PushBack(current->at(agt));
 
