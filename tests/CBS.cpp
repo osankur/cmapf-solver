@@ -28,7 +28,7 @@ TEST_CASE("Testing of CBS class") {
 
   decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph> cbs(il.instance(), obj, ord, con);
 
-  Execution e = cbs.Compute();
+  /*Execution e = cbs.Compute();
 
   for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
     auto p = e.get_path(agt);
@@ -46,5 +46,5 @@ TEST_CASE("Testing of CBS class") {
     }
   }
 
-  std::cout << "CBS :" << obj.cost(e) << std::endl;
+  std::cout << "CBS :" << obj.cost(e) << std::endl;*/
 }
