@@ -46,7 +46,8 @@ TEST_CASE("Testing of CCBS class") {
         CHECK_NE(config[agtA], config[agtB]);
       }
     }
-  }*/
+  }
 
   std::cout << "CCBS :" << obj.cost(e) << std::endl;
+  */
 }
