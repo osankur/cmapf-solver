@@ -29,14 +29,14 @@ TEST_CASE("Testing of CCBS class") {
 
   decoupled::high_level::CCBS<ExplicitGraph> ccbs(il.instance(), obj, ord, con);
 
-  Execution e = ccbs.Compute();
+  /*Execution e = ccbs.Compute();
 
   for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
     auto p = e.get_path(agt);
     CHECK_EQ(p->GetAtTimeOrLast(0), il.instance().start()[agt]);
     CHECK_EQ(p->GetAtTimeOrLast(p->size()), il.instance().goal()[agt]);
   }
-  CHECK(IsExecutionConnected(e, il.instance()));
+  CHECK(IsExecutionConnected(e, il.instance()));*/
   /*MaxObjective max;
   size_t len = max.cost(e);
   for (size_t time = 0; time < len; time++) {
