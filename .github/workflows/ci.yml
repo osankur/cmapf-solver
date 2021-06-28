@@ -39,16 +39,16 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          /home/runner/work/cmapf-solver/cmapf-solver/boost_1_72_0/build-dir
+          /home/runner/work/cmapf-solver/cmapf-solver/boost_1_75_0/build-dir
         key: ${{ runner.os }}
 
     - name: Setup Boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       run: |
-        wget https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && tar --bzip2 -xf boost_1_72_0.tar.bz2 && cd boost_1_72_0 && mkdir build-dir && ./bootstrap.sh --prefix=./build-dir && ./b2 install
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.bz2 && tar --bzip2 -xf boost_1_75_0.tar.bz2 && cd boost_1_75_0 && mkdir build-dir && ./bootstrap.sh --prefix=./build-dir && ./b2 install
         
     - name: Configure (${{ matrix.configuration }})
-      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_LIBRARYDIR:PATH=/home/runner/work/cmapf-solver/cmapf-solver/boost_1_72_0/build-dir/lib -DBOOST_ROOT:PATH=/home/runner/work/cmapf-solver/cmapf-solver/boost_1_72_0/build-dir -DBOOST_INCLUDEDIR:PATH=/home/runner/work/cmapf-solver/cmapf-solver/boost_1_72_0/build-dir/include
+      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DBOOST_LIBRARYDIR:PATH=/home/runner/work/cmapf-solver/cmapf-solver/boost_1_75_0/build-dir/lib -DBOOST_ROOT:PATH=/home/runner/work/cmapf-solver/cmapf-solver/boost_1_75_0/build-dir -DBOOST_INCLUDEDIR:PATH=/home/runner/work/cmapf-solver/cmapf-solver/boost_1_75_0/build-dir/include
 
     - name: Build with ${{ matrix.compiler }}
       run: cmake --build build

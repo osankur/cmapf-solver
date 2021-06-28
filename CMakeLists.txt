@@ -21,11 +21,17 @@ include(LTO)
 include(Misc)
 include(Warnings)
 
-FIND_PACKAGE( Boost 1.71 COMPONENTS program_options REQUIRED )
+SET(Boost_USE_STATIC_LIBS ON)
+#ADD_DEFINITIONS(-DBOOST_LOG_NO_THREADS)
+#ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
+FIND_PACKAGE(Boost 1.75 COMPONENTS log program_options REQUIRED)
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 add_library(rapidxml INTERFACE)
 target_include_directories(rapidxml INTERFACE ${PROJECT_SOURCE_DIR}/external/rapidxml/)
+
+add_library(magic_enum INTERFACE)
+target_include_directories(magic_enum INTERFACE ${PROJECT_SOURCE_DIR}/external/magic_enum/include)
 
 # Check for LTO support.
 find_lto(CXX)
@@ -56,6 +62,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
 target_link_libraries(${LIBRARY_NAME} PUBLIC rapidxml)
+target_link_libraries(${LIBRARY_NAME} PUBLIC magic_enum)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} LINK_PUBLIC ${Boost_LIBRARIES} )
 
 # Set the compile options you want (change as needed).
@@ -81,3 +88,20 @@ set_target_properties(
 )
 # Set up tests (see tests/CMakeLists.txt).
 add_subdirectory(tests)
+
+add_executable(console_main app/console_main.cpp)
+
+target_link_libraries(console_main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(console_main ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(console_main optimized)  # enable link-time-optimization if available for non-debug configurations
+
+# Set the properties you require, e.g. what C++ standard to use. Here applied to library and main (change as needed).
+set_target_properties(
+    ${LIBRARY_NAME} console_main 
+      PROPERTIES 
+        CXX_STANDARD 20
+        CXX_STANDARD_REQUIRED YES 
+        CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest"
+        CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest"
+        CXX_EXTENSIONS NO
+)
