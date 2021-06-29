@@ -30,6 +30,9 @@ namespace decoupled {
 
 template <class GraphMove, class GraphComm>
 class LowLevel {
+ private:
+  std::vector<std::vector<Node>> mem_paths_;
+
  protected:
   const Instance<GraphMove, GraphComm> &instance_;
 
@@ -104,7 +107,7 @@ class LowLevel {
   }
 
  public:
-  explicit LowLevel(const Instance<GraphMove, GraphComm> &instance) : instance_(instance) {}
+  explicit LowLevel(const Instance<GraphMove, GraphComm> &instance) : instance_(instance), mem_paths_() {}
   virtual ~LowLevel() {}
 
   virtual Path ComputeShiftedConstrainedPath(const std::map<uint64_t, std::list<Constraint>> &, const Constraint &,
@@ -115,6 +118,37 @@ class LowLevel {
   }
   Path ComputeShortestPath(const Node &source, const Node &target) const {
     return ComputeConstrainedPath(std::map<uint64_t, std::list<Constraint>>(), Constraint{0, 0, false}, source, target);
+  }
+
+  Path RetrieveShortestPath(const Node &source, const Node &target) {
+    Path p;
+    Node current = source;
+    while (current != target) {
+      p.PushBack(current);
+      if (mem_paths_[target][current] == current) throw "Unconnected Graph!";
+      current = mem_paths_[target][current];
+    }
+    p.PushBack(current);
+    return p;
+  }
+
+  void StoreShortestPath(const Node &target, const Path &path) {
+    if (target >= mem_paths_.size()) mem_paths_.resize(target + 1);
+    for (size_t step = 0; step < path.size() - 1; step++) {
+      if (path[step] >= mem_paths_[target].size())
+        mem_paths_[target].resize(path[step] + 1, std::numeric_limits<Node>::max());
+      mem_paths_[target][path[step]] = path[step + 1];
+    }
+  }
+
+  Path ComputeShortestPath(const Node &source, const Node &target) {
+    if (target < mem_paths_.size() && source < mem_paths_[target].size() &&
+        mem_paths_[target][source] != std::numeric_limits<Node>::max())
+      return RetrieveShortestPath(source, target);
+    Path p =
+        ComputeConstrainedPath(std::map<uint64_t, std::list<Constraint>>(), Constraint{0, 0, false}, source, target);
+    StoreShortestPath(target, p);
+    return p;
   }
 };
 

@@ -16,7 +16,7 @@
 
 class Objective {
  public:
-  virtual size_t cost(const Execution&) const { throw "Call to abtract Objective!"; };
+  virtual size_t cost(const Execution&) const = 0;
 };
 
 class MaxObjective : public Objective {

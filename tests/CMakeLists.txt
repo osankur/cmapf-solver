@@ -13,7 +13,7 @@ set(TESTFILES        # All .cpp files in tests/
     "CBS.cpp"
     "MAS.cpp"
  "LRAStar.cpp"
- "DFS.cpp" "CCBS.cpp")
+ "DFS.cpp" "CCBS.cpp" "FloydWarshall.cpp")
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
 set(TEST_RUNNER_PARAMS "")  # Any arguemnts to feed the test runner (change as needed).

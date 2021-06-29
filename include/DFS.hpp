@@ -20,6 +20,7 @@
 #include <vector>
 #include <utility>
 #include <unordered_set>
+#include <queue>
 #include <CTNOrderingStrategy.hpp>
 #include <ConflictSelectionStrategy.hpp>
 #include <ConstraintTreeNode.hpp>
@@ -28,6 +29,7 @@
 #include <Objective.hpp>
 #include <Solver.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
+#include <FloydWarshall.hpp>
 
 namespace coupled {
 
@@ -57,29 +59,31 @@ class DFS : public Solver<GraphMove, GraphComm> {
    private:
     const Instance<GraphMove, GraphComm>& instance_;
     const std::shared_ptr<Configuration> config_;
-    decoupled::low_level::NegativeAStar<GraphMove, GraphComm> n_astart_;
+    FloydWarshall<GraphMove, GraphComm> floydwarshall_;
 
    public:
     explicit HeapComparator(const Instance<GraphMove, GraphComm>& instance, const std::shared_ptr<Configuration> config)
-        : instance_(instance), config_(config), n_astart_(instance) {}
+        : instance_(instance), config_(config), floydwarshall_(instance) {
+      floydwarshall_.Compute();
+    }
 
-    bool operator()(const std::shared_ptr<Configuration>& a, const std::shared_ptr<Configuration>& b) const {
+    bool operator()(const std::shared_ptr<Configuration>& a, const std::shared_ptr<Configuration>& b) {
       size_t costA = 0;
       size_t costB = 0;
       costA += a->size();
       costB += b->size();
       for (size_t agt = 0; agt < config_->size(); agt++) {
-        if (agt < a->size()) costA += 1 + n_astart_.ComputeShortestPath(a->at(agt), instance_.goal()[agt]).size();
+        if (agt < a->size()) costA += 1 + floydwarshall_.GetShortestPathSize(a->at(agt), instance_.goal()[agt]);
         /*instance_.graph().movement().get_distance(config_->at(agt), a->at(agt)) +
         instance_.graph().movement().get_distance(a->at(agt), instance_.goal()[agt]);*/
         else
-          costA += n_astart_.ComputeShortestPath(config_->at(agt), instance_.goal()[agt]).size();
+          costA += floydwarshall_.GetShortestPathSize(config_->at(agt), instance_.goal()[agt]);
         // instance_.graph().movement().get_distance(config_->at(agt), instance_.goal()[agt]);
-        if (agt < b->size()) costB += 1 + n_astart_.ComputeShortestPath(b->at(agt), instance_.goal()[agt]).size();
+        if (agt < b->size()) costB += 1 + floydwarshall_.GetShortestPathSize(b->at(agt), instance_.goal()[agt]);
         /*instance_.graph().movement().get_distance(config_->at(agt), b->at(agt)) +
         instance_.graph().movement().get_distance(b->at(agt), instance_.goal()[agt]);*/
         else
-          costB += n_astart_.ComputeShortestPath(config_->at(agt), instance_.goal()[agt]).size();
+          costB += floydwarshall_.GetShortestPathSize(config_->at(agt), instance_.goal()[agt]);
         // instance_.graph().movement().get_distance(config_->at(agt), instance_.goal()[agt]);
       }
       return costA > costB;
@@ -133,7 +137,8 @@ class DFS : public Solver<GraphMove, GraphComm> {
 
   std::shared_ptr<Configuration> FindBestChild(const std::shared_ptr<Configuration> config) {
     HeapComparator cmp(this->instance_, config);
-    boost::heap::fibonacci_heap<std::shared_ptr<Configuration>, boost::heap::compare<HeapComparator>> open(cmp);
+    std::priority_queue<std::shared_ptr<Configuration>, std::vector<std::shared_ptr<Configuration>>, HeapComparator>
+        open(cmp);
     std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
     open.push(start);
     while (!open.empty()) {

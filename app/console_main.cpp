@@ -24,10 +24,11 @@
 #include <LRAStar.hpp>
 #include <MAS.hpp>
 #include <DFS.hpp>
+#include "AppConfig.h"
 
 using namespace boost::program_options;
 
-constexpr char DEFAULT_ALG[] = "CCBS";
+constexpr char DEFAULT_ALG[] = "LRA";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
 enum class Algorithm : int { CBS = 0, CCBS, LRA, MAS, DFS };
@@ -49,6 +50,11 @@ int main(int argc, const char* argv[]) {
       std::cout << desc << '\n';
       return 0;
     }
+#ifdef DEBUG
+    instance::XMLInstanceLoader il(
+        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_5_0.exp"),
+        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\"));
+#else
 
     if (!vm.count("experience")) {
       LOG_FATAL("The experience is missing !");
@@ -65,7 +71,7 @@ int main(int argc, const char* argv[]) {
     }
 
     instance::XMLInstanceLoader il(vm["experience"].as<std::string>(), vm["graph-folder"].as<std::string>());
-
+#endif
     LOG_TRACE("Instance created!");
 
     il.Load();
@@ -113,8 +119,8 @@ int main(int argc, const char* argv[]) {
       case Algorithm::CBS: {
         decoupled::ctn_ordering::LeastConflictStrategy ord;
         decoupled::conflict_selection::FirstConflictStrategy con;
-        solver = std::make_unique<decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(),
-                                                                                            ord, con);
+        solver = std::make_unique<decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph>>(il.instance(),
+                                                                                            *objective.get(), ord, con);
         break;
       }
       case Algorithm::CCBS: {

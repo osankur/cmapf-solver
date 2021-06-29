@@ -26,7 +26,7 @@ class Solver {
  public:
   Solver(const Instance<GraphMove, GraphComm>& instance, const Objective& objective)
       : instance_(instance), objective_(objective), execution_() {}
-  virtual ~Solver(){}
+  virtual ~Solver() {}
 
   virtual bool StepCompute() = 0;
 
