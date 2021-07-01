@@ -52,7 +52,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
       auto path_i = exec.get_path(i);
       for (size_t time = 0; time < path_i->size(); time++) {
         Node pos_i = path_i->GetAtTimeOrLast(time);
-        const std::set<Node>& neighbors = this->instance_.graph().communication().get_neighbors(pos_i);
+        const auto& neighbors = this->instance_.graph().communication().get_neighbors(pos_i);
         for (Node n : neighbors) {
           auto found = count_map.find(std::make_pair(n, time));
           if (found != count_map.end())
@@ -78,7 +78,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
 
   Node SelectStep(Agent agt, Node current, size_t time) {
     size_t good_strategy = (size_t)rand() % 2;
-    const std::set<Node>& neighbors = this->instance_.graph().movement().get_neighbors(current);
+    const auto& neighbors = this->instance_.graph().movement().get_neighbors(current);
     if (good_strategy == 0) {
       double choice = static_cast<double>(rand() / std::numeric_limits<int>::max());
       float sum_pheromone = 0.0f;
@@ -152,7 +152,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
         for (Agent b = 0; b < static_cast<Agent>(this->instance_.nb_agents()); ++b) {
           if (a != b && !agent_treated[b]) {
             Node bPos = exec.get_path(b)->GetAtTimeOrLast(b);
-            const std::set<Node>& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
+            const auto& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
 
             if (neighbors.find(bPos) != neighbors.end()) {
               agent_stack.push(b);

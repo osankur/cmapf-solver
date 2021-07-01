@@ -123,7 +123,7 @@ class DFS : public Solver<GraphMove, GraphComm> {
         for (Agent b = 0; b < static_cast<Agent>(this->instance_.nb_agents()); ++b) {
           if (a != b && !agent_treated[b]) {
             Node bPos = config->at(b);
-            const std::set<Node>& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
+            const auto& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
 
             if (neighbors.find(bPos) != neighbors.end()) {
               agent_stack.push(b);

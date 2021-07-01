@@ -21,6 +21,7 @@
 #include <utility>
 #include <unordered_set>
 #include <CTNOrderingStrategy.hpp>
+#include <FloydWarshall.hpp>
 #include <ConflictSelectionStrategy.hpp>
 #include <ConstraintTreeNode.hpp>
 #include <Instance.hpp>
@@ -32,24 +33,24 @@
 namespace decoupled {
 
 template <class GraphMove, class GraphComm>
-class LRAStar : public Solver<GraphMove, GraphComm> {
+class CAStar : public Solver<GraphMove, GraphComm> {
  private:
-  class LRANode {
+  class CANode {
    private:
     Execution execution_;
 
    public:
-    LRANode() : execution_() {}
-    LRANode(Agent agt, std::shared_ptr<const Path> path) : execution_() { execution_.set_path(agt, path); }
-    LRANode(const std::shared_ptr<LRANode>& node, Agent agt, std::shared_ptr<const Path> path)
+    CANode() : execution_() {}
+    CANode(Agent agt, std::shared_ptr<const Path> path) : execution_() { execution_.set_path(agt, path); }
+    CANode(const std::shared_ptr<CANode>& node, Agent agt, std::shared_ptr<const Path> path)
         : execution_(node->execution_) {
       execution_.set_path(agt, path);
     }
-    ~LRANode() {}
-    LRANode(const LRANode& other) : execution_(other.execution_) {}
-    LRANode(LRANode&& other) : execution_(other.execution_) {}
-    LRANode& operator=(const LRANode& other) { execution_ = other.execution_; }
-    LRANode& operator=(LRANode&& other) { execution_ = other.execution_; }
+    ~CANode() {}
+    CANode(const CANode& other) : execution_(other.execution_) {}
+    CANode(CANode&& other) : execution_(other.execution_) {}
+    CANode& operator=(const CANode& other) { execution_ = other.execution_; }
+    CANode& operator=(CANode&& other) { execution_ = other.execution_; }
 
     const std::shared_ptr<const Path> path(Agent a) const { return execution_.get_path(a); }
     bool IsAgentSet(Agent a) const {
@@ -58,40 +59,45 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
     const Execution& get_execution() const { return execution_; }
   };
 
-  class LRANodePtrComparator {
+  class CANodePtrComparator {
    private:
     const Instance<GraphMove, GraphComm>& instance_;
     const Objective& objective_;
+    const FloydWarshall<GraphMove, GraphComm>& fw_;
 
    public:
-    LRANodePtrComparator(const Instance<GraphMove, GraphComm>& instance, const Objective& objective)
-        : instance_(instance), objective_(objective) {}
-    ~LRANodePtrComparator() = default;
-    LRANodePtrComparator(const LRANodePtrComparator& other) = default;
-    LRANodePtrComparator(LRANodePtrComparator&& other) = default;
-    LRANodePtrComparator& operator=(const LRANodePtrComparator& other) = default;
-    LRANodePtrComparator& operator=(LRANodePtrComparator&& other) = default;
+    CANodePtrComparator(const Instance<GraphMove, GraphComm>& instance, const Objective& objective, const FloydWarshall<GraphMove, GraphComm>& fw)
+        : instance_(instance), objective_(objective), fw_(fw) {}
+    ~CANodePtrComparator() = default;
+    CANodePtrComparator(const CANodePtrComparator& other) = default;
+    CANodePtrComparator(CANodePtrComparator&& other) = default;
+    CANodePtrComparator& operator=(const CANodePtrComparator& other) = default;
+    CANodePtrComparator& operator=(CANodePtrComparator&& other) = default;
 
-    bool operator()(const std::shared_ptr<LRANode>& first, const std::shared_ptr<LRANode>& second) const {
+    bool operator()(const std::shared_ptr<CANode>& first, const std::shared_ptr<CANode>& second) const {
       size_t lengthFirst = objective_.cost(first->get_execution());
       size_t lengthSecond = objective_.cost(second->get_execution());
       size_t heuristicFirst = 0;
       size_t heuristicSecond = 0;
       for (Agent agt = 0; static_cast<size_t>(agt) < instance_.nb_agents(); agt++) {
         if (!first->IsAgentSet(agt))
-          heuristicFirst += instance_.graph().movement().get_distance(instance_.start()[agt], instance_.goal()[agt]);
+          heuristicFirst += fw_.GetShortestPathSize(instance_.start()[agt], instance_.goal()[agt]);
+            // instance_.graph().movement().get_distance(instance_.start()[agt], instance_.goal()[agt]);
         if (!second->IsAgentSet(agt))
-          heuristicSecond += instance_.graph().movement().get_distance(instance_.start()[agt], instance_.goal()[agt]);
+          heuristicSecond += fw_.GetShortestPathSize(instance_.start()[agt], instance_.goal()[agt]);
+            // instance_.graph().movement().get_distance(instance_.start()[agt], instance_.goal()[agt]);
       }
       return lengthFirst + heuristicFirst < lengthSecond + heuristicSecond;
     }
   };
 
   using priority_queue =
-      boost::heap::fibonacci_heap<std::shared_ptr<LRANode>, boost::heap::compare<LRANodePtrComparator>>;
+      boost::heap::fibonacci_heap<std::shared_ptr<CANode>, boost::heap::compare<CANodePtrComparator>>;
+  FloydWarshall<GraphMove, GraphComm> fw_;
   priority_queue open_;
+  const int depth_;
 
-  bool IsLRANodeDone(const std::shared_ptr<LRANode> node) const {
+  bool IsCANodeDone(const std::shared_ptr<CANode> node) const {
     for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
       if (!node->IsAgentSet(agt)) return false;
     }
@@ -123,20 +129,21 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
    private:
     const Instance<GraphMove, GraphComm>& instance_;
     const Node& target_;
+    const FloydWarshall<GraphMove, GraphComm>& fw_;
+    const int depth_;
 
    public:
-    explicit HeapComparator(const Instance<GraphMove, GraphComm>& instance, const Node& target)
-        : instance_(instance), target_(target) {}
+    explicit HeapComparator(const Instance<GraphMove, GraphComm>& instance, const Node& target,
+                            const FloydWarshall<GraphMove, GraphComm>& fw, int depth)
+        : instance_(instance), target_(target), fw_(fw), depth_(depth) {}
     bool operator()(const std::shared_ptr<AStarNode>& a, const std::shared_ptr<AStarNode>& b) const {
-      return a->time + instance_.graph().movement().get_distance(a->node, target_) >
-             b->time + instance_.graph().movement().get_distance(b->node, target_);
+      size_t sizeA = a->time + fw_.GetShortestPathSize(a->node, target_);
+      size_t sizeB = b->time + fw_.GetShortestPathSize(b->node, target_);
+      return sizeA > sizeB;
+      // instance_.graph().movement().get_distance(a->node, target_) >
+      // instance_.graph().movement().get_distance(b->node, target_);
     }
   };
-
-  Path ComputeInitialPath(Agent agt) {
-    decoupled::low_level::NegativeAStar<GraphMove, GraphComm> nastar(this->instance_);
-    return nastar.ComputeShortestPath(this->instance_.start()[agt], this->instance_.goal()[agt]);
-  }
 
   // TODO(arqueffe): Avoid reversing process
   Path RetrievePath(std::shared_ptr<AStarNode> end) const {
@@ -152,8 +159,8 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
     return p;
   }
 
-  Path ComputeConnectedPath(const std::shared_ptr<LRANode>& lranode, Agent agt) {
-    HeapComparator cmp(this->instance_, this->instance_.goal()[agt]);
+  Path ComputeConnectedPath(const std::shared_ptr<CANode>& canode, Agent agt) {
+    HeapComparator cmp(this->instance_, this->instance_.goal()[agt], fw_, depth_);
     boost::heap::fibonacci_heap<std::shared_ptr<AStarNode>, boost::heap::compare<HeapComparator>> open(cmp);
     std::unordered_set<std::shared_ptr<AStarNode>, AStarNodePtrHash, AStarNodePtrEqual> closed;
 
@@ -164,17 +171,20 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
       std::shared_ptr<AStarNode> current = open.top();
       open.pop();
 
-      if (current->node == this->instance_.goal()[agt]) return RetrievePath(current);
+      if (current->node == this->instance_.goal()[agt] || current->time == depth_ - 1) return RetrievePath(current);
 
-      for (Agent agtConn = 0; static_cast<size_t>(agtConn) < this->instance_.nb_agents(); agtConn++) {
-        if (!lranode->IsAgentSet(agtConn)) continue;
+      const auto& currentNeighbors = this->instance_.graph().movement().get_neighbors(current->node);
 
-        for (Node neighbor : this->instance_.graph().communication().get_neighbors(
-                 lranode->path(agtConn)->GetAtTimeOrLast(current->time + 1))) {
-          auto& currentNeighbors = this->instance_.graph().movement().get_neighbors(current->node);
-          if (currentNeighbors.find(neighbor) == currentNeighbors.end()) continue;
+      for (size_t agtOther = 0; agtOther < this->instance_.nb_agents(); agtOther++) {
+        if (!canode->IsAgentSet(agtOther)) continue;
 
-          std::shared_ptr<AStarNode> next = std::make_shared<AStarNode>(neighbor, current->time + 1, current);
+        const auto& agtConn = this->instance_.graph().communication().get_neighbors(
+            canode->path(agtOther)->GetAtTimeOrLast(current->time + 1));
+
+        for (const auto& neighbour : currentNeighbors) {
+          if (agtConn.find(neighbour) == agtConn.end()) continue;
+
+          std::shared_ptr<AStarNode> next = std::make_shared<AStarNode>(neighbour, current->time + 1, current);
 
           if (closed.find(next) == closed.end()) {
             open.push(next);
@@ -187,11 +197,18 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
   }
 
  public:
-  LRAStar(const Instance<GraphMove, GraphComm>& instance, const Objective& objective)
-      : Solver<GraphMove, GraphComm>(instance, objective), open_(LRANodePtrComparator(instance, objective)) {
+  CAStar(const Instance<GraphMove, GraphComm>& instance, const Objective& objective, int depth)
+      : Solver<GraphMove, GraphComm>(instance, objective),
+        fw_(instance),
+        open_(CANodePtrComparator(instance, objective, fw_)),
+        depth_(depth) {
+    fw_.Compute();
     for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
-      Path p = ComputeInitialPath(agt);
-      if (p.size() > 0) open_.push(std::make_shared<LRANode>(agt, std::make_shared<const Path>(p)));
+      Path p = fw_.GetShortestPath(this->instance_.start()[agt], this->instance_.goal()[agt]);
+      if (depth > -1 && p.size() > depth) {
+        p.Resize(depth + 1);
+      }
+      if (p.size() > 0) open_.push(std::make_shared<CANode>(agt, std::make_shared<const Path>(p)));
     }
   }
 
@@ -201,7 +218,7 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
     auto top = open_.top();
     open_.pop();
 
-    if (IsLRANodeDone(top)) {
+    if (IsCANodeDone(top)) {
       this->execution_ = top->get_execution();
       return true;
     }
@@ -209,7 +226,7 @@ class LRAStar : public Solver<GraphMove, GraphComm> {
     for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
       if (!top->IsAgentSet(agt)) {
         Path p = ComputeConnectedPath(top, agt);
-        if (p.size() > 0) open_.push(std::make_shared<LRANode>(top, agt, std::make_shared<const Path>(p)));
+        if (p.size() > 0) open_.push(std::make_shared<CANode>(top, agt, std::make_shared<const Path>(p)));
       }
     }
 

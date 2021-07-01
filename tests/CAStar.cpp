@@ -13,22 +13,22 @@
 #include <CBS.hpp>
 #include <InstanceLoader.hpp>
 #include <Objective.hpp>
-#include <LRAStar.hpp>
+#include <CAStar.hpp>
 #include "CommonTest.hpp"
 
 #include "AppConfig.h"
 #include "doctest.h"
 
-TEST_CASE("Testing of LRA* class") {
+TEST_CASE("Testing of CA* class") {
   instance::XMLInstanceLoader il(std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp",
                                  std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
   il.Load();
 
   SumObjective obj;
 
-  decoupled::LRAStar<ExplicitGraph, ExplicitGraph> lra(il.instance(), obj);
+  decoupled::CAStar<ExplicitGraph, ExplicitGraph> ca(il.instance(), obj, -1);
 
-  Execution e = lra.Compute();
+  Execution e = ca.Compute();
 
   for (Agent agt = 0; agt < static_cast<Agent>(il.instance().nb_agents()); agt++) {
     auto p = e.get_path(agt);
@@ -48,5 +48,5 @@ TEST_CASE("Testing of LRA* class") {
     }
   }*/
 
-  std::cout << "LRA :" << obj.cost(e) << std::endl;
+  std::cout << "CA* :" << obj.cost(e) << std::endl;
 }

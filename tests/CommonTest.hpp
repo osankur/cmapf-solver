@@ -47,7 +47,7 @@ bool IsConfigurationConnected(const Configuration& config, const Instance<GraphM
       for (Agent b = 0; b < static_cast<Agent>(instance.nb_agents()); ++b) {
         if (a != b && !agent_treated[b]) {
           Node bPos = config[b];
-          const std::set<Node>& neighbors = instance.graph().communication().get_neighbors(aPos);
+          const auto& neighbors = instance.graph().communication().get_neighbors(aPos);
 
           if (neighbors.find(bPos) != neighbors.end()) {
             agent_stack.push(b);

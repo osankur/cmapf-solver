@@ -10,8 +10,9 @@
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  */
-
+#ifdef _MSC_VER
 #pragma warning(disable : 4459)
+#endif
 
 #include <Logger.hpp>
 #include <Objective.hpp>
@@ -21,17 +22,17 @@
 #include <iostream>
 #include <CBS.hpp>
 #include <CCBS.hpp>
-#include <LRAStar.hpp>
+#include <CAStar.hpp>
 #include <MAS.hpp>
 #include <DFS.hpp>
 #include "AppConfig.h"
 
 using namespace boost::program_options;
 
-constexpr char DEFAULT_ALG[] = "LRA";
+constexpr char DEFAULT_ALG[] = "DFS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
-enum class Algorithm : int { CBS = 0, CCBS, LRA, MAS, DFS };
+enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS };
 enum class ObjectiveEnum : int { SUM = 0, MAX };
 
 int main(int argc, const char* argv[]) {
@@ -52,7 +53,7 @@ int main(int argc, const char* argv[]) {
     }
 #ifdef DEBUG
     instance::XMLInstanceLoader il(
-        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_5_0.exp"),
+        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_10_0.exp"),
         std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\"));
 #else
 
@@ -130,8 +131,8 @@ int main(int argc, const char* argv[]) {
             std::make_unique<decoupled::high_level::CCBS<ExplicitGraph>>(il.instance(), *objective.get(), ord, con);
         break;
       }
-      case Algorithm::LRA:
-        solver = std::make_unique<decoupled::LRAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
+      case Algorithm::CA:
+        solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 5);
         break;
       case Algorithm::MAS:
         solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());

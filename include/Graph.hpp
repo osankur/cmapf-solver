@@ -12,22 +12,22 @@
  */
 #pragma once
 
-#include <set>
 #include <vector>
 #include <tuple>
 #include <utility>
 #include <Common.hpp>
+#include <unordered_set>
 
 class Graph {
  public:
-  virtual const std::set<Node>& get_neighbors(Node) const = 0;
+  virtual const std::unordered_set<Node>& get_neighbors(Node) const = 0;
   virtual size_t node_count() const = 0;
   virtual size_t get_distance(Node, Node) const = 0;
 };
 
 class ExplicitGraph : public Graph {
  private:
-  std::vector<std::set<Node>> adjacency_;
+  std::vector<std::unordered_set<Node>> adjacency_;
   std::vector<std::pair<int, int>> positions_;
 
  public:
@@ -37,16 +37,16 @@ class ExplicitGraph : public Graph {
 
   size_t node_count() const override;
   size_t edge_count() const;
-  const std::set<Node>& get_neighbors(Node) const override;
+  const std::unordered_set<Node>& get_neighbors(Node) const override;
   size_t get_distance(Node, Node) const override;
 };
 
 class RadiusGraph : public Graph {
  public:
-  const std::set<Node>& get_neighbors(Node) const override;
+  const std::unordered_set<Node>& get_neighbors(Node) const override;
 };
 
 class GridGraph : public Graph {
  public:
-  const std::set<Node>& get_neighbors(Node) const override;
+  const std::unordered_set<Node>& get_neighbors(Node) const override;
 };

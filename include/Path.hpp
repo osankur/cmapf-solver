@@ -22,6 +22,7 @@ class Path {
  public:
   Path();
   Path(const Path&);
+  void Resize(size_t);
   void PushBack(Node);
   const Node& GetAtTimeOrLast(size_t) const;
 
@@ -31,6 +32,7 @@ class Path {
 
   // Properties
   size_t size() const;
+  const Node& at(size_t) const;
 
   // Friends
   friend std::ostream& operator<<(std::ostream&, const Path&);

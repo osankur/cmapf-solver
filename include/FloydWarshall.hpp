@@ -36,7 +36,7 @@ class FloydWarshall {
   const Instance<GraphMove, GraphComm> &instance_;
 
  public:
-  explicit FloydWarshall(const Instance<GraphMove, GraphComm> &instance) : instance_(instance), mem_paths_() {}
+  explicit FloydWarshall(const Instance<GraphMove, GraphComm> &instance) : mem_paths_(), instance_(instance) {}
   virtual ~FloydWarshall() {}
 
   Path GetShortestPath(const Node &source, const Node &target) const {

@@ -16,6 +16,7 @@
 
 class Objective {
  public:
+  virtual ~Objective() {}
   virtual size_t cost(const Execution&) const = 0;
 };
 
