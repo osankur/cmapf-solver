@@ -32,6 +32,15 @@ decoupled::ConstraintTreeNode::ConstraintTreeNode(const std::shared_ptr<Constrai
   execution_.set_path(agt, agt_path);
 }
 
+decoupled::ConstraintTreeNode::ConstraintTreeNode(const std::shared_ptr<ConstraintTreeNode> parent,
+                                                  const std::shared_ptr<ConstraintTreeNode> child)
+    : parent_(parent->parent_),
+      additional_cost_(0),
+      execution_(child->execution_),
+      conflicts_(child->conflicts_),
+      constraint(parent->constraint),
+      agent(parent->agent) {}
+
 void decoupled::ConstraintTreeNode::set_conflict(uint64_t time, std::shared_ptr<const Conflict> conflict) {
   conflicts_[time] = conflict;
 }

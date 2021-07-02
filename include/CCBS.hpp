@@ -22,6 +22,7 @@
 #include <Objective.hpp>
 #include <LowLevel.hpp>
 #include <Conflict.hpp>
+#include <Logger.hpp>
 
 namespace decoupled {
 
@@ -32,6 +33,8 @@ class CCBS : public HighLevel<ExplicitGraph, GraphComm> {
  private:
   using priority_queue =
       boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<CTNOrderingStrategy>>;
+
+  size_t split_count = 0;
 
   std::set<Agent> UnconstrainedAgents(const std::shared_ptr<ConstraintTreeNode> ctn, uint64_t time) const {
     std::set<Agent> agents;
@@ -49,10 +52,13 @@ class CCBS : public HighLevel<ExplicitGraph, GraphComm> {
 
     std::set<Agent> agents = UnconstrainedAgents(ctn, time);
 
+    if (agents.empty()) return;
+
     Agent agt = *agents.begin();
     for (Node vertex = 0; vertex < this->instance_.graph().movement().node_count(); vertex++) {
       this->CreateChild(children, ctn, agt, Constraint{vertex, time, true});
     }
+    /*LOG_INFO("CCBS Conflicts size: " << std::to_string(cast_conflict->size()));*/
   }
 
  public:

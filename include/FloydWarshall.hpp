@@ -32,12 +32,41 @@ class FloydWarshall {
  private:
   std::map<Node, std::vector<Node>> mem_paths_;
 
+  void ComputeShortestPaths(const Node &target) {
+    mem_paths_.insert(std::make_pair(target, std::vector<Node>{}));
+    std::vector<Node> &mem = mem_paths_[target];
+    mem.resize(instance_.graph().movement().node_count(), std::numeric_limits<Node>::max());
+    std::list<Node> open;
+    std::unordered_set<Node> closed;
+
+    mem[target] = target;
+    open.push_back(target);
+
+    while (!open.empty()) {
+      Node head = open.front();
+      open.pop_front();
+      closed.insert(head);
+
+      for (Node neighbor : instance_.graph().movement().get_neighbors(head)) {
+        if (closed.find(neighbor) != closed.end()) continue;
+        if (GetShortestPathSize(head, target) + 1 < GetShortestPathSize(neighbor, target)) mem[neighbor] = head;
+        if (find(open.begin(), open.end(), neighbor) == open.end()) open.push_back(neighbor);
+      }
+    }
+  }
+
  protected:
   const Instance<GraphMove, GraphComm> &instance_;
 
  public:
   explicit FloydWarshall(const Instance<GraphMove, GraphComm> &instance) : mem_paths_(), instance_(instance) {}
   virtual ~FloydWarshall() {}
+
+  Path ComputeShortestPath(const Node &source, const Node &target) {
+    const auto &memIt = mem_paths_.find(target);
+    if (memIt == mem_paths_.cend()) ComputeShortestPaths(target);
+    return GetShortestPath(source, target);
+  }
 
   Path GetShortestPath(const Node &source, const Node &target) const {
     const std::vector<Node> &mem = mem_paths_.at(target);
@@ -50,6 +79,12 @@ class FloydWarshall {
     }
     p.PushBack(current);
     return p;
+  }
+
+  Path ComputeShortestPathSize(const Node &source, const Node &target) {
+    auto &memIt = mem_paths_.find(target);
+    if (memIt == mem_paths_.end()) ComputeShortestPaths(target);
+    return GetShortestPathSize(source, target);
   }
 
   size_t GetShortestPathSize(const Node &source, const Node &target) const {
@@ -66,41 +101,12 @@ class FloydWarshall {
     return size;
   }
 
-  /*void StoreShortestPath(const Node &target, const Path &path) {
-    if (target >= mem_paths_.size()) mem_paths_.resize(target + 1);
-    for (size_t step = 0; step < path.size() - 1; step++) {
-      if (path[step] >= mem_paths_[target].size())
-        mem_paths_[target].resize(path[step] + 1, std::numeric_limits<Node>::max());
-      mem_paths_[target][path[step]] = path[step + 1];
-    }
-  }*/
-
   void Compute() {
     const Configuration &goal = instance_.goal();
 
     for (size_t i = 0; i < goal.size(); i++) {
       Node target = goal[i];
-
-      mem_paths_.insert(std::make_pair(target, std::vector<Node>{}));
-      std::vector<Node> &mem = mem_paths_[target];
-      mem.resize(instance_.graph().movement().node_count(), std::numeric_limits<Node>::max());
-      std::list<Node> open;
-      std::unordered_set<Node> closed;
-
-      mem[target] = target;
-      open.push_back(target);
-
-      while (!open.empty()) {
-        Node head = open.front();
-        open.pop_front();
-        closed.insert(head);
-
-        for (Node neighbor : instance_.graph().movement().get_neighbors(head)) {
-          if (closed.find(neighbor) != closed.end()) continue;
-          if (GetShortestPathSize(head, target) + 1 < GetShortestPathSize(neighbor, target)) mem[neighbor] = head;
-          if (find(open.begin(), open.end(), neighbor) == open.end()) open.push_back(neighbor);
-        }
-      }
+      ComputeShortestPaths(target);
     }
   }
 };

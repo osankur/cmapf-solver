@@ -64,10 +64,12 @@ class CAStar : public Solver<GraphMove, GraphComm> {
     const Instance<GraphMove, GraphComm>& instance_;
     const Objective& objective_;
     const FloydWarshall<GraphMove, GraphComm>& fw_;
+    const Configuration& start_;
 
    public:
-    CANodePtrComparator(const Instance<GraphMove, GraphComm>& instance, const Objective& objective, const FloydWarshall<GraphMove, GraphComm>& fw)
-        : instance_(instance), objective_(objective), fw_(fw) {}
+    CANodePtrComparator(const Instance<GraphMove, GraphComm>& instance, const Objective& objective,
+                        const FloydWarshall<GraphMove, GraphComm>& fw, const Configuration& start)
+        : instance_(instance), objective_(objective), fw_(fw), start_(start) {}
     ~CANodePtrComparator() = default;
     CANodePtrComparator(const CANodePtrComparator& other) = default;
     CANodePtrComparator(CANodePtrComparator&& other) = default;
@@ -80,12 +82,8 @@ class CAStar : public Solver<GraphMove, GraphComm> {
       size_t heuristicFirst = 0;
       size_t heuristicSecond = 0;
       for (Agent agt = 0; static_cast<size_t>(agt) < instance_.nb_agents(); agt++) {
-        if (!first->IsAgentSet(agt))
-          heuristicFirst += fw_.GetShortestPathSize(instance_.start()[agt], instance_.goal()[agt]);
-            // instance_.graph().movement().get_distance(instance_.start()[agt], instance_.goal()[agt]);
-        if (!second->IsAgentSet(agt))
-          heuristicSecond += fw_.GetShortestPathSize(instance_.start()[agt], instance_.goal()[agt]);
-            // instance_.graph().movement().get_distance(instance_.start()[agt], instance_.goal()[agt]);
+        if (!first->IsAgentSet(agt)) heuristicFirst += fw_.GetShortestPathSize(start_.at(agt), instance_.goal()[agt]);
+        if (!second->IsAgentSet(agt)) heuristicSecond += fw_.GetShortestPathSize(start_.at(agt), instance_.goal()[agt]);
       }
       return lengthFirst + heuristicFirst < lengthSecond + heuristicSecond;
     }
@@ -96,6 +94,16 @@ class CAStar : public Solver<GraphMove, GraphComm> {
   FloydWarshall<GraphMove, GraphComm> fw_;
   priority_queue open_;
   const int depth_;
+  std::vector<Path> exec_;
+  Configuration current_;
+
+  bool IsWCANodeDone(const std::shared_ptr<CANode> node) const {
+    for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
+      if (!node->IsAgentSet(agt) || node->path(agt)->at(node->path(agt)->size() - 1) != this->instance_.goal()[agt])
+        return false;
+    }
+    return true;
+  }
 
   bool IsCANodeDone(const std::shared_ptr<CANode> node) const {
     for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
@@ -115,7 +123,7 @@ class CAStar : public Solver<GraphMove, GraphComm> {
 
   struct AStarNodePtrEqual {
     bool operator()(const std::shared_ptr<AStarNode>& a, const std::shared_ptr<AStarNode>& b) const {
-      return a->node == b->node && a->time && b->time;
+      return a->node == b->node && a->time == b->time;
     }
   };
 
@@ -164,14 +172,14 @@ class CAStar : public Solver<GraphMove, GraphComm> {
     boost::heap::fibonacci_heap<std::shared_ptr<AStarNode>, boost::heap::compare<HeapComparator>> open(cmp);
     std::unordered_set<std::shared_ptr<AStarNode>, AStarNodePtrHash, AStarNodePtrEqual> closed;
 
-    std::shared_ptr<AStarNode> start = std::make_shared<AStarNode>(this->instance_.start()[agt], 0, nullptr);
+    std::shared_ptr<AStarNode> start = std::make_shared<AStarNode>(current_.at(agt), 0, nullptr);
     open.push(start);
     closed.insert(start);
     while (!open.empty()) {
       std::shared_ptr<AStarNode> current = open.top();
       open.pop();
 
-      if (current->node == this->instance_.goal()[agt] || current->time == depth_ - 1) return RetrievePath(current);
+      if (current->node == this->instance_.goal()[agt] || current->time >= depth_ - 1) return RetrievePath(current);
 
       const auto& currentNeighbors = this->instance_.graph().movement().get_neighbors(current->node);
 
@@ -196,20 +204,27 @@ class CAStar : public Solver<GraphMove, GraphComm> {
     return Path();
   }
 
+  void Initialize() {
+    open_.clear();
+    for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
+      Path p = fw_.ComputeShortestPath(current_.at(agt), this->instance_.goal()[agt]);
+      if (depth_ > -1 && p.size() > depth_) {
+        p.Resize(depth_ + 1);
+      }
+      if (p.size() > 0) open_.push(std::make_shared<CANode>(agt, std::make_shared<const Path>(p)));
+    }
+  }
+
  public:
   CAStar(const Instance<GraphMove, GraphComm>& instance, const Objective& objective, int depth)
       : Solver<GraphMove, GraphComm>(instance, objective),
         fw_(instance),
-        open_(CANodePtrComparator(instance, objective, fw_)),
-        depth_(depth) {
+        open_(CANodePtrComparator(instance, objective, fw_, instance.start())),
+        depth_(depth),
+        exec_(instance.nb_agents()),
+        current_(instance.start()) {
     fw_.Compute();
-    for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
-      Path p = fw_.GetShortestPath(this->instance_.start()[agt], this->instance_.goal()[agt]);
-      if (depth > -1 && p.size() > depth) {
-        p.Resize(depth + 1);
-      }
-      if (p.size() > 0) open_.push(std::make_shared<CANode>(agt, std::make_shared<const Path>(p)));
-    }
+    Initialize();
   }
 
   bool StepCompute() override {
@@ -219,8 +234,27 @@ class CAStar : public Solver<GraphMove, GraphComm> {
     open_.pop();
 
     if (IsCANodeDone(top)) {
-      this->execution_ = top->get_execution();
-      return true;
+      if (IsWCANodeDone(top)) {
+        for (size_t agt = 0; agt < top->get_execution().size(); agt++) {
+          for (size_t t = 1; t < top->get_execution().get_path(agt)->size(); t++) {
+            exec_[agt].PushBack(top->get_execution().get_path(agt)->at(t));
+          }
+          this->execution_.PushBack(std::make_shared<Path>(exec_[agt]));
+        }
+        return true;
+      }
+      for (size_t agt = 0; agt < top->get_execution().size(); agt++) {
+        for (size_t t = exec_[agt].size() == 0 ? 0 : 1; t < top->get_execution().get_path(agt)->size(); t++) {
+          exec_[agt].PushBack(top->get_execution().get_path(agt)->at(t));
+        }
+      }
+      size_t max_path = 0;
+      for (size_t agt = 0; agt < top->get_execution().size(); agt++) {
+        size_t size_path = top->get_execution().get_path(agt)->size();
+        if (max_path < size_path) max_path = size_path;
+      }
+      current_ = top->get_execution().get_configuration(max_path);
+      Initialize();
     }
 
     for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {

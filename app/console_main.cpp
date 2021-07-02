@@ -29,7 +29,7 @@
 
 using namespace boost::program_options;
 
-constexpr char DEFAULT_ALG[] = "DFS";
+constexpr char DEFAULT_ALG[] = "CA";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
 enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS };
@@ -132,7 +132,7 @@ int main(int argc, const char* argv[]) {
         break;
       }
       case Algorithm::CA:
-        solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 5);
+        solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 3);
         break;
       case Algorithm::MAS:
         solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());

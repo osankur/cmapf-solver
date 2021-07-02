@@ -26,6 +26,7 @@
 #include <LowLevel.hpp>
 #include <Objective.hpp>
 #include <Solver.hpp>
+#include <Logger.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
 
 namespace decoupled {
@@ -101,7 +102,7 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
         for (Agent b = 0; b < static_cast<Agent>(this->instance_.nb_agents()); ++b) {
           if (a != b && !agent_treated[b]) {
             Node bPos = ctn->get_path(b)->GetAtTimeOrLast(b);
-            const std::set<Node>& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
+            const auto& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
 
             if (neighbors.find(bPos) != neighbors.end()) {
               agent_stack.push(b);
@@ -127,12 +128,12 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     for (uint64_t i = 0; i < prev_path->size(); i++) {
       if ((*prev_path)[i] == (*new_path)[i]) continue;
 
-      ComputeCollision(ctn, i);
-      // ComputeDisconnection(ctn, i);
+      // ComputeCollision(ctn, i);
+      ComputeDisconnection(ctn, i);
     }
-    for (uint64_t i = prev_path->size()-1; i < new_path->size(); i++) {
-      ComputeCollision(ctn, i);
-      // ComputeDisconnection(ctn, i);
+    for (uint64_t i = prev_path->size() - 1; i < new_path->size(); i++) {
+      // ComputeCollision(ctn, i);
+      ComputeDisconnection(ctn, i);
     }
   }
 
@@ -147,8 +148,8 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     }
 
     for (uint64_t i = 0; i < max; i++) {
-      ComputeCollision(root, i);
-      // ComputeDisconnection(root, i);
+      // ComputeCollision(root, i);
+      ComputeDisconnection(root, i);
     }
   }
 
@@ -162,19 +163,19 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     if (new_path.size() == 0) return;
 
     auto new_path_ptr = std::make_shared<const Path>(new_path);
-    auto child = std::make_shared<ConstraintTreeNode>(parent, c, agt, new_path_ptr);
+    auto child_ptr = std::make_shared<ConstraintTreeNode>(parent, c, agt, new_path_ptr);
 
-    RecomputeConflicts(child, agt);
+    RecomputeConflicts(child_ptr, agt);
 
-#ifdef BYPASS
     // TODO(arqueffe): Count conflicts size depending on the type
-    if (child->get_path(agt)->size() == parent->get_path(agt)->size() &&
-        child->get_conflicts().size() < parent->get_conflicts().size()) {
-      throw BypassException(child);
+    if (child_ptr->get_path(agt)->size() == parent->get_path(agt)->size() &&
+        child_ptr->get_conflicts().size() < parent->get_conflicts().size()) {
+      BypassException bp;
+      bp.child = child_ptr;
+      throw bp;
     }
-#endif
 
-    children->push(child);
+    children->push(child_ptr);
   }
 
  public:
@@ -212,8 +213,9 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
 
     try {
       Split(&children, top, conflict_time);
-    } catch (const BypassException&) {
-      // TODO(arqueffe): Implement Bypass
+    } catch (const BypassException& bp) {
+      children.clear();
+      children.push(std::make_shared<ConstraintTreeNode>(top, bp.child));
     }
 
     open_.merge(children);

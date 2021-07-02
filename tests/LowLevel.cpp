@@ -58,3 +58,32 @@ TEST_CASE("Testing of PositiveAStar::ComputeShortestPath") {
     CHECK_EQ(p.size(), TEST_SHORTEST_PATH[i][2]);
   }
 }
+
+//{552, 674, 41}, {674, 411, 36}
+TEST_CASE("Testing of PositiveAStar::ComputeConstrainedPath") {
+  instance::XMLInstanceLoader il(std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp",
+                                 std::string(PROJECT_SOURCE_DIR) + "/tests/assets/");
+  il.Load();
+
+  decoupled::low_level::PositiveAStar<ExplicitGraph, ExplicitGraph> astar(il.instance());
+
+  auto c1 = decoupled::Constraint{674, 41, true};
+  std::map<uint64_t, std::list<decoupled::Constraint>> cons;
+
+  Path p1 = astar.ComputeConstrainedPath(cons, c1, 552, 411);
+  CHECK_EQ(p1[0], 552);
+  CHECK_EQ(p1[41], 674);
+  CHECK_EQ(p1[p1.size() - 1], 411);
+  CHECK_EQ(p1.size(), 41 + 36);
+
+  std::list<decoupled::Constraint> l1;
+  l1.push_back(c1);
+  cons.insert(std::make_pair(41, l1));
+
+  Path p2 = astar.ComputeConstrainedPath(cons, decoupled::Constraint{434, 50, true}, 552, 411);
+  CHECK_EQ(p2[0], 552);
+  CHECK_EQ(p2[41], 674);
+  CHECK_EQ(p2[50], 434);
+  CHECK_EQ(p2[p2.size() - 1], 411);
+  CHECK_EQ(p2.size(), 41 + 10 + 33 - 1);
+}

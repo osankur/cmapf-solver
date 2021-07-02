@@ -22,6 +22,7 @@
 #include <Objective.hpp>
 #include <LowLevel.hpp>
 #include <Conflict.hpp>
+#include <Logger.hpp>
 
 namespace decoupled {
 
@@ -33,6 +34,8 @@ class CBS : public HighLevel<GraphMove, GraphComm> {
   using priority_queue =
       boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<CTNOrderingStrategy>>;
 
+  size_t split_count = 0;
+
   void Split(priority_queue* children, std::shared_ptr<ConstraintTreeNode> ctn, uint64_t time) override {
     const std::shared_ptr<const Conflict> conflict = ctn->get_conflicts().at(time);
     const std::shared_ptr<const CollisionConflict> cast_conflict =
@@ -42,6 +45,7 @@ class CBS : public HighLevel<GraphMove, GraphComm> {
       Node pos_conflict = ctn->get_path(agt)->GetAtTimeOrLast(time);
       this->CreateChild(children, ctn, agt, Constraint{pos_conflict, time, false});
     }
+    LOG_INFO("CCBS Split count: " << std::to_string(++split_count));
   }
 
  public:

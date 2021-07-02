@@ -34,6 +34,8 @@ class ConstraintTreeNode : public std::enable_shared_from_this<ConstraintTreeNod
   // Child Constructor
   ConstraintTreeNode(const std::shared_ptr<ConstraintTreeNode>, const Constraint, const Agent,
                      std::shared_ptr<const Path>);
+  // Bypass Constructor
+  ConstraintTreeNode(const std::shared_ptr<ConstraintTreeNode>, const std::shared_ptr<ConstraintTreeNode>);
   ~ConstraintTreeNode() = default;
   ConstraintTreeNode(const ConstraintTreeNode& other) = delete;
   ConstraintTreeNode(ConstraintTreeNode&& other) = delete;

@@ -38,4 +38,5 @@ class Solver {
 
   const Instance<GraphMove, GraphComm>& instance() const { return instance_; }
   const Objective& objective() const { return objective_; }
+  Execution execution() const { return execution_; }
 };
