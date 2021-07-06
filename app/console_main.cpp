@@ -29,7 +29,7 @@
 
 using namespace boost::program_options;
 
-constexpr char DEFAULT_ALG[] = "CA";
+constexpr char DEFAULT_ALG[] = "DFS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
 enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS };
@@ -53,7 +53,7 @@ int main(int argc, const char* argv[]) {
     }
 #ifdef DEBUG
     instance::XMLInstanceLoader il(
-        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_10_0.exp"),
+        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_8_0.exp"),
         std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\"));
 #else
 
@@ -118,17 +118,17 @@ int main(int argc, const char* argv[]) {
 
     switch (algo.value()) {
       case Algorithm::CBS: {
-        decoupled::ctn_ordering::LeastConflictStrategy ord;
         decoupled::conflict_selection::FirstConflictStrategy con;
-        solver = std::make_unique<decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph>>(il.instance(),
-                                                                                            *objective.get(), ord, con);
+        solver = std::make_unique<
+            decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
+            il.instance(), *objective.get(), con);
         break;
       }
       case Algorithm::CCBS: {
-        decoupled::ctn_ordering::LeastConflictStrategy ord;
         decoupled::conflict_selection::FirstConflictStrategy con;
-        solver =
-            std::make_unique<decoupled::high_level::CCBS<ExplicitGraph>>(il.instance(), *objective.get(), ord, con);
+        solver = std::make_unique<
+            decoupled::high_level::CCBS<ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
+            il.instance(), *objective.get(), con);
         break;
       }
       case Algorithm::CA:

@@ -39,7 +39,7 @@ class DisconnectionConflict : public Conflict {
   std::list<std::set<Agent>> clusters_;
 
  public:
-  size_t size() const override { return clusters_.size() - 1; }
+  size_t size() const override { return clusters_.size(); }
   void PushBack(const std::set<Agent>& cluster) { clusters_.push_back(cluster); }
   const std::set<Agent>& back() const { return clusters_.back(); }
   std::set<Agent>& back() { return clusters_.back(); }

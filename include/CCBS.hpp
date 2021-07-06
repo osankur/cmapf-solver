@@ -28,11 +28,11 @@ namespace decoupled {
 
 namespace high_level {
 
-template <class GraphComm>
-class CCBS : public HighLevel<ExplicitGraph, GraphComm> {
+template <class GraphComm, class OderingStrat>
+class CCBS : public HighLevel<ExplicitGraph, GraphComm, OderingStrat> {
  private:
   using priority_queue =
-      boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<CTNOrderingStrategy>>;
+      boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<OderingStrat>>;
 
   size_t split_count = 0;
 
@@ -45,7 +45,8 @@ class CCBS : public HighLevel<ExplicitGraph, GraphComm> {
     return agents;
   }
 
-  void Split(priority_queue* children, std::shared_ptr<ConstraintTreeNode> ctn, uint64_t time) override {
+  void Split(std::shared_ptr<priority_queue> children, std::shared_ptr<ConstraintTreeNode> ctn,
+             uint64_t time) override {
     const std::shared_ptr<const Conflict> conflict = ctn->get_conflicts().at(time);
     const std::shared_ptr<const DisconnectionConflict> cast_conflict =
         std::dynamic_pointer_cast<const DisconnectionConflict>(conflict);
@@ -58,14 +59,14 @@ class CCBS : public HighLevel<ExplicitGraph, GraphComm> {
     for (Node vertex = 0; vertex < this->instance_.graph().movement().node_count(); vertex++) {
       this->CreateChild(children, ctn, agt, Constraint{vertex, time, true});
     }
-    /*LOG_INFO("CCBS Conflicts size: " << std::to_string(cast_conflict->size()));*/
+    LOG_INFO("CCBS Conflicts size: " << std::to_string(cast_conflict->size()));
   }
 
  public:
   CCBS(const Instance<ExplicitGraph, GraphComm>& instance, const Objective& objective,
-       const CTNOrderingStrategy& ordering_strategy, const ConflictSelectionStrategy& selection_strategy)
-      : decoupled::HighLevel<ExplicitGraph, GraphComm>(
-            instance, objective, ordering_strategy, selection_strategy,
+       const ConflictSelectionStrategy& selection_strategy)
+      : decoupled::HighLevel<ExplicitGraph, GraphComm, OderingStrat>(
+            instance, objective, selection_strategy,
             std::make_unique<low_level::PositiveAStar<ExplicitGraph, GraphComm>>(instance)) {}
 };
 

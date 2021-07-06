@@ -20,9 +20,7 @@ namespace decoupled {
 class CTNOrderingStrategy {
  public:
   virtual bool operator()(const std::shared_ptr<ConstraintTreeNode> &,
-                          const std::shared_ptr<ConstraintTreeNode> &) const {
-    return true;
-  }
+                          const std::shared_ptr<ConstraintTreeNode> &) const = 0;
 };
 
 namespace ctn_ordering {
@@ -31,7 +29,7 @@ class LeastConflictStrategy : public CTNOrderingStrategy {
  public:
   bool operator()(const std::shared_ptr<ConstraintTreeNode> &first,
                   const std::shared_ptr<ConstraintTreeNode> &second) const override {
-    return first->get_conflicts().size() < second->get_conflicts().size();
+    return first->get_conflicts().size() > second->get_conflicts().size();
   }
 };
 

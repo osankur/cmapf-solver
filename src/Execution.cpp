@@ -31,6 +31,13 @@ const std::shared_ptr<const Path> Execution::get_path(Agent a) const { return ex
 
 size_t Execution::size() const { return exec_.size(); }
 
+size_t Execution::max_path() const {
+  size_t max = 0;
+  for (auto& path : exec_)
+    if (max < path->size()) max = path->size();
+  return max;
+}
+
 std::ostream& operator<<(std::ostream& os, const Execution& e) {
   os << "{";
   for (auto it = e.exec_.cbegin(); it != e.exec_.cend(); ++it) {

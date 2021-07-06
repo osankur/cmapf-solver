@@ -24,10 +24,10 @@ TEST_CASE("Testing of CCBS class") {
   il.Load();
 
   SumObjective obj;
-  decoupled::ctn_ordering::LeastConflictStrategy ord;
   decoupled::conflict_selection::FirstConflictStrategy con;
 
-  decoupled::high_level::CCBS<ExplicitGraph> ccbs(il.instance(), obj, ord, con);
+  decoupled::high_level::CCBS<ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy> ccbs(il.instance(), obj,
+                                                                                                  con);
 
   /*Execution e = ccbs.Compute();
 

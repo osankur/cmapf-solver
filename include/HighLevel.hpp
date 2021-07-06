@@ -35,18 +35,17 @@ struct BypassException : public std::exception {
   std::shared_ptr<ConstraintTreeNode> child;
 };
 
-template <class GraphMove, class GraphComm>
+template <class GraphMove, class GraphComm, class OderingStrat>
 class HighLevel : public Solver<GraphMove, GraphComm> {
  private:
-  const CTNOrderingStrategy& ordering_strategy_;
   const ConflictSelectionStrategy& selection_strategy_;
 
   std::unique_ptr<LowLevel<GraphMove, GraphComm>> low_level_;
   using priority_queue =
-      boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<CTNOrderingStrategy>>;
-  priority_queue open_;
+      boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<OderingStrat>>;
+  std::unique_ptr<priority_queue> open_;
 
-  virtual void Split(priority_queue*, std::shared_ptr<ConstraintTreeNode>, uint64_t) = 0;
+  virtual void Split(std::shared_ptr<priority_queue>, std::shared_ptr<ConstraintTreeNode>, uint64_t) = 0;
 
   // TODO(arqueffe): Add support for edge collision.
   // TODO(arqueffe): Implement partial conflict computation
@@ -85,24 +84,26 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     std::vector<bool>::iterator it;
 
     while ((it = find(agent_treated.begin(), agent_treated.end(), false)) != agent_treated.end()) {
-      agent_stack.push(distance(agent_treated.begin(), it));
+      agent_stack.push(it - agent_treated.begin());
 
       conflict->PushBack(std::set<Agent>());
       std::set<Agent>& cluster = conflict->back();
       while (!agent_stack.empty()) {
         Agent a = agent_stack.top();
-        cluster.insert(a);
         agent_stack.pop();
+
+        cluster.insert(a);
+
         if (agent_treated[a]) continue;
+
         agent_treated[a] = true;
         agent_count++;
 
         Node aPos = ctn->get_path(a)->GetAtTimeOrLast(time);
-
+        const auto& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
         for (Agent b = 0; b < static_cast<Agent>(this->instance_.nb_agents()); ++b) {
           if (a != b && !agent_treated[b]) {
-            Node bPos = ctn->get_path(b)->GetAtTimeOrLast(b);
-            const auto& neighbors = this->instance_.graph().communication().get_neighbors(aPos);
+            Node bPos = ctn->get_path(b)->GetAtTimeOrLast(time);
 
             if (neighbors.find(bPos) != neighbors.end()) {
               agent_stack.push(b);
@@ -142,19 +143,16 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
      * - root has no parent
      */
     auto& exec = root->get_execution();
-    uint64_t max = 0;
-    for (Agent i = 0; i < static_cast<Agent>(this->instance_.nb_agents()); i++) {
-      if (max < exec.get_path(i)->size()) max = exec.get_path(i)->size();
-    }
+    uint64_t max = exec.max_path();
 
-    for (uint64_t i = 0; i < max; i++) {
+    for (uint64_t i = 1; i < max; i++) {
       // ComputeCollision(root, i);
       ComputeDisconnection(root, i);
     }
   }
 
  protected:
-  void CreateChild(priority_queue* children, std::shared_ptr<ConstraintTreeNode> parent, Agent agt,
+  void CreateChild(std::shared_ptr<priority_queue> children, std::shared_ptr<ConstraintTreeNode> parent, Agent agt,
                    const Constraint& c) {
     std::map<uint64_t, std::list<Constraint>> agt_cons = parent->get_constraints(agt);
     Path new_path =
@@ -180,13 +178,12 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
 
  public:
   HighLevel(const Instance<GraphMove, GraphComm>& instance, const Objective& objective,
-            const CTNOrderingStrategy& ordering_strategy, const ConflictSelectionStrategy& selection_strategy,
+            const ConflictSelectionStrategy& selection_strategy,
             std::unique_ptr<LowLevel<GraphMove, GraphComm>> low_level)
       : Solver<GraphMove, GraphComm>(instance, objective),
-        ordering_strategy_(ordering_strategy),
         selection_strategy_(selection_strategy),
         low_level_(std::move(low_level)),
-        open_(ordering_strategy) {
+        open_(std::make_unique<priority_queue>()) {
     Execution start_exec;
     for (Agent agt = 0; agt < static_cast<Agent>(this->instance_.nb_agents()); agt++) {
       Path p = low_level_->ComputeShortestPath(this->instance_.start()[agt], this->instance_.goal()[agt]);
@@ -194,12 +191,15 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     }
     auto start_node = std::make_shared<ConstraintTreeNode>(start_exec);
     ComputeConflicts(start_node);
-    open_.push(start_node);
+    open_->push(start_node);
   }
 
   bool StepCompute() override {
-    std::shared_ptr<ConstraintTreeNode> top = open_.top();
-    open_.pop();
+    std::shared_ptr<ConstraintTreeNode> top = open_->top();
+    open_->pop();
+
+    LOG_INFO("Top Conflict count: " << top->get_conflicts().size());
+    if (!open_->empty()) LOG_INFO("Second Conflict count: " << open_->top()->get_conflicts().size());
 
     if (top->get_conflicts().size() == 0) {
       this->execution_ = top->get_execution();
@@ -209,16 +209,16 @@ class HighLevel : public Solver<GraphMove, GraphComm> {
     uint64_t conflict_time = selection_strategy_.SelectConflict(top->get_conflicts());
 
     // Using fibo for storage of children as merge is O(1)
-    priority_queue children(ordering_strategy_);
+    std::shared_ptr<priority_queue> children = std::make_shared<priority_queue>();
 
     try {
-      Split(&children, top, conflict_time);
+      Split(children, top, conflict_time);
     } catch (const BypassException& bp) {
-      children.clear();
-      children.push(std::make_shared<ConstraintTreeNode>(top, bp.child));
+      children->clear();
+      children->push(std::make_shared<ConstraintTreeNode>(top, bp.child));
     }
 
-    open_.merge(children);
+    open_->merge(*children);
 
     return false;
   }

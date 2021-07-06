@@ -28,15 +28,16 @@ namespace decoupled {
 
 namespace high_level {
 
-template <class GraphMove, class GraphComm>
-class CBS : public HighLevel<GraphMove, GraphComm> {
+template <class GraphMove, class GraphComm, class OderingStrat>
+class CBS : public HighLevel<GraphMove, GraphComm, OderingStrat> {
  private:
   using priority_queue =
-      boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<CTNOrderingStrategy>>;
+      boost::heap::fibonacci_heap<std::shared_ptr<ConstraintTreeNode>, boost::heap::compare<OderingStrat>>;
 
   size_t split_count = 0;
 
-  void Split(priority_queue* children, std::shared_ptr<ConstraintTreeNode> ctn, uint64_t time) override {
+  void Split(std::shared_ptr<priority_queue> children, std::shared_ptr<ConstraintTreeNode> ctn,
+             uint64_t time) override {
     const std::shared_ptr<const Conflict> conflict = ctn->get_conflicts().at(time);
     const std::shared_ptr<const CollisionConflict> cast_conflict =
         std::dynamic_pointer_cast<const CollisionConflict>(conflict);
@@ -50,9 +51,9 @@ class CBS : public HighLevel<GraphMove, GraphComm> {
 
  public:
   CBS(const Instance<GraphMove, GraphComm>& instance, const Objective& objective,
-      const CTNOrderingStrategy& ordering_strategy, const ConflictSelectionStrategy& selection_strategy)
-      : decoupled::HighLevel<GraphMove, GraphComm>(
-            instance, objective, ordering_strategy, selection_strategy,
+      const ConflictSelectionStrategy& selection_strategy)
+      : decoupled::HighLevel<GraphMove, GraphComm, OderingStrat>(
+            instance, objective, selection_strategy,
             std::make_unique<low_level::NegativeAStar<GraphMove, GraphComm>>(instance)) {}
 };
 

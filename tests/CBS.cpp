@@ -23,10 +23,10 @@ TEST_CASE("Testing of CBS class") {
   il.Load();
 
   SumObjective obj;
-  decoupled::ctn_ordering::LeastConflictStrategy ord;
   decoupled::conflict_selection::FirstConflictStrategy con;
 
-  decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph> cbs(il.instance(), obj, ord, con);
+  decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy> cbs(
+      il.instance(), obj, con);
 
   /*Execution e = cbs.Compute();
 

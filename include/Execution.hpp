@@ -31,6 +31,7 @@ class Execution {
 
   // Properties
   size_t size() const;
+  size_t max_path() const;
 
   // Friends
   friend std::ostream& operator<<(std::ostream&, const Execution&);
