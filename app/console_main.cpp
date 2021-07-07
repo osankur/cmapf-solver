@@ -29,7 +29,7 @@
 
 using namespace boost::program_options;
 
-constexpr char DEFAULT_ALG[] = "DFS";
+constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
 enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS };
@@ -53,7 +53,7 @@ int main(int argc, const char* argv[]) {
     }
 #ifdef DEBUG
     instance::XMLInstanceLoader il(
-        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_8_0.exp"),
+        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_6_0.exp"),
         std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\"));
 #else
 

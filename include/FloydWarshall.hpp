@@ -32,12 +32,14 @@ class FloydWarshall {
  private:
   std::map<Node, std::vector<Node>> mem_paths_;
 
+  enum class NodeColor { kWhite, kGray, kBlack };
+
   void ComputeShortestPaths(const Node &target) {
     mem_paths_.insert(std::make_pair(target, std::vector<Node>{}));
     std::vector<Node> &mem = mem_paths_[target];
     mem.resize(instance_.graph().movement().node_count(), std::numeric_limits<Node>::max());
     std::list<Node> open;
-    std::unordered_set<Node> closed;
+    std::vector<NodeColor> colored(instance_.graph().movement().node_count(), NodeColor::kWhite);
 
     mem[target] = target;
     open.push_back(target);
@@ -45,12 +47,15 @@ class FloydWarshall {
     while (!open.empty()) {
       Node head = open.front();
       open.pop_front();
-      closed.insert(head);
+      colored[head] = NodeColor::kBlack;
 
       for (Node neighbor : instance_.graph().movement().get_neighbors(head)) {
-        if (closed.find(neighbor) != closed.end()) continue;
+        if (colored[neighbor] == NodeColor::kBlack) continue;
         if (GetShortestPathSize(head, target) + 1 < GetShortestPathSize(neighbor, target)) mem[neighbor] = head;
-        if (find(open.begin(), open.end(), neighbor) == open.end()) open.push_back(neighbor);
+        if (colored[neighbor] == NodeColor::kWhite) {
+          open.push_back(neighbor);
+          colored[neighbor] = NodeColor::kGray;
+        }
       }
     }
   }

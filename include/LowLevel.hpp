@@ -249,14 +249,14 @@ class PositiveAStar : public LowLevel<GraphMove, GraphComm> {
     auto iter = constraints.cbegin();
     // Source to first constraint
     Path p = fw_.ComputeShortestPath(source, iter->second.node);
-    if (p.size() == 0 || p.size() > (iter->second.time - time)) return Path();
+    if (p.size() == 0 || p.size() - 1 > (iter->second.time - time)) return Path();
     for (size_t i = 0; i < p.size(); i++) final_path.PushBack(p.at(i));
     while (final_path.size() <= (iter->second.time - time)) final_path.PushBack(final_path.at(final_path.size() - 1));
 
     // Constraint to Constraint
     while (std::next(iter) != constraints.cend()) {
       p = fw_.ComputeShortestPath(iter->second.node, std::next(iter)->second.node);
-      if (p.size() == 0 || p.size() > (std::next(iter)->second.time - iter->second.time)) return Path();
+      if (p.size() == 0 || p.size() - 1> (std::next(iter)->second.time - iter->second.time)) return Path();
       for (size_t i = 1; i < p.size(); i++) final_path.PushBack(p.at(i));
       while (final_path.size() <= (std::next(iter)->second.time - time))
         final_path.PushBack(final_path.at(final_path.size() - 1));
