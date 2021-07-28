@@ -12,8 +12,9 @@
  */
 #include <Graph.hpp>
 
-#include "doctest.h"
+//#include "doctest.h"
 
+#include <doctest/doctest.h>
 TEST_CASE("Testing of ExplicitGraph class") {
   ExplicitGraph eg;
   CHECK_EQ(eg.node_count(), 0);

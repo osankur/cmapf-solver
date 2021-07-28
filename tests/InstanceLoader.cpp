@@ -13,8 +13,9 @@
 #include <InstanceLoader.hpp>
 
 #include "AppConfig.h"
-#include "doctest.h"
+//#include "doctest.h"
 
+#include <doctest/doctest.h>
 TEST_CASE("Testing of XMLInstanceLoader class") {
   instance::XMLInstanceLoader il(
       std::string(PROJECT_SOURCE_DIR) + "/tests/assets/Test1.exp",

@@ -12,8 +12,9 @@
  */
 #include <Objective.hpp>
 
-#include "doctest.h"
+//#include "doctest.h"
 
+#include <doctest/doctest.h>
 TEST_CASE("Testing of MaxObjective class") {
   Execution e;
 

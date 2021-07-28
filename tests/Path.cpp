@@ -14,8 +14,9 @@
 #include <Path.hpp>
 #include <sstream>
 
-#include "doctest.h"
+//#include "doctest.h"
 
+#include <doctest/doctest.h>
 TEST_CASE("Testing of Path class") {
   Path p;
   CHECK_EQ(p.size(), 0);

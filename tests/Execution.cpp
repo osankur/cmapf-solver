@@ -13,8 +13,9 @@
 #include <Execution.hpp>
 #include <sstream>
 
-#include "doctest.h"
+//#include "doctest.h"
 
+#include <doctest/doctest.h>
 TEST_CASE("Testing of Execution class") {
   Execution e;
   CHECK_EQ(e.size(), 0);

@@ -12,8 +12,9 @@
  */
 #include <ConstraintTreeNode.hpp>
 
-#include "doctest.h"
+//#include "doctest.h"
 
+#include <doctest/doctest.h>
 TEST_CASE("Testing of ConstraintTreeNode class") {
   Execution e;
   Path p1;

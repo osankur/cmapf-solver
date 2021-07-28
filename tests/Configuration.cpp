@@ -13,7 +13,8 @@
 #include <Configuration.hpp>
 #include <sstream>
 
-#include "doctest.h"
+//#include "doctest.h"
+#include <doctest/doctest.h>
 
 TEST_CASE("Testing of Configuration class") {
   Configuration c;

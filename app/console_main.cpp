@@ -25,6 +25,7 @@
 #include <CAStar.hpp>
 #include <MAS.hpp>
 #include <DFS.hpp>
+#include <CoordSolver.hpp>
 #include "AppConfig.h"
 
 using namespace boost::program_options;

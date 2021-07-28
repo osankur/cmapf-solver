@@ -15,11 +15,11 @@
 
 void Configuration::PushBack(Node node) { config_.push_back(node); }
 
-Node& Configuration::operator[](Agent a) { return config_[a]; }
+Node& Configuration::operator[](Agent a) { return config_[static_cast<unsigned long>(a)]; }
 
-const Node& Configuration::operator[](Agent a) const { return config_[a]; }
+const Node& Configuration::operator[](Agent a) const { return config_[static_cast<unsigned long>(a)]; }
 
-const Node& Configuration::at(Agent a) const { return config_[a]; }
+const Node& Configuration::at(Agent a) const { return config_[static_cast<unsigned long>(a)]; }
 
 size_t Configuration::size() const { return config_.size(); }
 

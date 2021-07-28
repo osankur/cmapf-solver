@@ -24,7 +24,7 @@ include(Warnings)
 SET(Boost_USE_STATIC_LIBS ON)
 ADD_DEFINITIONS(-DDEBUG)
 #ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
-FIND_PACKAGE(Boost 1.75.0 COMPONENTS log program_options REQUIRED)
+FIND_PACKAGE(Boost 1.69.0 COMPONENTS log program_options REQUIRED)
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 add_library(rapidxml INTERFACE)
@@ -66,14 +66,14 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC magic_enum)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} LINK_PUBLIC ${Boost_LIBRARIES} )
 
 # Set the compile options you want (change as needed).
-target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
+target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)
 # target_compile_options(${LIBRARY_NAME} ... )  # For setting manually.
 
 # Add an executable for the file app/main.cpp.
 # If you add more executables, copy these lines accordingly.
 add_executable(main app/main.cpp)   # Name of exec. and location of file.
 target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
-target_set_warnings(main ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_set_warnings(main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(main optimized)  # enable link-time-optimization if available for non-debug configurations
 
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and main (change as needed).
@@ -87,12 +87,12 @@ set_target_properties(
         CXX_EXTENSIONS NO
 )
 # Set up tests (see tests/CMakeLists.txt).
-add_subdirectory(tests)
+#add_subdirectory(tests)
 
 add_executable(console_main app/console_main.cpp)
 
 target_link_libraries(console_main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
-target_set_warnings(console_main ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_set_warnings(console_main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(console_main optimized)  # enable link-time-optimization if available for non-debug configurations
 
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and main (change as needed).

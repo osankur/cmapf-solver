@@ -15,9 +15,10 @@
 #include <Constraint.hpp>
 
 #include "AppConfig.h"
-#include "doctest.h"
+//#include "doctest.h"
 #include <Execution.hpp>
 
+#include <doctest/doctest.h>
 constexpr Node TEST_SHORTEST_PATH[50][3] = {  // { source, target, size }
     {1265, 1014, 78}, {1685, 1188, 45}, {655, 1629, 57},  {616, 420, 12},   {1739, 812, 69},  {1729, 717, 49},
     {1523, 1337, 9},  {1033, 720, 18},  {1247, 948, 32},  {720, 84, 37},    {1537, 1634, 40}, {507, 1352, 78},
