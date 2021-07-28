@@ -7,6 +7,10 @@
 
 namespace coordinated{
 
+    /**
+     * TODO Test all functions
+     * TODO Determine what FloydWarshall actually does
+     */
     template <class GraphMove, class GraphComm>
     class LocalQ {
         protected:
@@ -14,18 +18,51 @@ namespace coordinated{
             const Configuration source_conf;
             // The vector of agents on which the local Q function depends
             const std::vector<Agent> & args;
-            std::shared_ptr<FloydWarshall<GraphMove,GraphComm>> fw;
-        public:
-        LocalQ(const Configuration & source_conf, const std::vector<Agent> & args, const Instance<GraphMove,GraphComm> & instance) 
-            : source_conf(source_conf), args(args){
-                fw = std::make_shared(instance);
+            const FloydWarshall<GraphMove,GraphComm> & fw;
+            const Instance<GraphMove,GraphComm> & instance;
+
+        bool check_collisionless(const std::vector<Node> & next_conf){
+            std::set<Node> check;
+            for(auto node : next_conf){
+                if (check.contains(node)) return false;
+                check.insert(node);
             }
+            return true;
+        }
+
+        bool check_connected(const std::vector<Node> & next_conf){
+            std::set<Node> to_check;
+            for(auto node : next_conf) to_check.insert(node);
+            
+            std::list<Node> open;
+            open.push_back(next_conf[0]);
+            while(!open.empty()){
+                Node node = open.back();
+                open.pop_back();
+                to_check.erase(node);
+                auto neighbors = instance.graph().movement().get_neighbors(node);
+                for(auto m : to_check){
+                    if (neighbors.contains(m)){
+                        open.push_back(m);
+                    }
+                }
+            }
+            if (to_check.empty()) return true;
+            return false;
+        }
+
+
+        public:
+        LocalQ(const Configuration & source_conf, const std::vector<Agent> & args, 
+               const FloydWarshall<GraphMove,GraphComm> & fw, const Instance<GraphMove,GraphComm> & instance)
+            : source_conf(source_conf), args(args), fw(fw), instance(instance){
+            }
+
 
         int get_value(const std::vector<Node> & next_conf){
             assert(next_conf.size() == args.size());
-            // Check if next_conf is connected or if it contains collisions
-            //  --> std::numeric_limits<Node>::max()
-            if (0) return std::numeric_limits<int>::max();
+            if (!check_connected(next_conf))
+                std::numeric_limits<int>::max();
             int sum = 0;
             for(int i = 0; i < args.size(); i++){
                 Agent agent = args[i];
