@@ -33,7 +33,7 @@ using namespace boost::program_options;
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
-enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS };
+enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS, COORD };
 enum class ObjectiveEnum : int { SUM = 0, MAX };
 
 int main(int argc, const char* argv[]) {
@@ -52,11 +52,6 @@ int main(int argc, const char* argv[]) {
       std::cout << desc << '\n';
       return 0;
     }
-#ifdef DEBUG
-    instance::XMLInstanceLoader il(
-        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\b-w-open_uniform_grid_13_range_150_6_0.exp"),
-        std::string(std::string(PROJECT_SOURCE_DIR) + "\\data\\"));
-#else
 
     if (!vm.count("experience")) {
       LOG_FATAL("The experience is missing !");
@@ -73,7 +68,7 @@ int main(int argc, const char* argv[]) {
     }
 
     instance::XMLInstanceLoader il(vm["experience"].as<std::string>(), vm["graph-folder"].as<std::string>());
-#endif
+
     LOG_TRACE("Instance created!");
 
     il.Load();
@@ -141,6 +136,9 @@ int main(int argc, const char* argv[]) {
       case Algorithm::DFS:
         solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
         break;
+      case Algorithm::COORD:
+        solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
+        break;
     }
 
     LOG_TRACE("Solver created!");
@@ -148,7 +146,6 @@ int main(int argc, const char* argv[]) {
     const auto execution = solver->Compute();
 
     LOG_TRACE("Solver terminated!");
-
     LOG_INFO("Execution cost:" << objective->cost(execution));
     LOG_INFO("Execution:" << execution);
 

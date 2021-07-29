@@ -4,13 +4,11 @@
 #include <Instance.hpp>
 #include <Objective.hpp>
 #include <Configuration.hpp>
+#include <Solver.hpp>
+#include <Logger.hpp>
 
 namespace coordinated{
 
-    /**
-     * TODO Test all functions
-     * TODO Determine what FloydWarshall actually does
-     */
     template <class GraphMove, class GraphComm>
     class LocalQ {
         protected:
@@ -74,18 +72,16 @@ namespace coordinated{
     };
 
     template <class GraphMove, class GraphComm>
-    class CoordSolver {
-    protected:
-    const Instance<GraphMove, GraphComm>& instance_;
-    const Objective& objective_;
-    Execution execution_;
-
+    class CoordSolver : public Solver<GraphMove,GraphComm> {
     public:
-    CoordSolver(const Instance<GraphMove, GraphComm>& instance)
-        : instance_(instance), execution_() {}
+    CoordSolver(const Instance<GraphMove, GraphComm>& instance, const Objective& objective)
+      : Solver<GraphMove, GraphComm>(instance, objective) {}
 
-    const Execution Compute(){return Execution();}
-    const Instance<GraphMove, GraphComm>& instance() const { return instance_; }
-    const Objective& objective() const { return objective_; }
+    virtual bool StepCompute() {
+        this->execution_ = Execution();
+        return true;
+    }
+    const Execution Compute() {
+    }
     };
 }
