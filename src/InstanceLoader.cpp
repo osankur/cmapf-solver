@@ -99,9 +99,11 @@ void XMLInstanceLoader::Load() {
   size_t startI = 0;
   auto endI = startConf.find(" ");
 
+//  std::cerr << "Got whole: " << startConf << "\n";
   // Creating the start configuration
   while (endI != std::string::npos) {
     std::string s = startConf.substr(startI, endI - startI);
+    // std::cerr << "Token: <" << s << ">\n";
     if (s != "start") instance_.start().PushBack(std::stoi(s));
     startI = endI + 1;
     endI = startConf.find(" ", startI);

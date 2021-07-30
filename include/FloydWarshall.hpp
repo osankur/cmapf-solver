@@ -86,8 +86,8 @@ class FloydWarshall {
     return p;
   }
 
-  Path ComputeShortestPathSize(const Node &source, const Node &target) {
-    auto &memIt = mem_paths_.find(target);
+  size_t ComputeShortestPathSize(const Node &source, const Node &target) {
+    auto memIt = mem_paths_.find(target);
     if (memIt == mem_paths_.end()) ComputeShortestPaths(target);
     return GetShortestPathSize(source, target);
   }

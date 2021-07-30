@@ -137,7 +137,7 @@ int main(int argc, const char* argv[]) {
         solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
         break;
       case Algorithm::COORD:
-        solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
+        solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 0, 1);
         break;
     }
 
