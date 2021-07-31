@@ -42,6 +42,7 @@ int main(int argc, const char* argv[]) {
     desc.add_options()("help,h", "Help screen")("experience,e", value<std::string>(), "The experience file to run.")(
         "graph-folder,G", value<std::string>(), "The graph folder.")(
         "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run.")(
+        "window,w", value<int>()->default_value(2), "Window size.")(
         "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize");
 
     variables_map vm;
@@ -137,7 +138,10 @@ int main(int argc, const char* argv[]) {
         solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
         break;
       case Algorithm::COORD:
-        solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 0, 1);
+        solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(), 
+                                  *objective.get(), 
+                                  vm["window"].as<int>(),
+                                  coordinated::collision_mode_t::IGNORE_COLLISIONS);
         break;
     }
 

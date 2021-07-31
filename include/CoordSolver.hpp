@@ -12,6 +12,7 @@
 namespace coordinated{
     enum class collision_mode_t {CHECK_COLLISIONS, IGNORE_COLLISIONS};
 
+
     template <class GraphMove, class GraphComm>
     class LocalQ {
         protected:
@@ -296,12 +297,13 @@ namespace coordinated{
         }
     };
 
+
+
     template <class GraphMove, class GraphComm>
     class CoordSolver : public Solver<GraphMove,GraphComm> {
     private:
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_;
-        unsigned int lookback_;
-        unsigned int lookahead_;
+        unsigned int window_size_;
         FloydWarshall<GraphMove,GraphComm> fw_;
         const collision_mode_t collision_mode_;
 
@@ -310,17 +312,37 @@ namespace coordinated{
         void initialize_qfuncs(const Configuration & source_conf){
             qfuncs_.clear();
             size_t nb_agents = this->instance_.nb_agents();
+            std::vector<std::vector<Agent>> clusters;
+            std::vector<Agent> cl;
+            int local_index = 0;
             for(size_t i = 0; i < nb_agents; i++){
-                // Create Q function with arguments [max(i - lookback_,0),...,min(i+lookahead_,nb_agents-1)]
-                std::vector<Agent> args;
-                size_t window_l = (i - lookback_ >= 0) ? (i - lookback_) : 0;
-                size_t window_r = (i + lookahead_ < nb_agents) ? i + lookahead_ : nb_agents -1;
-                // LOG_DEBUG("Initializing qfunc for i=" + std::to_string(i) + " window=" + std::to_string(window_l) + ", " + std::to_string(window_r));
-                for(size_t j = window_l; j <= window_r; j++)
-                    args.push_back(j);
+                cl.push_back(i);
+                if (local_index == window_size_ - 1){
+                    clusters.push_back(cl);
+                    cl.clear();
+                    cl.push_back(i);
+                    local_index = 0;
+                }
+                local_index++;
+            }
+            if (cl.size()>=2){
+                clusters.push_back(cl);
+            }
+            for (int i = 0; i < nb_agents; i++){
+                int cluster_index = (i==0)? 0 : (i-1) / (window_size_-1);
+                auto cl = clusters[cluster_index];
+                
+                // std::cerr << "Creating Q function for agent " << i << " with args=[";
+                // for(auto j : cl){
+                //     std::cerr << j << " ";
+                // }
+                // std::cerr << "]\n";
+
                 std::shared_ptr<LocalQIdentity<GraphMove,GraphComm>> qf = 
-                    std::make_shared<LocalQIdentity<GraphMove,GraphComm>>(this->instance_,fw_,source_conf,args,i,collision_mode_);
-                qfuncs_.push_back(qf);                
+                    std::make_shared<LocalQIdentity<GraphMove,GraphComm>>(this->instance_,fw_,
+                                                                            source_conf,cl,i,collision_mode_);
+                qfuncs_.push_back(qf);
+                
             }
         }
 
@@ -368,7 +390,7 @@ namespace coordinated{
                     }
                     for(auto p : successors ){
                         // If a node was selected by another agent, we skip it
-                        if (node_support.contains(p.second)){
+                        if (collision_mode_ == collision_mode_t::CHECK_COLLISIONS && node_support.contains(p.second)){
                             continue;
                         }
                         // Otherwise, select it
@@ -432,12 +454,11 @@ namespace coordinated{
     public:
     CoordSolver(const Instance<GraphMove, GraphComm>& instance, 
                 const Objective& objective,
-                unsigned int lookback,
-                unsigned int lookahead,
+                unsigned int window_size,
                 const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS
                 )
       : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode), 
-        lookback_(lookback), lookahead_(lookahead),fw_(instance) {
+        window_size_(window_size),fw_(instance) {
             config_stack_.push_back(instance.start());
         }
 
@@ -465,6 +486,15 @@ namespace coordinated{
         }
         bool success;
         Configuration next = get_next_best(config_stack_.back(), success);
+        
+        std::cerr << "[";
+        for(int i = 0; i< next.size();i++){
+            auto n = next[i];
+            auto pos = this->instance_.graph().movement().get_position(n);
+            std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
+        }
+        std::cerr << "]\n";
+
         if (!success){
             return true;
         } else {
