@@ -39,6 +39,7 @@ class ExplicitGraph : public Graph {
   size_t edge_count() const;
   const std::unordered_set<Node>& get_neighbors(Node) const override;
   size_t get_distance(Node, Node) const override;
+  std::pair<int,int> get_position(Node) const;
 };
 
 class RadiusGraph : public Graph {

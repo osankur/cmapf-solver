@@ -32,6 +32,10 @@ void ExplicitGraph::AddPosition(Node n, int x, int y) {
   positions_.insert(positions_.begin() + n, std::make_pair(x, y));
 }
 
+std::pair<int,int> ExplicitGraph::get_position(Node node) const {
+    return positions_[node];
+}
+
 const std::unordered_set<Node>& ExplicitGraph::get_neighbors(Node n) const { return adjacency_[n]; }
 
 size_t ExplicitGraph::get_distance(Node a, Node b) const {

@@ -24,7 +24,7 @@ namespace coordinated{
             const collision_mode_t collision_mode_;
         public:
         
-        bool check_collisionless(const Configuration & next_conf){
+        bool check_collisionless(const std::vector<Node> & next_conf){
             std::set<Node> check;
             for(int i = 0; i < next_conf.size(); i++){
                 auto node = next_conf[i];
@@ -34,7 +34,7 @@ namespace coordinated{
             return true;
         }
 
-        bool check_connected(const Configuration & next_conf){
+        bool check_connected(const std::vector<Node> & next_conf){
             std::set<Node> to_check;
             for(int i = 0; i < next_conf.size(); i++) to_check.insert(next_conf[i]);
             std::list<Node> open;
@@ -66,25 +66,15 @@ namespace coordinated{
                 FloydWarshall<GraphMove,GraphComm> & fw,
                const Configuration & source_conf, 
                const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS)
-            : source_conf_(source_conf), instance_(instance), fw_(fw) {
+            : source_conf_(source_conf), instance_(instance), fw_(fw), collision_mode_(collision_mode) {
             }
 
-        /** @pre next_partial_conf is a successor configuration for the agents in args
-         *  @return 
-         */
-        virtual size_t get_value(const std::vector<Node> & next_partial_conf) = 0;
 
         /** @pre next_partial_conf contains an entry for each element of arguments()
          */
-        size_t get_value(const std::map<Agent,Node> & next_partial_conf){
-            std::vector<Node> next_partial_conf_v;
-            for(auto agt : this->arguments()){
-                next_partial_conf_v.push_back(next_partial_conf[agt]);
-            }
-            return get_value(next_partial_conf_v,fw_);
-        }
+        virtual size_t get_value(const std::map<Agent,Node> & next_partial_conf) = 0;
 
-        virtual std::vector<Agent> arguments() = 0;
+        virtual const std::vector<Agent> & arguments() = 0;
 
         const Configuration & source_configuration(){
             return source_conf_;
@@ -113,13 +103,30 @@ namespace coordinated{
             : LocalQ<GraphMove,GraphComm>(instance,fw,source_conf,collision_mode), agent_(agent), args_(args){
             }
         
-        size_t get_value(const std::vector<Node> & next_partial_conf){
-            assert(this->args_.size() <= this->instance.start().size());
-
-            if (!this->check_connected(next_partial_conf)){
+        size_t get_value(const std::map<Agent,Node> & next_partial_conf){
+            assert(this->args_.size() <= this->instance_.start().size());
+            //std::cerr << "Computing value of the following next_partial_conf (size: " 
+            //          <<  next_partial_conf.size() << "): ";
+            // for(Node node : next_partial_conf){
+            //     std::cerr << node << " ";
+            // }
+            // std::cerr << "\n";
+            std::vector<Node> our_nodes;
+            for(auto agent : args_){
+                our_nodes.push_back(next_partial_conf.find(agent)->second);
+            }
+            // LOG_DEBUG("Are they connected: " + std::to_string(this->check_connected(our_nodes)));
+            if (!this->check_connected(our_nodes)){
                 return INFINITY;
-            } else{
-                return this->fw.ComputeShortestPathSize(this->next_conf[agent_], this->instance.goal()[agent_]);
+            } else if( this->collision_mode_ == collision_mode_t::CHECK_COLLISIONS && !this->check_collisionless(our_nodes)) {
+                return INFINITY;
+            } else {
+                auto d = this->fw_.ComputeShortestPathSize(next_partial_conf.find(agent_)->second, 
+                    this->instance_.goal()[agent_]);
+                // LOG_DEBUG("Evaluating weight for node=" + std::to_string(agent_) 
+                //     + ". Distance from node " + std::to_string(next_partial_conf.find(agent_)->second)
+                //     + " to node " + std::to_string(this->instance_.goal()[agent_]) + " = " + std::to_string(d));
+                return d;
             }
         }
 
@@ -146,8 +153,7 @@ namespace coordinated{
          * @pre next_partial_conf is an empty vector
          * @pre index is 0 
          */
-        void fill_data(
-                        std::vector<std::unordered_set<Node>> & neighbors,
+        void fill_data(std::vector<std::unordered_set<Node>> & neighbors,
                         std::vector<Node> & next_partial_conf,
                         std::map<Agent,Node> & next_partial_conf_m,
                         int index)
@@ -161,12 +167,13 @@ namespace coordinated{
                     }
                 } else {
                     std::vector<std::pair<size_t,Node> > image;
-                    auto pivot_neighbors = this->instance_.graph().movement().neighbors(agent_to_eliminate_);
+                    std::unordered_set<Node> pivot_neighbors(this->instance_.graph().movement().get_neighbors(this->source_conf_[agent_to_eliminate_]));
+                    pivot_neighbors.insert(this->source_conf_[agent_to_eliminate_]); // add the self-loop
                     for (auto next_node : pivot_neighbors){
                         next_partial_conf_m[agent_to_eliminate_] = next_node;
                         size_t sum = 0;
                         for(auto qf : qfuncs_){
-                            size_t qf_value = qf.get_value(next_partial_conf_m);
+                            size_t qf_value = qf->get_value(next_partial_conf_m);
                             if (qf_value == INFINITY){
                                 sum = INFINITY;
                                 break;
@@ -178,6 +185,21 @@ namespace coordinated{
                         }
                     }
                     std::sort(image.begin(),image.end());
+                    /*
+                    std::cerr << "Adding ";
+                    for(auto n : next_partial_conf){
+                        std::cerr << n << " ";
+                    }
+                    std::cerr << ": ";
+
+                    for(auto i : image){
+                        std::cerr << "(node=" << i.second << ", x=" << 
+                        this->instance_.graph().movement().get_position(i.second).first
+                        << ", y=" << this->instance_.graph().movement().get_position(i.second).second
+                        << ", dist=" << i.first << ") ";
+                    }
+                    std::cerr << "\n";
+                    */
                     data_[next_partial_conf] = image;
                 }
                 
@@ -186,18 +208,27 @@ namespace coordinated{
                 // args are the union of the agents in all qfuncs \ {agent_to_eliminate_}
                 std::set<Agent> all_agents;
                 for(auto qf : qfuncs_){
-                    for (auto agent : qf.arguments()){
+                    for (auto agent : qf->arguments()){
                         all_agents.insert(agent);
                     }
                 }
                 all_agents.erase(agent_to_eliminate_);
-                args_ = all_agents;
+                args_ = std::vector(all_agents.begin(), all_agents.end());
 
                 // neighbors[i] is the movement neighborhood of the node of the agent args[i]
                 std::vector<std::unordered_set<Node> > neighbors;
                 for(auto agent : args_){
-                    neighbors.push_back(this->instance_.graph().movement().neighbors(this->source_conf[agent]));                    
+                    std::unordered_set<Node> n(this->instance_.graph().movement().get_neighbors(this->source_conf_[agent]));
+                    n.insert(this->source_conf_[agent]); // add the self-loop
+                    neighbors.push_back(n);
                 }
+
+                
+                // std::cerr << "Created local Q compound with args: ";
+                // for(auto i : arguments()){
+                //     std::cerr << i <<" ";
+                // }
+                // std::cerr << "\n";
 
                 std::vector<Node> next_partial_conf;
                 std::map<Agent,Node> next_partial_conf_m;
@@ -217,7 +248,7 @@ namespace coordinated{
                 initialize();
             }
         
-        size_t get_value(const std::vector<Node> & next_partial_conf){
+        size_t get_value(const std::map<Agent,Node> & next_partial_conf){
             const std::vector<std::pair<size_t,Node> > & values = get_value_vector(next_partial_conf);
             if (values.size() == 0){
                 return INFINITY;
@@ -227,12 +258,6 @@ namespace coordinated{
         }
 
         /**
-         * @pre next_partial_conf[i] is a movement-neighbor of the node of arguments()[i] in source_configuration()
-         */
-        const std::vector<std::pair<size_t,Node> > & get_value_vector(const std::vector<Node> & next_partial_conf){
-            return data_[next_partial_conf];
-        }
-        /**
          * @pre next_partial_conf_m contains a key agent for each agent in arguments(), and next_partial_conf_m[agent] is 
          * a movement-neighbor of the node of in source_configuration()[agent]
          */
@@ -241,7 +266,7 @@ namespace coordinated{
             for(Agent agent : arguments()){
                 next_partial_conf.push_back(next_partial_conf_m.find(agent)->second);
             }
-            return get_value_vector(next_partial_conf);
+            return data_[next_partial_conf];
         }
         const std::vector<Agent> & arguments(){
             return args_;
@@ -252,6 +277,23 @@ namespace coordinated{
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > & qfunctions(){
             return qfuncs_;
         }
+
+        void print(){
+            for(const auto p : data_ ){
+                const std::vector<Node> & key = p.first;
+                const auto & val = p.second;
+                std::cerr << "CONF ";
+                for(auto n : key){
+                    std::cerr << n << " ";
+                }
+                std::cerr << ": ";
+                for(auto n : p.second){
+                    std::cerr << "(node=" << n.second << ", dist=" << n.first << ") ";
+                }
+                std::cerr << "\n";
+
+            }
+        }
     };
 
     template <class GraphMove, class GraphComm>
@@ -260,35 +302,133 @@ namespace coordinated{
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_;
         unsigned int lookback_;
         unsigned int lookahead_;
-        FloydWarshall<GraphMove,GraphComm> fw;
+        FloydWarshall<GraphMove,GraphComm> fw_;
         const collision_mode_t collision_mode_;
 
+        std::vector<Configuration> config_stack_;
+
         void initialize_qfuncs(const Configuration & source_conf){
+            qfuncs_.clear();
             size_t nb_agents = this->instance_.nb_agents();
             for(size_t i = 0; i < nb_agents; i++){
                 // Create Q function with arguments [max(i - lookback_,0),...,min(i+lookahead_,nb_agents-1)]
                 std::vector<Agent> args;
                 size_t window_l = (i - lookback_ >= 0) ? (i - lookback_) : 0;
                 size_t window_r = (i + lookahead_ < nb_agents) ? i + lookahead_ : nb_agents -1;
+                // LOG_DEBUG("Initializing qfunc for i=" + std::to_string(i) + " window=" + std::to_string(window_l) + ", " + std::to_string(window_r));
                 for(size_t j = window_l; j <= window_r; j++)
                     args.push_back(j);
-                std::shared_ptr<LocalQIdentity<GraphMove,GraphComm>> qf = std::make_shared<LocalQIdentity>(this->instance_,fw,source_conf,args,i,collision_mode_);
+                std::shared_ptr<LocalQIdentity<GraphMove,GraphComm>> qf = 
+                    std::make_shared<LocalQIdentity<GraphMove,GraphComm>>(this->instance_,fw_,source_conf,args,i,collision_mode_);
+                qfuncs_.push_back(qf);                
             }
         }
 
         /**
          * @pre initialize_qfuncs has been called
+         * @pre agent_to_eliminate appears in the arguments of some qfuncs
          */
-        void reduce_qfuncs(){
-
+        void reduce_qfuncs(Agent agent_to_eliminate){
+            std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_elim;
+            std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_rem;
+            for(auto qf : qfuncs_){
+                // if agent_to_eliminate is present in qf->arguments()
+                if (std::find(qf->arguments().begin(),qf->arguments().end(),agent_to_eliminate)
+                    != qf->arguments().end())
+                {
+                    qfuncs_elim.push_back(qf);
+                } else{
+                    qfuncs_rem.push_back(qf);
+                }
+            }
+            if (qfuncs_elim.size() == 0)
+                return;
+            std::shared_ptr<LocalQCompound<GraphMove,GraphComm>> qf_comp
+                = std::make_shared<LocalQCompound<GraphMove,GraphComm>>(this->instance_, this->fw_,
+                                                        qfuncs_elim[0]->source_configuration(),
+                                                        qfuncs_elim,
+                                                        agent_to_eliminate,
+                                                        collision_mode_);
+            qfuncs_rem.push_back(qf_comp);
+            qfuncs_ = qfuncs_rem;
         }
 
-        /**
-         * @pre reduce_qfuncs has been called.
-         */
-        Configuration get_next_best(){
+        bool get_next_best_rec(std::vector<std::shared_ptr<LocalQCompound<GraphMove,GraphComm> > > & linearized,
+                               std::map<Agent,Node> & partial_conf,
+                               std::set<Node> & node_support,
+                               int index)
+            {
+                if (index >= linearized.size()){
+                    return true;
+                } else {
+                    Agent agent = linearized[index]->agent_to_eliminate();
+                    auto successors = linearized[index]->get_value_vector(partial_conf);
+                    if (successors.size() == 0){
+                        return false;
+                    }
+                    for(auto p : successors ){
+                        // If a node was selected by another agent, we skip it
+                        if (node_support.contains(p.second)){
+                            continue;
+                        }
+                        // Otherwise, select it
+                        partial_conf[agent] = p.second;
+                        node_support.insert(p.second);
+                        if (get_next_best_rec(linearized, partial_conf, node_support, index+1)){
+                            return true;
+                        }
+                        node_support.erase(p.second);
+                    }
+                    return false;
+                }                
+            }
+        Configuration get_next_best(const Configuration & source, bool & success){
+            initialize_qfuncs(source);
+            for(int i =0; i < this->instance_.nb_agents(); i++){                                
+                // for(auto qf : qfuncs_){
+                //     std::cerr << "[";
+                //     for(auto i : qf->arguments()){
+                //         std::cerr << i << " ";
+                //     }
+                //     std::cerr << "] ";
+                // }
+                // std::cerr<<"\n";
+                reduce_qfuncs(i);
+            }
+            // std::cerr << "There are " << qfuncs_.size() << " Q functions\n";
+            assert(qfuncs_.size() == 1);
+            assert( (dynamic_cast<LocalQCompound<GraphMove,GraphComm>*>(qfuncs_[0].get()) != nullptr) );
 
+            // Obtain a list of compound Q-functions in topological order
+            // (each qfunc depends only on the variables determined by the functions on its left)
+            std::vector<std::shared_ptr<LocalQCompound<GraphMove,GraphComm>> > linearized;
+            std::queue<std::shared_ptr<LocalQCompound<GraphMove,GraphComm>> > open;
+            open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove,GraphComm>>(qfuncs_[0]));            
+            while(!open.empty()){
+                std::shared_ptr<LocalQCompound<GraphMove,GraphComm>> qf = open.front();
+                open.pop();
+                linearized.push_back(qf);
+                for(auto child_qf : qf->qfunctions()){
+                    if ( dynamic_cast<LocalQCompound<GraphMove,GraphComm>*>(child_qf.get()) != nullptr){
+                        // std::shared_ptr<B> bp = std::dynamic_pointer_cast<B>(ap);
+                        open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove,GraphComm>>(child_qf));
+                    }
+                }
+            }
+
+            // Choose the successor
+            std::map<Agent,Node> partial_conf;
+            std::set<Node> node_support;
+            success = get_next_best_rec(linearized, partial_conf, node_support, 0);
+            Configuration successor(source.size());
+            if (success){
+                for(auto p : partial_conf){
+                    successor[p.first] = p.second;
+                }
+            }
+            return successor;
         }
+
     public:
     CoordSolver(const Instance<GraphMove, GraphComm>& instance, 
                 const Objective& objective,
@@ -296,21 +436,134 @@ namespace coordinated{
                 unsigned int lookahead,
                 const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS
                 )
-      : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode), lookback_(lookback), lookahead_(lookahead),fw(instance) {}
+      : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode), 
+        lookback_(lookback), lookahead_(lookahead),fw_(instance) {
+            config_stack_.push_back(instance.start());
+        }
 
-    virtual bool StepCompute() {
-        this->execution_ = Execution();
+    virtual bool StepCompute() override {
+        // Solution found?
+        if (config_stack_.back() == this->instance_.goal()){
+            for(int i = 0; i < this->instance_.nb_agents(); i++){
+                std::shared_ptr<Path> path = std::make_shared<Path>();
+                for(auto c : config_stack_){
+                    path->PushBack(c[i]);
+                }
+                this->execution_.PushBack(path);
+            }
+            // print
+            for(auto c : config_stack_){
+                std::cerr << "[";
+                for(int i = 0; i< c.size();i++){
+                    auto n = c[i];
+                    auto pos = this->instance_.graph().movement().get_position(n);
+                    std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
+                }
+                std::cerr << "]\n";
+            }            
+            return true;
+        }
+        bool success;
+        Configuration next = get_next_best(config_stack_.back(), success);
+        if (!success){
+            return true;
+        } else {
+            config_stack_.push_back(next);
+            return false;
+        }
+    }
+    void test(){
         /*
-        auto graph = this->instance_.graph().movement();
-        std::cerr << "Node count: " << graph.node_count() << "\n";
         const Configuration & start = this->instance_.start();
         const Configuration & goal = this->instance_.goal();
-        std::cerr << "start has size: " << start.size() << "\n";
-        std::cerr << "goal has size: " << goal.size() << "\n";
         for (int i = 0; i < start.size(); i++){
             std::cerr << "(" << start[i] << " -- ";
             std::cerr << goal[i] << "), ";        }
         std::cerr <<"\n";
+
+        this->initialize_qfuncs(this->instance_.start());
+        std::map<Agent,Node> next_conf;
+        next_conf[0] = start[0];
+        next_conf[1] = start[1];
+        next_conf[2] = start[2];
+        // next_conf[0] = goal[0];
+        // next_conf[1] = goal[1];
+        // next_conf[2] = goal[2];
+        std::cerr << "qfuncs size: " << qfuncs_.size() << "\n";
+        std::cerr << "qfuncs[0]->get_value: " << qfuncs_[0]->get_value(next_conf) << "\n";
+        std::cerr << "qfuncs[0]->get_value: " << qfuncs_[1]->get_value(next_conf) << "\n";
+        std::cerr << "qfuncs[0]->get_value: " << qfuncs_[2]->get_value(next_conf) << "\n";
+        std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > my_qfuncs;
+        my_qfuncs.push_back(qfuncs_[0]);
+        my_qfuncs.push_back(qfuncs_[1]);
+        std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp =
+            std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
+                                                    qfuncs_[0]->source_configuration(),
+                                                    my_qfuncs,
+                                                    1,
+                                                    collision_mode_);
+        std::cerr << "qcomp has arguments: ";
+        for(auto i : qf_comp->arguments()){
+            std::cerr << i << " ";
+        }
+        std::cerr << "\n";
+        qf_comp->print();
+        std::cerr << "qcomp.get_value: " << qf_comp->get_value(next_conf) << "\n";
+
+        my_qfuncs.clear();
+        my_qfuncs.push_back(qf_comp);
+        my_qfuncs.push_back(qfuncs_[2]);
+        std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp2 =
+            std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
+                                                    qfuncs_[0]->source_configuration(),
+                                                    my_qfuncs,
+                                                    2,
+                                                    collision_mode_);
+        qf_comp2->print();
+        std::cerr << "qcomp.get_value: " << qf_comp2->get_value(next_conf) << "\n";
+
+        my_qfuncs.clear();
+        my_qfuncs.push_back(qf_comp2);
+        std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp3 =
+            std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
+                                                    qfuncs_[0]->source_configuration(),
+                                                    my_qfuncs,
+                                                    0,
+                                                    collision_mode_);
+        qf_comp3->print();
+        std::cerr << "qcomp.get_value: " << qf_comp3->get_value(next_conf) << "\n";
+
+
+        std::map<Agent,Node> partial_conf;
+        std::pair<size_t,Node> best = qf_comp3->get_value_vector(partial_conf)[0];
+        std::cerr << "Agent " << qf_comp3->agent_to_eliminate() << " -> Node " << best.second << 
+            " (with val=" << best.first << ")\n";
+        partial_conf[qf_comp3->agent_to_eliminate()] = best.second;
+
+        best = qf_comp2->get_value_vector(partial_conf)[0];
+        std::cerr << "Agent " << qf_comp2->agent_to_eliminate() << " -> Node " << best.second << 
+            " (with val=" << best.first << ")\n";
+        partial_conf[qf_comp2->agent_to_eliminate()] = best.second;
+
+        best = qf_comp->get_value_vector(partial_conf)[0];
+        std::cerr << "Agent " << qf_comp->agent_to_eliminate() << " -> Node " << best.second << 
+            " (with val=" << best.first << ")\n";
+        */
+        
+        auto graph = this->instance_.graph().movement();
+        const Configuration & start = this->instance_.start();
+        const Configuration & goal = this->instance_.goal();
+        for (int i = 0; i < start.size(); i++){
+            std::cerr << "(" << start[i] << " -- ";
+            std::cerr << goal[i] << "), ";        }
+        std::cerr <<"\n";
+        std::cerr << "Neighborhood of node " << start[0] << "\n";
+        auto neigh = graph.get_neighbors(start[0]);
+        for(auto n : neigh){
+            std::cerr << n << " ";
+        }
+        std::cerr << "\n";
+        /*
         const std::vector<Agent> args ={0,1,2};
         FloydWarshall<GraphMove,GraphComm> fw(this->instance_);
         LocalQ<GraphMove,GraphComm> localQ(start, args, fw, this->instance_);
@@ -320,7 +573,6 @@ namespace coordinated{
         assert(localQ.check_connected(goal));
         localQ.get_value(start);
         */
-        return true;
     }
     };
 }

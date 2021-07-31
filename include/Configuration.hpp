@@ -21,11 +21,14 @@ class Configuration {
   std::vector<Node> config_;
 
  public:
+  Configuration();
+  Configuration(size_t size);
   void PushBack(Node);
 
   // Operators
   Node& operator[](Agent);
   const Node& operator[](Agent) const;
+  bool operator==(const Configuration &);
 
   // Properties
   size_t size() const;
