@@ -8,6 +8,14 @@
 #include <Configuration.hpp>
 #include <Solver.hpp>
 #include <Logger.hpp>
+#include <set>
+/**
+ * TODO LIST
+ * - Write a clustering function to choose the local Q functions
+ * - Add a passed list to detect looping and to add backtrack
+ * 
+ * - Arthur: DFS uses a closed list of type shared_ptr<Configuration> ???
+ */
 
 namespace coordinated{
     enum class collision_mode_t {CHECK_COLLISIONS, IGNORE_COLLISIONS};
@@ -25,7 +33,7 @@ namespace coordinated{
             const collision_mode_t collision_mode_;
         public:
         
-        bool check_collisionless(const std::vector<Node> & next_conf){
+        bool isCollisionless(const std::vector<Node> & next_conf){
             std::set<Node> check;
             for(int i = 0; i < next_conf.size(); i++){
                 auto node = next_conf[i];
@@ -35,7 +43,7 @@ namespace coordinated{
             return true;
         }
 
-        bool check_connected(const std::vector<Node> & next_conf){
+        bool isConnected(const std::vector<Node> & next_conf){
             std::set<Node> to_check;
             for(int i = 0; i < next_conf.size(); i++) to_check.insert(next_conf[i]);
             std::list<Node> open;
@@ -73,11 +81,11 @@ namespace coordinated{
 
         /** @pre next_partial_conf contains an entry for each element of arguments()
          */
-        virtual size_t get_value(const std::map<Agent,Node> & next_partial_conf) = 0;
+        virtual size_t getValue(const std::map<Agent,Node> & next_partial_conf) = 0;
 
         virtual const std::vector<Agent> & arguments() = 0;
 
-        const Configuration & source_configuration(){
+        const Configuration & sourceConfiguration(){
             return source_conf_;
         }
     };
@@ -104,7 +112,7 @@ namespace coordinated{
             : LocalQ<GraphMove,GraphComm>(instance,fw,source_conf,collision_mode), agent_(agent), args_(args){
             }
         
-        size_t get_value(const std::map<Agent,Node> & next_partial_conf){
+        size_t getValue(const std::map<Agent,Node> & next_partial_conf){
             assert(this->args_.size() <= this->instance_.start().size());
             //std::cerr << "Computing value of the following next_partial_conf (size: " 
             //          <<  next_partial_conf.size() << "): ";
@@ -116,10 +124,10 @@ namespace coordinated{
             for(auto agent : args_){
                 our_nodes.push_back(next_partial_conf.find(agent)->second);
             }
-            // LOG_DEBUG("Are they connected: " + std::to_string(this->check_connected(our_nodes)));
-            if (!this->check_connected(our_nodes)){
+            // LOG_DEBUG("Are they connected: " + std::to_string(this->isConnected(our_nodes)));
+            if (!this->isConnected(our_nodes)){
                 return INFINITY;
-            } else if( this->collision_mode_ == collision_mode_t::CHECK_COLLISIONS && !this->check_collisionless(our_nodes)) {
+            } else if( this->collision_mode_ == collision_mode_t::CHECK_COLLISIONS && !this->isCollisionless(our_nodes)) {
                 return INFINITY;
             } else {
                 auto d = this->fw_.ComputeShortestPathSize(next_partial_conf.find(agent_)->second, 
@@ -174,7 +182,7 @@ namespace coordinated{
                         next_partial_conf_m[agent_to_eliminate_] = next_node;
                         size_t sum = 0;
                         for(auto qf : qfuncs_){
-                            size_t qf_value = qf->get_value(next_partial_conf_m);
+                            size_t qf_value = qf->getValue(next_partial_conf_m);
                             if (qf_value == INFINITY){
                                 sum = INFINITY;
                                 break;
@@ -249,8 +257,8 @@ namespace coordinated{
                 initialize();
             }
         
-        size_t get_value(const std::map<Agent,Node> & next_partial_conf){
-            const std::vector<std::pair<size_t,Node> > & values = get_value_vector(next_partial_conf);
+        size_t getValue(const std::map<Agent,Node> & next_partial_conf){
+            const std::vector<std::pair<size_t,Node> > & values = getValueVector(next_partial_conf);
             if (values.size() == 0){
                 return INFINITY;
             } else{
@@ -260,9 +268,9 @@ namespace coordinated{
 
         /**
          * @pre next_partial_conf_m contains a key agent for each agent in arguments(), and next_partial_conf_m[agent] is 
-         * a movement-neighbor of the node of in source_configuration()[agent]
+         * a movement-neighbor of the node of in sourceConfiguration()[agent]
          */
-        const std::vector<std::pair<size_t,Node> > & get_value_vector(const std::map<Agent,Node> & next_partial_conf_m){
+        const std::vector<std::pair<size_t,Node> > & getValueVector(const std::map<Agent,Node> & next_partial_conf_m){
             std::vector<Node> next_partial_conf;
             for(Agent agent : arguments()){
                 next_partial_conf.push_back(next_partial_conf_m.find(agent)->second);
@@ -308,6 +316,7 @@ namespace coordinated{
         const collision_mode_t collision_mode_;
 
         std::vector<Configuration> config_stack_;
+        std::set<Configuration> closed_;
 
         void initialize_qfuncs(const Configuration & source_conf){
             qfuncs_.clear();
@@ -367,7 +376,7 @@ namespace coordinated{
                 return;
             std::shared_ptr<LocalQCompound<GraphMove,GraphComm>> qf_comp
                 = std::make_shared<LocalQCompound<GraphMove,GraphComm>>(this->instance_, this->fw_,
-                                                        qfuncs_elim[0]->source_configuration(),
+                                                        qfuncs_elim[0]->sourceConfiguration(),
                                                         qfuncs_elim,
                                                         agent_to_eliminate,
                                                         collision_mode_);
@@ -381,10 +390,19 @@ namespace coordinated{
                                int index)
             {
                 if (index >= linearized.size()){
-                    return true;
+                    Configuration c;
+                    for(Agent i = 0; i < this->instance_.nb_agents(); i++){
+                        c.PushBack(partial_conf[i]);
+                    }
+                    if (closed_.find(c) != closed_.end()){
+                        return false;
+                    } else {
+                        closed_.insert(c);
+                        return true;
+                    }
                 } else {
                     Agent agent = linearized[index]->agent_to_eliminate();
-                    auto successors = linearized[index]->get_value_vector(partial_conf);
+                    auto successors = linearized[index]->getValueVector(partial_conf);
                     if (successors.size() == 0){
                         return false;
                     }
@@ -486,7 +504,7 @@ namespace coordinated{
         }
         bool success;
         Configuration next = get_next_best(config_stack_.back(), success);
-        
+
         std::cerr << "[";
         for(int i = 0; i< next.size();i++){
             auto n = next[i];
@@ -520,15 +538,15 @@ namespace coordinated{
         // next_conf[1] = goal[1];
         // next_conf[2] = goal[2];
         std::cerr << "qfuncs size: " << qfuncs_.size() << "\n";
-        std::cerr << "qfuncs[0]->get_value: " << qfuncs_[0]->get_value(next_conf) << "\n";
-        std::cerr << "qfuncs[0]->get_value: " << qfuncs_[1]->get_value(next_conf) << "\n";
-        std::cerr << "qfuncs[0]->get_value: " << qfuncs_[2]->get_value(next_conf) << "\n";
+        std::cerr << "qfuncs[0]->getValue: " << qfuncs_[0]->getValue(next_conf) << "\n";
+        std::cerr << "qfuncs[0]->getValue: " << qfuncs_[1]->getValue(next_conf) << "\n";
+        std::cerr << "qfuncs[0]->getValue: " << qfuncs_[2]->getValue(next_conf) << "\n";
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > my_qfuncs;
         my_qfuncs.push_back(qfuncs_[0]);
         my_qfuncs.push_back(qfuncs_[1]);
         std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp =
             std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                    qfuncs_[0]->source_configuration(),
+                                                    qfuncs_[0]->sourceConfiguration(),
                                                     my_qfuncs,
                                                     1,
                                                     collision_mode_);
@@ -538,44 +556,44 @@ namespace coordinated{
         }
         std::cerr << "\n";
         qf_comp->print();
-        std::cerr << "qcomp.get_value: " << qf_comp->get_value(next_conf) << "\n";
+        std::cerr << "qcomp.getValue: " << qf_comp->getValue(next_conf) << "\n";
 
         my_qfuncs.clear();
         my_qfuncs.push_back(qf_comp);
         my_qfuncs.push_back(qfuncs_[2]);
         std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp2 =
             std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                    qfuncs_[0]->source_configuration(),
+                                                    qfuncs_[0]->sourceConfiguration(),
                                                     my_qfuncs,
                                                     2,
                                                     collision_mode_);
         qf_comp2->print();
-        std::cerr << "qcomp.get_value: " << qf_comp2->get_value(next_conf) << "\n";
+        std::cerr << "qcomp.getValue: " << qf_comp2->getValue(next_conf) << "\n";
 
         my_qfuncs.clear();
         my_qfuncs.push_back(qf_comp2);
         std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp3 =
             std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                    qfuncs_[0]->source_configuration(),
+                                                    qfuncs_[0]->sourceConfiguration(),
                                                     my_qfuncs,
                                                     0,
                                                     collision_mode_);
         qf_comp3->print();
-        std::cerr << "qcomp.get_value: " << qf_comp3->get_value(next_conf) << "\n";
+        std::cerr << "qcomp.getValue: " << qf_comp3->getValue(next_conf) << "\n";
 
 
         std::map<Agent,Node> partial_conf;
-        std::pair<size_t,Node> best = qf_comp3->get_value_vector(partial_conf)[0];
+        std::pair<size_t,Node> best = qf_comp3->getValueVector(partial_conf)[0];
         std::cerr << "Agent " << qf_comp3->agent_to_eliminate() << " -> Node " << best.second << 
             " (with val=" << best.first << ")\n";
         partial_conf[qf_comp3->agent_to_eliminate()] = best.second;
 
-        best = qf_comp2->get_value_vector(partial_conf)[0];
+        best = qf_comp2->getValueVector(partial_conf)[0];
         std::cerr << "Agent " << qf_comp2->agent_to_eliminate() << " -> Node " << best.second << 
             " (with val=" << best.first << ")\n";
         partial_conf[qf_comp2->agent_to_eliminate()] = best.second;
 
-        best = qf_comp->get_value_vector(partial_conf)[0];
+        best = qf_comp->getValueVector(partial_conf)[0];
         std::cerr << "Agent " << qf_comp->agent_to_eliminate() << " -> Node " << best.second << 
             " (with val=" << best.first << ")\n";
         */
@@ -597,11 +615,11 @@ namespace coordinated{
         const std::vector<Agent> args ={0,1,2};
         FloydWarshall<GraphMove,GraphComm> fw(this->instance_);
         LocalQ<GraphMove,GraphComm> localQ(start, args, fw, this->instance_);
-        assert(localQ.check_collisionless(start));
-        assert(localQ.check_collisionless(goal));
-        assert(localQ.check_connected(start));
-        assert(localQ.check_connected(goal));
-        localQ.get_value(start);
+        assert(localQ.isCollisionless(start));
+        assert(localQ.isCollisionless(goal));
+        assert(localQ.isConnected(start));
+        assert(localQ.isConnected(goal));
+        localQ.getValue(start);
         */
     }
     };

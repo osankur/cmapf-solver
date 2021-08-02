@@ -49,3 +49,7 @@ std::ostream& operator<<(std::ostream& os, const Configuration& config) {
   os << ">";
   return os;
 }
+
+bool operator<(const Configuration& c1,const Configuration& c2){
+    return c1.config_ < c2.config_;
+}

@@ -36,4 +36,7 @@ class Configuration {
 
   // Friends
   friend std::ostream& operator<<(std::ostream&, const Configuration&);
+  friend bool operator<(const Configuration&,const Configuration&);
 };
+
+bool operator<(const Configuration& c1,const Configuration& c2);
