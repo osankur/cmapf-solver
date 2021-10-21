@@ -9,10 +9,8 @@
 #include <Solver.hpp>
 #include <Logger.hpp>
 #include <set>
+
 /**
- * TODO LIST
- * - Write a clustering function to choose the local Q functions
- * - Add a passed list to detect looping and to add backtrack
  * 
  * - Arthur: DFS uses a closed list of type shared_ptr<Configuration> ???
  */
@@ -491,6 +489,7 @@ namespace coordinated{
                 this->execution_.PushBack(path);
             }
             // print
+            /*
             for(auto c : config_stack_){
                 std::cerr << "[";
                 for(int i = 0; i< c.size();i++){
@@ -499,12 +498,14 @@ namespace coordinated{
                     std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
                 }
                 std::cerr << "]\n";
-            }            
+            } 
+            */           
             return true;
         }
         bool success;
         Configuration next = get_next_best(config_stack_.back(), success);
 
+        /*
         std::cerr << "[";
         for(int i = 0; i< next.size();i++){
             auto n = next[i];
@@ -512,9 +513,16 @@ namespace coordinated{
             std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
         }
         std::cerr << "]\n";
-
+        */
         if (!success){
-            return true;
+            // Solution not found
+            if (config_stack_.size() == 1){
+                return true;
+            } else {
+                // No successor found for config_stack_.back(). Backtracking.
+                config_stack_.pop_back();
+                return false;
+            }
         } else {
             config_stack_.push_back(next);
             return false;
