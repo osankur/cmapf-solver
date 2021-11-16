@@ -40,6 +40,9 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       vertices_.push_back(start);
     };
 
+    std::vector<std::shared_ptr<Configuration>> get_vertices() { return *vertices_;};
+    std::vector<std::shared_ptr<Configuration>> get_parents() { return parents_;};
+
     bool has(const std::shared_ptr<Configuration>& config) {
       for (auto found : this->explorationtree_) {
         if (config->size() == found->size()) {
@@ -56,9 +59,39 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     }
 
     void extend(tree){
-      std::shared_ptr<Configuration> c_rand = pick_rand(p, instance_->goal());
+      std::shared_ptr<Configuration> c_rand = pick_rand(p, std::make_shared(tree->goal()));
+      std::shared_ptr<Configuration> c_nearest = nearest(*c_rand, tree->get_vertices());
+      std::shared_ptr<Configuration> c_new = few_steps(c_rand, c_nearest);
+
+      vertices_.push_back(c_new);
+      std::shared_ptr<Configuration> c_min = c_nearest;
+      int costmin = Cost(sources, c_min) + Cost(c_min, c_new);
+      std::vector<std::shared_ptr<Configuration>> Neighborhood = Neighbors(c_new);
+
+      for (auto cnear : Neighborhood){
+        int cost = Cost(sources, cnear) + Cost(cnear, cnew);
+        if (cost < costmin){
+          c_min = cnear;
+          costmin = cost;
+        }
+      }
+      parents_.push_back(c_min); //parent of c_new
+
+      replaceParent(Neighborhood, c_min, c_new);
       
     }
+
+    std::shared_ptr<Configuration> pick_rand(float prob, const Configuration& goal){};
+
+    std::shared_ptr<Configuration> nearest(const std::shared_ptr<Configuration>& rand, const std::vector<std::shared_ptr<Configuration>>& vertices){};
+
+    std::shared_ptr<Configuration> few_steps(const std::shared_ptr<Configuration>& rand, const std::shared_ptr<Configuration>& nearest){};
+
+    std::vector<std::shared_ptr<Configuration>> Neighbors(const std::shared_ptr<Configuration>& config){};
+
+    int Cost(const std::shared_ptr<Configuration>& first, const std::shared_ptr<Configuration>& second){};
+
+    void replaceParent(const std::vector<std::shared_ptr<Configuration>>& Neighborhood, const std::shared_ptr<Configuration>& min, const std::shared_ptr<Configuration>& near){};
   }
 
   ExplorationTree<GraphMove, GraphComm> explorationtree_;
