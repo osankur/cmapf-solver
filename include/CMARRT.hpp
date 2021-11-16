@@ -24,7 +24,7 @@ namespace cmarrt {
 template <class GraphMove, class GraphComm>
 class CMARRT : public Solver<GraphMove, GraphComm> {
  private:
- float p = 0.2; //biasis
+ float p = 20; //biasis in %
  int step = 5; //to define
   class ExplorationTree {
    public:
@@ -43,7 +43,15 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     std::vector<std::shared_ptr<Configuration>> get_vertices() { return *vertices_;};
     std::vector<std::shared_ptr<Configuration>> get_parents() { return parents_;};
 
-    bool has(const std::shared_ptr<Configuration>& config) {
+    int get_index(Configuration c, const std::vector<std::shared_ptr<Configuration>> vect){
+      auto it = std::find(vect.begin(), vect.end(), std::make_shared<Configuration>(c));
+      if (it != vect.end()){
+        return it - vect.begin();
+      }
+      return -1;
+    };
+
+    bool TreeHasConfig(const std::shared_ptr<Configuration>& config) {
       for (auto found : this->explorationtree_) {
         if (config->size() == found->size()) {
           bool foundisconfig = true;
@@ -60,7 +68,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
 
     void extend(tree){
       std::shared_ptr<Configuration> c_rand = pick_rand(p, std::make_shared(tree->goal()));
-      std::shared_ptr<Configuration> c_nearest = nearest(*c_rand, tree->get_vertices());
+      std::shared_ptr<Configuration> c_nearest = nearest(c_rand);
       std::shared_ptr<Configuration> c_new = few_steps(c_rand, c_nearest);
 
       vertices_.push_back(c_new);
@@ -81,13 +89,32 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       
     }
 
-    std::shared_ptr<Configuration> pick_rand(float prob, const Configuration& goal){};
+    std::shared_ptr<Configuration> pick_rand(float prob, const std::shared_ptr<Configuration> goal){
+      srand(time(NULL));
+      int irand = rand()%100;
+      if (irand < prob){
+        //TODO
+      } else {
+        return goal;
+      }
+    };
 
-    std::shared_ptr<Configuration> nearest(const std::shared_ptr<Configuration>& rand, const std::vector<std::shared_ptr<Configuration>>& vertices){};
+    std::shared_ptr<Configuration> nearest(const std::shared_ptr<Configuration>& rand){
+      float mindist = -1;
+      std::shared_ptr<Configuration> c_nearest = std::make_shared<Configuration>();
+      for (auto v: this->get_vertices()){
+        //distance v->rand TODO
+      }
+      return c_nearest;
+    };
 
-    std::shared_ptr<Configuration> few_steps(const std::shared_ptr<Configuration>& rand, const std::shared_ptr<Configuration>& nearest){};
+    std::shared_ptr<Configuration> few_steps(const std::shared_ptr<Configuration>& rand, const std::shared_ptr<Configuration>& nearest){
+      //DFS source = nearest & target = rand
+    };
 
-    std::vector<std::shared_ptr<Configuration>> Neighbors(const std::shared_ptr<Configuration>& config){};
+    std::vector<std::shared_ptr<Configuration>> Neighbors(const std::shared_ptr<Configuration>& config){
+      //
+    };
 
     int Cost(const std::shared_ptr<Configuration>& first, const std::shared_ptr<Configuration>& second){};
 
@@ -106,11 +133,12 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       : Solver<GraphMove, GraphComm>(instance, objective), explorationtree_(instance){};
 
   bool StepCompute() override {
-    if (explorationtree_.has(instance_->goal())) {
-      this->execution_ = ComputePath(explorationtree_, instance_) return true
+    if (explorationtree_.TreeHasConfig(this->instance_->goal())) {
+      this->execution_ = ComputePath(this->explorationtree_, this->instance_);
+      return true;
     }
-    extend(explorationtree_);
-    return false
+    extend(this->explorationtree_);
+    return false;
   }
 };
 
