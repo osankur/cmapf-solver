@@ -162,7 +162,14 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
   std::vector<std::shared_ptr<Configuration>> ComputePath(ExplorationTree tree, Instance instance)
   {
     std::vector<std::shared_ptr<Configuration>> exec;
-
+    Configuration current = instance.goal();
+    exec.insert(exec.begin(), std::make_shared(current));
+    while (not(current==instance.start())){
+      int id = tree.get_index(current, tree.get_vertices());
+      current = tree.get_parents()[id];
+      exec.insert(exec.begin(), std::make_shared(current));
+    }
+    return exec;
   }
 
  public:
