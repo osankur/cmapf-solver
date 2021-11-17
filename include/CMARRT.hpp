@@ -42,6 +42,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
 
     std::vector<std::shared_ptr<Configuration>> get_vertices() { return *vertices_;};
     std::vector<std::shared_ptr<Configuration>> get_parents() { return parents_;};
+    const Instance<GraphMove, GraphComm>& instance() {return instance_;};
 
     int get_index(Configuration c, const std::vector<std::shared_ptr<Configuration>> vect){
       auto it = std::find(vect.begin(), vect.end(), std::make_shared<Configuration>(c));
@@ -72,20 +73,21 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       std::shared_ptr<Configuration> c_new = few_steps(c_rand, c_nearest);
 
       vertices_.push_back(c_new);
-      std::shared_ptr<Configuration> c_min = c_nearest;
-      int costmin = Cost(sources, c_min) + Cost(c_min, c_new);
-      std::vector<std::shared_ptr<Configuration>> Neighborhood = Neighbors(c_new);
+      parents_.push_back(c_nearest);
+      // std::shared_ptr<Configuration> c_min = c_nearest;
+      // int costmin = Cost(sources, c_min) + Cost(c_min, c_new);
+      // std::vector<std::shared_ptr<Configuration>> Neighborhood = Neighbors(c_new);
 
-      for (auto cnear : Neighborhood){
-        int cost = Cost(sources, cnear) + Cost(cnear, cnew);
-        if (cost < costmin){
-          c_min = cnear;
-          costmin = cost;
-        }
-      }
-      parents_.push_back(c_min); //parent of c_new
+      // for (auto cnear : Neighborhood){
+      //   int cost = Cost(sources, cnear) + Cost(cnear, cnew);
+      //   if (cost < costmin){
+      //     c_min = cnear;
+      //     costmin = cost;
+      //   }
+      // }
+      // parents_.push_back(c_min); //parent of c_new
 
-      replaceParent(Neighborhood, c_min, c_new);
+      // replaceParent(Neighborhood, c_min, c_new);
       
     }
 
@@ -94,16 +96,50 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       int irand = rand()%100;
       if (irand < prob){
         //TODO
+        //Tirer (entier) noeud de Gc au hasard pour 1er agent
+        size_t nb_nodes = this->instance_->topo_graph_->communication_graph_->node_count();
+        srand(time(NULL));
+        Node first = (uint64_t) rand()%nb_nodes - 1;
+        std::vector<Node> agents;
+        agents.push_back(first);
+        //Tirer dans les voisins (dans Gc) la position du 2e, etc...
+        for (size_t agt = 1; agt < this->instance_->nb_agents(); agt++){
+          next = this->instance()->graph()->communication()->get_neighbors(agents[agt-1]);
+          srand(time(NULL));
+          int nextagt = rand()% next.size();
+          agents.push_back(next[nextagt]);
+        }
+        std::shared_ptr<Configuration> c_rand = std::make_shared<Configuration>();
+        for (size_t agt = 0; agt < agents.size(); agt++) c_rand->PushBack(agents[agt]);
+        return c_rand;
       } else {
         return goal;
       }
     };
 
+    std::pair<int, int> barycenter(const std::shared_ptr<Configuration>& config){
+      int nb_agents = config->size();
+      int x, y = 0,0;
+      for (size_t agt = 0; agt < config.size(); agt++){
+        std::pair<int, int> pos_agt = this->instance()->graph()->communication->get_position(config[agt])
+        x += pos_agt.first;
+        y += pos_agt.second;
+      }
+      return std::make_pair((int) x/nb_agents, (int) y/nb_agents)
+    }
+
     std::shared_ptr<Configuration> nearest(const std::shared_ptr<Configuration>& rand){
-      float mindist = -1;
+      int mindist = -1;
       std::shared_ptr<Configuration> c_nearest = std::make_shared<Configuration>();
+      std::pair<int, int> rand_pos = barycenter(rand);
       for (auto v: this->get_vertices()){
         //distance v->rand TODO
+        std::pair<int, int> v_pos = barycenter(v);
+        int dist = (abs(v_pos.first - rand_pos.first) + abs(v_pos.second - rand_pos.second));
+        if (dist < mindist || mindist == -1){
+          mindist = dist;
+          c_nearest = v;
+        }
       }
       return c_nearest;
     };
@@ -126,6 +162,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
   std::vector<std::shared_ptr<Configuration>> ComputePath(ExplorationTree tree, Instance instance)
   {
     std::vector<std::shared_ptr<Configuration>> exec;
+
   }
 
  public:
