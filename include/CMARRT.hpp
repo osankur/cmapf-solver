@@ -155,7 +155,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       smallInstance.set_goal(*nearest.get());
       coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance, this->objective_);
       for (int i = 0; i< 10; i++){
-        if (!dfs_solver.StepCompute()){
+        if (dfs_solver.smallStepCompute()){
           return std::make_shared<Configuration>(dfs_solver.execution().get_configuration(dfs_solver.execution().size()));
         }
       }

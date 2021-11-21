@@ -193,6 +193,28 @@ class DFS : public Solver<GraphMove, GraphComm> {
       exec_.push_back(config);
     return false;
   }
+
+  bool smallStepCompute() {
+    if (exec_.empty()) return true;
+    if (IsGoal(exec_.back())) {
+      for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++) {
+        std::shared_ptr<Path> p_agt = std::make_shared<Path>();
+        for (size_t t = 0; t < exec_.size(); t++) {
+          p_agt->PushBack(exec_[t]->at(agt));
+        }
+        this->execution_.set_path(agt, p_agt);
+      }
+      return true;
+    }
+
+    std::shared_ptr<Configuration> config = FindBestChild(exec_.back());
+    closed_.insert(config);
+    if (config == nullptr)
+      return true;
+    else
+      exec_.push_back(config);
+    return false;
+  }
 };
 
 }  // namespace coupled
