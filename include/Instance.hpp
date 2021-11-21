@@ -35,6 +35,8 @@ class Instance {
   Configuration& start() { return start_; }
   Configuration& goal() { return goal_; }
   void set_nb_agents(size_t nb) { nb_agents_ = nb; }
+  void set_start(const Configuration newstart) { start_ = newstart;}
+  void set_goal(const Configuration newgoal) { goal_ = newgoal;}
 
   const TopologicalGraph<GraphMove, GraphComm>& graph() const { return topo_graph_; }
   const Configuration& start() const { return start_; }

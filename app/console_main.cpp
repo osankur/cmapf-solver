@@ -26,6 +26,7 @@
 #include <MAS.hpp>
 #include <DFS.hpp>
 #include <CoordSolver.hpp>
+#include <CMARRT.hpp>
 #include "AppConfig.h"
 
 using namespace boost::program_options;
@@ -33,7 +34,7 @@ using namespace boost::program_options;
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
-enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS, COORD };
+enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS, COORD, CMARRT };
 enum class ObjectiveEnum : int { SUM = 0, MAX };
 
 int main(int argc, const char* argv[]) {
@@ -142,6 +143,9 @@ int main(int argc, const char* argv[]) {
                                   *objective.get(), 
                                   vm["window"].as<int>(),
                                   coordinated::collision_mode_t::IGNORE_COLLISIONS);
+        break;
+      case Algorithm::CMARRT:
+        solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
         break;
     }
 
