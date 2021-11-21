@@ -55,11 +55,11 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     };
 
     bool TreeHasConfig(const Configuration& config) {
-      for (auto found : this->explorationtree_) {
-        if (config->size() == found->size()) {
+      for (auto found : this->get_vertices()) {
+        if (config.size() == found->size()) {
           bool foundisconfig = true;
-          for (size_t agt = 0; agt < config->size(); agt++) {
-            if (config->at(agt) != found->at(agt)) foundisconfig = false;
+          for (size_t agt = 0; agt < config.size(); agt++) {
+            if (config.at(agt) != found->at(agt)) foundisconfig = false;
           }
           if (foundisconfig) return true;
         }
@@ -67,7 +67,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     }
 
     void extend(ExplorationTree tree){
-      std::shared_ptr<Configuration> c_rand = pick_rand(p, std::make_shared(tree->goal()));
+      std::shared_ptr<Configuration> c_rand = pick_rand(20, std::make_shared<Configuration>(tree.instance().goal()));
       std::shared_ptr<Configuration> c_nearest = nearest(c_rand);
       std::shared_ptr<Configuration> c_new = few_steps(c_rand, c_nearest);
 
@@ -96,17 +96,21 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       if (irand < prob){
         //TODO
         //Tirer (entier) noeud de Gc au hasard pour 1er agent
-        size_t nb_nodes = this->instance_->topo_graph_->communication_graph_->node_count();
+        size_t nb_nodes = this->instance().graph().communication().node_count();
         srand(time(NULL));
         Node first = (uint64_t) rand()%nb_nodes - 1;
         std::vector<Node> agents;
         agents.push_back(first);
         //Tirer dans les voisins (dans Gc) la position du 2e, etc...
-        for (size_t agt = 1; agt < this->instance_->nb_agents(); agt++){
-          auto next = this->instance()->graph()->communication()->get_neighbors(agents[agt-1]);
+        for (size_t agt = 1; agt < this->instance().nb_agents(); agt++){
+          auto next = this->instance().graph().communication().get_neighbors(agents[agt-1]);
           srand(time(NULL));
           int nextagt = rand()% next.size();
-          agents.push_back(next[nextagt]);
+          auto it = next.begin();
+          for (int i = 0; i< nextagt; i++){
+            it++;
+          }
+          agents.push_back(*it);
         }
         std::shared_ptr<Configuration> c_rand = std::make_shared<Configuration>();
         for (size_t agt = 0; agt < agents.size(); agt++) c_rand->PushBack(agents[agt]);
@@ -121,7 +125,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       int x = 0;
       int y = 0;
       for (size_t agt = 0; agt < (*config.get()).size(); agt++){
-        std::pair<int, int> pos_agt = this->instance()->graph()->communication->get_position((*config.get())[agt]);
+        std::pair<int, int> pos_agt = this->instance().graph().communication().get_position((*config.get())[agt]);
         x += pos_agt.first;
         y += pos_agt.second;
       }
@@ -149,13 +153,13 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       Instance smallInstance = this->instance();
       smallInstance.set_start(*rand.get());
       smallInstance.set_goal(*nearest.get());
-      auto dfs_solver = DFS(smallInstance, this->objective_);
-      for (int i = 0; i< step; i++){
+      coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance, this->objective_);
+      for (int i = 0; i< 10; i++){
         if (!dfs_solver.StepCompute()){
-          return dfs_solver.execution_.get_configuration(dfs_solver.execution_.size());
+          return std::make_shared<Configuration>(dfs_solver.execution().get_configuration(dfs_solver.execution().size()));
         }
       }
-      return dfs_solver.execution_.get_configuration(dfs_solver.execution_.size());
+      return std::make_shared<Configuration>(dfs_solver.execution().get_configuration(dfs_solver.execution().size()));
     };
 
     std::vector<std::shared_ptr<Configuration>> Neighbors(const std::shared_ptr<Configuration>& config){
@@ -176,7 +180,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     exec.insert(exec.begin(), std::make_shared<Configuration>(current));
     while (not(current==instance.start())){
       int id = tree.get_index(current, tree.get_vertices());
-      current = tree.get_parents()[id];
+      current = *(tree.get_parents()[id]).get();
       exec.insert(exec.begin(), std::make_shared<Configuration>(current));
     }
     return exec;
@@ -188,7 +192,14 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
 
   bool StepCompute() override {
     if (explorationtree_.TreeHasConfig(this->instance().goal())) {
-      this->execution_ = ComputePath(this->explorationtree_, this->instance_);
+      auto exec = ComputePath(this->explorationtree_, this->instance_);
+      for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++) {
+        std::shared_ptr<Path> p_agt = std::make_shared<Path>();
+        for (size_t t = 0; t < exec.size(); t++) {
+          p_agt->PushBack(exec[t]->at(agt));
+        }
+        this->execution_.set_path(agt, p_agt);
+      }
       return true;
     }
     explorationtree_.extend(this->explorationtree_);
