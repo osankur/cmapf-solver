@@ -74,15 +74,14 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       }
     };
 
-    std::pair<int, int> barycenter(
-        const Configuration& config) {
+    std::pair<int, int> barycenter(const Configuration& config) {
       int nb_agents = config.size();
       int x = 0;
       int y = 0;
-      for (size_t agt = 0; agt < (config.size(); agt++) {
+      for (size_t agt = 0; agt < config.size(); agt++) {
         std::pair<int, int> pos_agt =
             this->instance().graph().communication().get_position(
-                (config[agt]);
+                config[agt]);
         x += pos_agt.first;
         y += pos_agt.second;
       }
@@ -97,7 +96,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       std::pair<int, int> rand_pos = barycenter(rand);
       for (auto v : this->get_vertices()) {
         // distance v->rand
-        std::pair<int, int> v_pos = barycenter(v);
+        std::pair<int, int> v_pos = barycenter(*v);
         int dist = (abs(v_pos.first - rand_pos.first) +
                     abs(v_pos.second - rand_pos.second));
         if (dist < mindist || mindist == -1) {
@@ -108,13 +107,14 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       return c_nearest;
     };
 
-    std::shared_ptr<Configuration> move_towards(
-        const Configuration& rand,
-        const Configuration& nearest) {
+    std::shared_ptr<Configuration> move_towards(const Configuration& rand,
+                                                const Configuration& nearest) {
       // DFS source = nearest & target = rand
       // Instance smallInstance(this->instance().graph(), rand, nearest); //copy
-      // smallInstance.set_start(*rand.get());
-      // smallInstance.set_goal(*nearest.get());
+
+      Instance smallInstance = this->instance();
+      smallInstance.set_start(rand);
+      smallInstance.set_goal(nearest);
       coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
                                                     this->objective_);
       for (int i = 0; i < 10; i++) {
@@ -176,8 +176,8 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     }
 
     void extend(ExplorationTree& tree) {
-      std::shared_ptr<Configuration> c_rand = pick_state_at_random(
-          20, tree.instance().goal());
+      std::shared_ptr<Configuration> c_rand =
+          pick_state_at_random(20, tree.instance().goal());
       std::shared_ptr<Configuration> c_nearest =
           get_nearest_configuration(*c_rand);
       std::shared_ptr<Configuration> c_new = move_towards(*c_rand, *c_nearest);
@@ -202,23 +202,22 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     }
 
     std::vector<std::shared_ptr<Configuration>> ComputePath(
-      ExplorationTree& tree,
-      const Instance<GraphMove, GraphComm>& instance) {
-    std::vector<std::shared_ptr<Configuration>> exec;
-    std::shared_ptr<Configuration> current =
-        std::make_shared<Configuration>(instance.goal());
-    exec.insert(exec.begin(), current);
-    while (not(*current == instance.start())) {
-      int id = tree.get_index(*current, tree.get_vertices());
-      current = tree.get_parents()[id];
+        ExplorationTree& tree,
+        const Instance<GraphMove, GraphComm>& instance) {
+      std::vector<std::shared_ptr<Configuration>> exec;
+      std::shared_ptr<Configuration> current =
+          std::make_shared<Configuration>(instance.goal());
       exec.insert(exec.begin(), current);
-    }
-    return exec;
-  };
+      while (not(*current == instance.start())) {
+        int id = tree.get_index(*current, tree.get_vertices());
+        current = tree.get_parents()[id];
+        exec.insert(exec.begin(), current);
+      }
+      return exec;
+    };
   };
 
   ExplorationTree explorationtree_;
-
 
  public:
   CMARRT(const Instance<GraphMove, GraphComm>& instance,
@@ -228,7 +227,8 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
 
   bool StepCompute() override {
     if (explorationtree_.TreeHasConfig(this->instance().goal())) {
-      auto exec = explorationtree_.ComputePath(this->explorationtree_, this->instance_);
+      auto exec =
+          explorationtree_.ComputePath(this->explorationtree_, this->instance_);
       for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++) {
         std::shared_ptr<Path> p_agt = std::make_shared<Path>();
         for (size_t t = 0; t < exec.size(); t++) {
