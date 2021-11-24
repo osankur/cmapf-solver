@@ -27,7 +27,8 @@ class Instance {
   Instance() : topo_graph_(), start_(), goal_(), nb_agents_(0) {}
   Instance(const TopologicalGraph<GraphMove,GraphComm> & topo_graph,
            const Configuration & start,
-           const Configuration & goal);
+           const Configuration & goal) : topo_graph_(topo_graph), start_(start), goal_(goal), nb_agents_(start.size())
+           {}
   ~Instance() = default;
   Instance(const Instance& other) = default;
   Instance(Instance&& other) = default;
