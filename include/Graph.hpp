@@ -11,7 +11,7 @@
  * all copies or substantial portions of the Software.
  */
 #pragma once
-
+#include <memory>
 #include <vector>
 #include <tuple>
 #include <utility>
@@ -27,10 +27,15 @@ class Graph {
 
 class ExplicitGraph : public Graph {
  private:
-  std::vector<std::unordered_set<Node>> adjacency_;
-  std::vector<std::pair<int, int>> positions_;
+  std::shared_ptr<std::vector<std::unordered_set<Node>>> adjacency_;
+  std::shared_ptr<std::vector<std::pair<int, int>>> positions_;
 
  public:
+  ExplicitGraph(){
+    this->adjacency_ = std::make_shared<std::vector<std::unordered_set<Node>>>();
+    this->positions_ = std::make_shared<std::vector<std::pair<int, int>>>();
+  }
+  ExplicitGraph(const ExplicitGraph &) = default;
   void AddNode(Node);
   void AddEdge(Node, Node);
   void AddPosition(Node, int x, int y);

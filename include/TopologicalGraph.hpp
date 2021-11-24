@@ -22,6 +22,8 @@ class TopologicalGraph {
   GraphComm communication_graph_;
 
  public:
+  TopologicalGraph() = default;
+  TopologicalGraph(const TopologicalGraph&) = default;
   GraphMove& movement() { return movement_graph_; }
 
   GraphComm& communication() { return communication_graph_; }
