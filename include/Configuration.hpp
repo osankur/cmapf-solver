@@ -28,7 +28,7 @@ class Configuration {
   // Operators
   Node& operator[](Agent);
   const Node& operator[](Agent) const;
-  bool operator==(const Configuration &);
+  bool operator==(const Configuration &) const;
 
   // Properties
   size_t size() const;
