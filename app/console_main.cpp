@@ -145,6 +145,7 @@ int main(int argc, const char* argv[]) {
                                   coordinated::collision_mode_t::IGNORE_COLLISIONS);
         break;
       case Algorithm::CMARRT:
+        srand(time(NULL));
         solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
         break;
     }

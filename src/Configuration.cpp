@@ -29,7 +29,7 @@ const Node& Configuration::at(Agent a) const { return config_[static_cast<unsign
 
 size_t Configuration::size() const { return config_.size(); }
 
-bool Configuration::operator==(const Configuration & c){
+bool Configuration::operator==(const Configuration & c) const{
   int n = this->size();
   if (n != c.size()) return false;
   for(int i = 0; i < n; i++){
