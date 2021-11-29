@@ -12,13 +12,28 @@
  */
 #include <iostream>
 #include <InstanceLoader.hpp>
+#include <fstream>
+#include <string>
 
 namespace instance {
+
+
+inline static bool file_exists (const std::string & name) {
+    std::ifstream f(name.c_str());
+    return f.good();
+}
 
 XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath, const std::string& location)
     : file_path_(filepath), graph_folder_(location) {}
 
 void XMLInstanceLoader::Load() {
+  if (!file_exists(file_path_)) 
+  {
+    throw std::runtime_error("File " + std::string(file_path_) + " not found.");
+  } else {
+    std::cout << "Accessing: " << file_path_ << "\n"; 
+    std::cout.flush();
+  }
   std::ifstream infile(file_path_);
 
   std::string line;
@@ -38,6 +53,13 @@ void XMLInstanceLoader::Load() {
   char* movFile = sMovFile.data();
   char* comFile = sComFile.data();
 
+  if (!file_exists(std::string(movFile))) 
+  {
+    throw std::runtime_error("File " + std::string(movFile) + " not found.");
+  }
+  if(!file_exists(std::string(comFile))){
+    throw std::runtime_error("File " + std::string(comFile) + " not found.");
+  }
   rapidxml::file<> xmlFile(movFile);
   rapidxml::xml_document<> movDoc;
   movDoc.parse<0>(xmlFile.data());
