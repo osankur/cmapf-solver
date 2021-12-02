@@ -173,7 +173,7 @@ class DFS : public Solver<GraphMove, GraphComm> {
   }
 
 /**
- * @brief //TODO:
+ * @brief execute one step of computation of DFS from [Tateo et al.]
  * 
  * @return true 
  * @return false 
