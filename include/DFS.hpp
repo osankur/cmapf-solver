@@ -172,6 +172,12 @@ class DFS : public Solver<GraphMove, GraphComm> {
     closed_.insert(start);
   }
 
+/**
+ * @brief //TODO:
+ * 
+ * @return true 
+ * @return false 
+ */
   bool StepCompute() override {
     if (exec_.empty()) return true;
     if (IsGoal(exec_.back())) {
@@ -194,6 +200,12 @@ class DFS : public Solver<GraphMove, GraphComm> {
     return false;
   }
 
+/**
+ * @brief //TODO:
+ * 
+ * @return true 
+ * @return false 
+ */
   bool smallStepCompute() {
     if (exec_.empty()) return true;
     if (IsGoal(exec_.back())) {

@@ -33,8 +33,8 @@ namespace cmarrt
     class ExplorationTree
     {
     private:
-      float p = 2;   // biasis in %
-      int step = 50; // to define
+      float p = 2;   // bias in % to use the target configuration for the random one
+      int step = 50; // TODO: to define
       float neardist = 10;
 
       std::vector<std::shared_ptr<Configuration>> vertices_;
@@ -322,7 +322,7 @@ namespace cmarrt
 
 
 /**
- * @brief //TODO: not very clear! ;)
+ * @brief //TODO: not very clear! ;) Is it a real path or a path in the tree? 
  * 
  * @param start 
  * @param goal 
