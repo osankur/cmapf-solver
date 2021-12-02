@@ -136,8 +136,7 @@ namespace cmarrt
         return std::make_pair((int)x / nb_agents, (int)y / nb_agents);
       }
 
-
-/**
+      /**
  * @brief Get the nearest configuration in the tree in the direction given
  * by the configuration rand. We use the barycenter for evaluating the 
  * distance from an existing configuration to rand.
@@ -167,8 +166,7 @@ namespace cmarrt
         return c_nearest;
       };
 
-
-/**
+      /**
  * @brief returns the configuration from nearest in the direction o
  * TODO: POTENTIAL ERROR! it should start from nearest and not rand!
  * TODO: rename "nearest" in "source"
@@ -199,6 +197,12 @@ namespace cmarrt
                 dfs_solver.execution().size()));
       };
 
+      /**
+ * @brief compute the neighbors of the configuration in the tree
+ * 
+ * @param config 
+ * @return std::vector<std::shared_ptr<Configuration>> 
+ */
       std::vector<std::shared_ptr<Configuration>> Neighbors(const Configuration &config)
       {
         std::vector<std::shared_ptr<Configuration>> neighbors;
@@ -216,6 +220,14 @@ namespace cmarrt
         return neighbors;
       };
 
+
+/**
+ * @brief //TODO: explain the mathematical definition of the cost
+ * 
+ * @param first 
+ * @param second 
+ * @return int 
+ */
       int Cost(const Configuration &first, const Configuration &second)
       {
         std::vector<std::shared_ptr<Configuration>> smallExec =
@@ -238,6 +250,13 @@ namespace cmarrt
       };
 
     public:
+    /**
+     * @brief Construct a new Exploration Tree that initially contains the starting configuration of
+     * the instance
+     * 
+     * @param instance 
+     * @param objective 
+     */
       explicit ExplorationTree(const Instance<GraphMove, GraphComm> &instance,
                                const Objective &objective)
           : instance_(instance), objective_(objective), vertices_(), parents_()
@@ -301,6 +320,14 @@ namespace cmarrt
         // replaceParent(Neighborhood, *c_min, *c_new);
       }
 
+
+/**
+ * @brief //TODO: not very clear! ;)
+ * 
+ * @param start 
+ * @param goal 
+ * @return std::vector<std::shared_ptr<Configuration>> 
+ */
       std::vector<std::shared_ptr<Configuration>> ComputePath(
           const Configuration &start,
           const Configuration &goal)
