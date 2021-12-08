@@ -84,21 +84,24 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         // TODO
         // Tirer (entier) noeud de Gc au hasard pour 1er agent
         size_t nb_nodes = this->instance().graph().communication().node_count();
-        Node first = (uint64_t)rand() % nb_nodes - 1;
-        Configuration agents;
-        agents.PushBack(first);
+        Node first = (uint64_t)rand() % (nb_nodes - 1);
+        Configuration configuration;
+        configuration.PushBack(first);
         // Tirer dans les voisins (dans Gc) la position du 2e, etc...
         for (size_t agt = 1; agt < this->instance().nb_agents(); agt++) {
-          auto next = this->instance().graph().communication().get_neighbors(
-              agents.at(agt - 1));
-          int nextagt = rand() % next.size();
-          auto it = next.begin();
-          for (int i = 0; i < nextagt; i++) {
-            it++;
-          }
-          agents.PushBack(*it);
+          auto neighbors = this->instance().graph().communication().get_neighbors(
+              configuration.at(agt - 1));
+          auto next = std::vector<Node>(neighbors.begin(), neighbors.end());
+          auto size = next.size();
+          std::cout << "size for agt " << agt << ":" << size;
+          int random = rand(); 
+          std::cout << "rand :" << random;
+          std::cout.flush();
+          auto nextagt = random % (size-1);
+          configuration.PushBack(next.at(nextagt));
+          assert(next.at(nextagt) < this->instance().graph().movement().node_count());
         }
-        return (std::make_shared<Configuration>(agents));
+        return (std::make_shared<Configuration>(configuration));
       } else {
         return std::make_shared<Configuration>(goal);
       }
