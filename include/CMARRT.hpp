@@ -156,11 +156,12 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     };
 
     /**
-     * @brief returns the configuration from nearest in the direction o
-     * TODO: POTENTIAL ERROR! it should start from nearest and not rand!
-     * TODO: rename "nearest" in "source"
-     * @param rand
-     * @param nearest
+     * @brief returns configuration from source in the direction of target
+     * that configuration is reachable from source
+     * if we are lucky, that returned configuration is target
+     *       
+     * @param source
+     * @param target
      * @return std::shared_ptr<Configuration>
      */
     std::shared_ptr<Configuration> move_towards(const Configuration& source,
@@ -168,6 +169,8 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       Instance smallInstance(this->instance().graph(), source, target);
       coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
                                                     this->objective_);
+
+      //performs this->step steps of DFS  
       for (int i = 0; i < this->step; i++) {
         if (dfs_solver.smallStepCompute()) {
           return std::make_shared<Configuration>(
@@ -177,7 +180,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       }
       return std::make_shared<Configuration>(
           dfs_solver.execution().get_configuration(
-              dfs_solver.execution().size()));
+              dfs_solver.execution().size())); //case when the execution does not necessary stop with target
     };
 
     /**
