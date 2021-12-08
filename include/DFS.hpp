@@ -238,7 +238,7 @@ namespace coupled
     }
 
     /**
-     * @brief compute an execution that goes towards the goal (but not necessary reaching the goal)
+     * @brief compute one step of computation to produce an execution that goes towards the goal (but not necessary reaching the goal)
      *
      * @return true if it has produced a execution (not necessary reaching the goal)
      * @return false if the work is not finished
