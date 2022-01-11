@@ -32,9 +32,9 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
   class ExplorationTree {
    private:
     float p =
-        2;  // bias in % to use the target configuration for the random one
-    int step = 10;  // TODO: to define
-    float neardist = 10;
+        0;  // bias in % to use the target configuration for the random one
+    int step = 1;  // TODO: to define
+    float neardist = 1;
 
     std::vector<std::shared_ptr<Configuration>> vertices_;
     std::vector<std::shared_ptr<Configuration>> parents_;  // for edges
@@ -72,7 +72,6 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     /**
      * @brief returns the random configuration (used then to compute the nearest
      * configuration)
-     * TODO: rename in pick_config_at_random
      *
      * @param goal
      * @return std::shared_ptr<Configuration>
@@ -81,13 +80,12 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         const Configuration& goal) {
       int irand = rand() % 100;
       if (irand < this->p) {
-        // TODO
-        // Tirer (entier) noeud de Gc au hasard pour 1er agent
+        // Pick a node of Gc for the 1st agent
         size_t nb_nodes = this->instance().graph().communication().node_count();
         Node first = (uint64_t)rand() % (nb_nodes - 1);
         Configuration configuration;
         configuration.PushBack(first);
-        // Tirer dans les voisins (dans Gc) la position du 2e, etc...
+        // Pick in the Gc neighbors the position for the 2nd, etc
         for (size_t agt = 1; agt < this->instance().nb_agents(); agt++) {
           auto neighbors = this->instance().graph().communication().get_neighbors(
               configuration.at(agt - 1));
@@ -171,16 +169,22 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
                                                     this->objective_);
 
       //performs this->step steps of DFS  
-      for (int i = 0; i < this->step; i++) {
-        if (dfs_solver.smallStepCompute()) {
-          return std::make_shared<Configuration>(
-              dfs_solver.execution().get_configuration(
-                  dfs_solver.execution().size()));
-        }
-      }
-      return std::make_shared<Configuration>(
-          dfs_solver.execution().get_configuration(
-              dfs_solver.execution().size())); //case when the execution does not necessary stop with target
+      // for (int i = 0; i < this->step; i++) {
+        // if (dfs_solver.StepCompute()) {
+        //   return 
+        //       dfs_solver.get_exec().at(
+        //           dfs_solver.get_exec().size());
+      //   }
+      // }
+      //assert(dfs_solver.get_exec().size()>0); //fail
+      auto cnew = std::make_shared<Configuration>(dfs_solver.smallStepCompute(step));
+      assert((*cnew).size()>0);
+      return cnew;
+      // return 
+      //     dfs_solver.get_exec().at(
+      //         dfs_solver.get_exec().size()); //case when the execution does not necessary stop with target
+
+
     };
 
     /**
@@ -242,10 +246,15 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     explicit ExplorationTree(const Instance<GraphMove, GraphComm>& instance,
                              const Objective& objective)
         : instance_(instance), objective_(objective), vertices_(), parents_() {
+      std::cout << "Exploration Tree built\n";
       std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
       for (size_t agt = 0; agt < instance.start().size(); agt++)
         start->PushBack(instance.start().at(agt));
       vertices_.push_back(start);
+      // step and neardist 
+      // int size = instance.graph().movement().node_count();
+      // step = size / 10;
+      // neardist = size / 50;
     };
 
     std::vector<std::shared_ptr<Configuration>>& get_vertices() {
@@ -254,6 +263,13 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     std::vector<std::shared_ptr<Configuration>>& get_parents() {
       return parents_;
     };
+
+    void print_vertices() {
+      for (auto v : this->get_vertices()){
+        std::cout << *v << ". ";
+      }
+    }
+
     const Instance<GraphMove, GraphComm>& instance() { return instance_; };
 
     bool TreeHasConfig(const Configuration& config) {
@@ -261,23 +277,27 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         if (config == *found) {
           return true;
         }
-        return false;
       }
+      return false;
     }
 
     void extend() {
+      std::cout << "Tree has ";
+      this->print_vertices();
       std::shared_ptr<Configuration> c_rand =
           pick_config_at_random(this->instance().goal());
+      std::cout << "Crand is " << (*c_rand);
       std::shared_ptr<Configuration> c_nearest =
           get_nearest_configuration(*c_rand);
+      std::cout << "Cnearest is " << *c_nearest;
       std::shared_ptr<Configuration> c_new = move_towards(*c_nearest, *c_rand);
       auto source = this->instance().start();
       if (c_new->size() == 0)
         return;
-      if (not(TreeHasConfig(*c_new))) {
+      if (not(this->TreeHasConfig(*c_new))) {
         this->vertices_.push_back(c_new);
         this->parents_.push_back(c_nearest);
-        std::cout << *c_new << "\n";
+        std::cout << "Cnew added: "<< *c_new << "\n";
         std::cout.flush();
       }
       // std::shared_ptr<Configuration> c_min = c_nearest;
@@ -314,8 +334,9 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       while (not(*current == start)) {
         int id = this->index_of_configuration(*current);
         auto parents = this->get_parents();
-        assert(id < parents.size());
-        current = this->get_parents().at(id);
+        std::cout.flush();
+        assert(id <= parents.size());
+        current = this->get_parents().at(id-1);
         exec.insert(exec.begin(), current);
       }
       return exec;
@@ -331,7 +352,9 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         explorationtree_(instance, objective){};
 
   bool StepCompute() override {
+    std::cout << "\nStep \n";
     if (explorationtree_.TreeHasConfig(this->instance().goal())) {
+      std::cout << "finished\n";
       auto exec = explorationtree_.ComputeExecution(this->instance().start(),
                                                     this->instance().goal());
       for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++) {
