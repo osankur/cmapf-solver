@@ -264,8 +264,8 @@ class DFS : public Solver<GraphMove, GraphComm> {
         return *exec_.back();
       else
         exec_.push_back(config);
-      return *exec_.back();
     }
+    return *exec_.back();
   }
 };
 

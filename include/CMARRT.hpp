@@ -58,17 +58,6 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       return -1;
     };
 
-    // int get_index(Configuration& c,
-    //               const std::vector<std::shared_ptr<Configuration>>&
-    //                   vect) {  // remplacée par les deux méthodes index_of...
-    //   auto it = std::find(vect.begin(), vect.end(),
-    //                       std::make_shared<Configuration>(c));  // refaire
-    //   if (it != vect.end()) {
-    //     return it - vect.begin();
-    //   }
-    //   return -1;
-    // };
-
     /**
      * @brief returns the random configuration (used then to compute the nearest
      * configuration)
@@ -87,17 +76,19 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         configuration.PushBack(first);
         // Pick in the Gc neighbors the position for the 2nd, etc
         for (size_t agt = 1; agt < this->instance().nb_agents(); agt++) {
-          auto neighbors = this->instance().graph().communication().get_neighbors(
-              configuration.at(agt - 1));
+          auto neighbors =
+              this->instance().graph().communication().get_neighbors(
+                  configuration.at(agt - 1));
           auto next = std::vector<Node>(neighbors.begin(), neighbors.end());
           auto size = next.size();
           std::cout << "size for agt " << agt << ":" << size;
-          int random = rand(); 
+          int random = rand();
           std::cout << "rand :" << random;
           std::cout.flush();
-          auto nextagt = random % (size-1);
+          auto nextagt = random % (size - 1);
           configuration.PushBack(next.at(nextagt));
-          assert(next.at(nextagt) < this->instance().graph().movement().node_count());
+          assert(next.at(nextagt) <
+                 this->instance().graph().movement().node_count());
         }
         return (std::make_shared<Configuration>(configuration));
       } else {
@@ -157,7 +148,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
      * @brief returns configuration from source in the direction of target
      * that configuration is reachable from source
      * if we are lucky, that returned configuration is target
-     *       
+     *
      * @param source
      * @param target
      * @return std::shared_ptr<Configuration>
@@ -168,23 +159,10 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
                                                     this->objective_);
 
-      //performs this->step steps of DFS  
-      // for (int i = 0; i < this->step; i++) {
-        // if (dfs_solver.StepCompute()) {
-        //   return 
-        //       dfs_solver.get_exec().at(
-        //           dfs_solver.get_exec().size());
-      //   }
-      // }
-      //assert(dfs_solver.get_exec().size()>0); //fail
-      auto cnew = std::make_shared<Configuration>(dfs_solver.smallStepCompute(step));
-      assert((*cnew).size()>0);
+      auto cnew =
+          std::make_shared<Configuration>(dfs_solver.smallStepCompute(step));
+      assert((*cnew).size() > 0);
       return cnew;
-      // return 
-      //     dfs_solver.get_exec().at(
-      //         dfs_solver.get_exec().size()); //case when the execution does not necessary stop with target
-
-
     };
 
     /**
@@ -216,12 +194,21 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
      * @return int
      */
     int Cost(const Configuration& first, const Configuration& second) {
-      std::vector<std::shared_ptr<Configuration>> smallExec =
-          ComputeExecution(*this, first, second);
+      Instance smallInstance(this->instance().graph(), first, second);
+      coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
+                                                    this->objective_);
+      Execution smallExec = dfs_solver.Compute();
       return smallExec.size();
     };
 
-    void replaceParent(
+    /**
+     * @brief replace the parent of a vertex by one providing a shorter path
+     *
+     * @param Neighborhood
+     * @param cmin
+     * @param cnew
+     */
+    void replaceParent(  // TODO : test this
         const std::vector<std::shared_ptr<Configuration>>& Neighborhood,
         const Configuration& cmin,
         const Configuration& cnew) {
@@ -229,11 +216,35 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         if (not(cmin == *c) &
             Cost(this->instance_.start(), *c) >
                 Cost(this->instance_.start(), cnew) + Cost(cnew, *c)) {
+          std::cout << "here\n";
           this->parents_.at(index_of_configuration(*c)) =
               std::make_shared<Configuration>(cnew);
         }
       }
     };
+
+    /**
+     * @brief compute the path between two vertices for the final execution
+     *
+     * @param first
+     * @param second
+     * @return smallExec
+     */
+    std::vector<std::shared_ptr<Configuration>> computeSmallPath(
+        const Configuration& first,
+        const Configuration& second) {
+      Instance smallInstance(this->instance().graph(), first, second);
+      coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
+                                                    this->objective_);
+      Execution exec(dfs_solver.Compute());
+      std::vector<std::shared_ptr<Configuration>> smallExec;
+      std::cout << "\nExecution " << exec;
+      for (int i = 1; i < exec.max_path() - 1; i++) {
+        smallExec.push_back(
+            std::make_shared<Configuration>(exec.get_configuration(i)));
+      }
+      return smallExec;
+    }
 
    public:
     /**
@@ -246,15 +257,16 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     explicit ExplorationTree(const Instance<GraphMove, GraphComm>& instance,
                              const Objective& objective)
         : instance_(instance), objective_(objective), vertices_(), parents_() {
-      std::cout << "Exploration Tree built\n";
+      std::cout << "Exploration tree built\n";
       std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
       for (size_t agt = 0; agt < instance.start().size(); agt++)
         start->PushBack(instance.start().at(agt));
       vertices_.push_back(start);
-      // step and neardist 
-      // int size = instance.graph().movement().node_count();
-      // step = size / 10;
-      // neardist = size / 50;
+      // step and neardist
+      int size = instance.graph().movement().node_count();
+      step = size / 30;
+      neardist = size / 50;
+      std::cout << "Step is " << step << " and neardist " << neardist << "\n";
     };
 
     std::vector<std::shared_ptr<Configuration>>& get_vertices() {
@@ -265,7 +277,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
     };
 
     void print_vertices() {
-      for (auto v : this->get_vertices()){
+      for (auto v : this->get_vertices()) {
         std::cout << *v << ". ";
       }
     }
@@ -297,24 +309,26 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       if (not(this->TreeHasConfig(*c_new))) {
         this->vertices_.push_back(c_new);
         this->parents_.push_back(c_nearest);
-        std::cout << "Cnew added: "<< *c_new << "\n";
+        std::cout << "Cnew added: " << *c_new << "\n";
         std::cout.flush();
       }
-      // std::shared_ptr<Configuration> c_min = c_nearest;
-      // int costmin = Cost(source, *c_min) + Cost(*c_min, *c_new);
-      // std::vector<std::shared_ptr<Configuration>> Neighborhood =
-      // Neighbors(*c_new);
 
-      // for (auto cnear : Neighborhood){
-      //   int cost = Cost(source, *cnear) + Cost(*cnear, *c_new);
-      //   if (cost < costmin){
-      //     c_min = cnear;
-      //     costmin = cost;
-      //   }
-      // }
-      // parents_.push_back(c_min); //parent of c_new
+      //RRT* component
+      std::shared_ptr<Configuration> c_min = c_nearest;
+      int costmin = Cost(source, *c_min) + Cost(*c_min, *c_new);
+      std::vector<std::shared_ptr<Configuration>> Neighborhood =
+          Neighbors(*c_new);
 
-      // replaceParent(Neighborhood, *c_min, *c_new);
+      for (auto cnear : Neighborhood) {
+        int cost = Cost(source, *cnear) + Cost(*cnear, *c_new);
+        if (cost < costmin) {
+          c_min = cnear;
+          costmin = cost;
+        }
+      }
+      parents_.push_back(c_min);  // parent of c_new
+
+      replaceParent(Neighborhood, *c_min, *c_new);
     }
 
     /**
@@ -333,11 +347,15 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
       exec.insert(exec.begin(), current);
       while (not(*current == start)) {
         int id = this->index_of_configuration(*current);
-        auto parents = this->get_parents();
-        std::cout.flush();
+        auto parents = this->get_parents(); //not necessary anymore except for the assert
         assert(id <= parents.size());
-        current = this->get_parents().at(id-1);
-        exec.insert(exec.begin(), current);
+        auto parent = this->get_parents().at(id - 1);
+        auto smallpath = computeSmallPath(*current, *parent);
+        for (int i = 0; i < smallpath.size(); i++) {
+          exec.insert(exec.begin(), smallpath.at(i));
+        }
+        exec.insert(exec.begin(), parent);
+        current = parent;
       }
       return exec;
     };
