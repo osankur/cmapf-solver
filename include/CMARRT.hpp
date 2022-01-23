@@ -32,8 +32,8 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
   class ExplorationTree {
    private:
     float p =
-        0;  // bias in % to use the target configuration for the random one
-    int step = 1;  // TODO: to define
+        95;  // bias in % to use the target configuration for the random one
+    int step = 10;  // TODO: to define
     float neardist = 1;
 
     std::vector<std::shared_ptr<Configuration>> vertices_;
@@ -79,15 +79,12 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
           auto neighbors =
               this->instance().graph().communication().get_neighbors(
                   configuration.at(agt - 1));
-          auto next = std::vector<Node>(neighbors.begin(), neighbors.end());
-          auto size = next.size();
+          auto neighbors_vector = std::vector<Node>(neighbors.begin(), neighbors.end());
+          auto size = neighbors_vector.size();
           std::cout << "size for agt " << agt << ":" << size;
-          int random = rand();
-          std::cout << "rand :" << random;
-          std::cout.flush();
-          auto nextagt = random % (size - 1);
-          configuration.PushBack(next.at(nextagt));
-          assert(next.at(nextagt) <
+          auto nextagt = rand() % (size - 1);
+          configuration.PushBack(neighbors_vector.at(nextagt));
+          assert(neighbors_vector.at(nextagt) <
                  this->instance().graph().movement().node_count());
         }
         return (std::make_shared<Configuration>(configuration));
@@ -263,9 +260,9 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         start->PushBack(instance.start().at(agt));
       vertices_.push_back(start);
       // step and neardist
-      int size = instance.graph().movement().node_count();
-      step = size / 30;
-      neardist = size / 50;
+      // int size = instance.graph().movement().node_count();
+      // step = size / 30;
+      // neardist = size / 50;
       std::cout << "Step is " << step << " and neardist " << neardist << "\n";
     };
 
@@ -278,7 +275,7 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
 
     void print_vertices() {
       for (auto v : this->get_vertices()) {
-        std::cout << *v << ". ";
+        std::cout << *v << "\n";
       }
     }
 
@@ -312,23 +309,26 @@ class CMARRT : public Solver<GraphMove, GraphComm> {
         std::cout << "Cnew added: " << *c_new << "\n";
         std::cout.flush();
       }
+      else {
+        std::cout << "Cnew is already in the tree : " << *c_new;
+      }
 
       //RRT* component
-      std::shared_ptr<Configuration> c_min = c_nearest;
-      int costmin = Cost(source, *c_min) + Cost(*c_min, *c_new);
-      std::vector<std::shared_ptr<Configuration>> Neighborhood =
-          Neighbors(*c_new);
+      // std::shared_ptr<Configuration> c_min = c_nearest;
+      // int costmin = Cost(source, *c_min) + Cost(*c_min, *c_new);
+      // std::vector<std::shared_ptr<Configuration>> Neighborhood =
+      //     Neighbors(*c_new);
 
-      for (auto cnear : Neighborhood) {
-        int cost = Cost(source, *cnear) + Cost(*cnear, *c_new);
-        if (cost < costmin) {
-          c_min = cnear;
-          costmin = cost;
-        }
-      }
-      parents_.push_back(c_min);  // parent of c_new
+      // for (auto cnear : Neighborhood) {
+      //   int cost = Cost(source, *cnear) + Cost(*cnear, *c_new);
+      //   if (cost < costmin) {
+      //     c_min = cnear;
+      //     costmin = cost;
+      //   }
+      // }
+      // parents_.push_back(c_min);  // parent of c_new
 
-      replaceParent(Neighborhood, *c_min, *c_new);
+      // replaceParent(Neighborhood, *c_min, *c_new);
     }
 
     /**

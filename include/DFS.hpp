@@ -128,29 +128,23 @@ class DFS : public Solver<GraphMove, GraphComm> {
     size_t agent_count = 0;
     std::vector<bool>::iterator it;
 
-    while ((it = find(agent_treated.begin(), agent_treated.end(), false)) !=
-           agent_treated.end()) {
-      agent_stack.push(distance(agent_treated.begin(), it));
+    agent_stack.push(0);
+    while (!agent_stack.empty()) {
+      Agent a = agent_stack.top();
+      agent_stack.pop();
 
-      while (!agent_stack.empty()) {
-        Agent a = agent_stack.top();
-        agent_stack.pop();
-
-        if (agent_treated[a])
-          continue;
-
+      if (!agent_treated[a]) {
         agent_treated[a] = true;
         agent_count++;
 
         Node aPos = config->at(a);
 
         for (Agent b = 0; b < static_cast<Agent>(this->instance_.nb_agents());
-             ++b) {
+             b++) {
           if (a != b && !agent_treated[b]) {
             Node bPos = config->at(b);
             const auto& neighbors =
                 this->instance_.graph().communication().get_neighbors(aPos);
-
             if (neighbors.find(bPos) != neighbors.end()) {
               agent_stack.push(b);
             }
@@ -176,9 +170,9 @@ class DFS : public Solver<GraphMove, GraphComm> {
 
       if (current->size() == this->instance_.nb_agents()) {
         if (IsConfigurationConnected(current) &&
-            closed_.find(current) == closed_.end())
+            closed_.find(current) == closed_.end()) {
           return current;
-        else
+        } else
           continue;
       }
 
