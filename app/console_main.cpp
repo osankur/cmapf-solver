@@ -34,38 +34,62 @@ using namespace boost::program_options;
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 
-enum class Algorithm : int { CBS = 0, CCBS, CA, MAS, DFS, COORD, CMARRT };
-enum class ObjectiveEnum : int { SUM = 0, MAX };
+enum class Algorithm : int
+{
+  CBS = 0,
+  CCBS,
+  CA,
+  MAS,
+  DFS,
+  COORD,
+  CMARRT
+};
+enum class ObjectiveEnum : int
+{
+  SUM = 0,
+  MAX
+};
 
-int main(int argc, const char* argv[]) {
-  try {
+int main(int argc, const char *argv[])
+{
+  try
+  {
     options_description desc{"Options"};
     desc.add_options()("help,h", "Help screen")("experience,e", value<std::string>(), "The experience file to run.")(
         "graph-folder,G", value<std::string>(), "The graph folder.")(
         "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run.")(
         "window,w", value<int>()->default_value(2), "Window size.")(
-        "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize");
+        "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize")(
+        "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
+        "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
 
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
     notify(vm);
 
-    if (vm.count("help")) {
+    if (vm.count("help"))
+    {
       std::cout << desc << '\n';
       return 0;
     }
 
-    if (!vm.count("experience")) {
+    if (!vm.count("experience"))
+    {
       LOG_FATAL("The experience is missing !");
       return 1;
-    } else {
+    }
+    else
+    {
       LOG_INFO("Experience: " << vm["experience"].as<std::string>());
     }
 
-    if (!vm.count("graph-folder")) {
+    if (!vm.count("graph-folder"))
+    {
       LOG_FATAL("The graph-folder is missing !");
       return 1;
-    } else {
+    }
+    else
+    {
       LOG_INFO("Graph Folder: " << vm["graph-folder"].as<std::string>());
     }
 
@@ -78,9 +102,11 @@ int main(int argc, const char* argv[]) {
     LOG_TRACE("Instance loaded!");
 
     auto obj = magic_enum::enum_cast<ObjectiveEnum>(std::string(DEFAULT_OBJ));
-    if (vm.count("objective")) {
+    if (vm.count("objective"))
+    {
       obj = magic_enum::enum_cast<ObjectiveEnum>(vm["objective"].as<std::string>());
-      if (!obj.has_value()) {
+      if (!obj.has_value())
+      {
         LOG_FATAL("The objective " << vm["objective"].as<std::string>() << " is unkown !");
         return 1;
       }
@@ -90,21 +116,24 @@ int main(int argc, const char* argv[]) {
 
     std::unique_ptr<Objective> objective = nullptr;
 
-    switch (obj.value()) {
-      case ObjectiveEnum::SUM:
-        objective = std::make_unique<SumObjective>();
-        break;
-      case ObjectiveEnum::MAX:
-        objective = std::make_unique<MaxObjective>();
-        break;
+    switch (obj.value())
+    {
+    case ObjectiveEnum::SUM:
+      objective = std::make_unique<SumObjective>();
+      break;
+    case ObjectiveEnum::MAX:
+      objective = std::make_unique<MaxObjective>();
+      break;
     }
 
     LOG_TRACE("Objective created!");
 
     auto algo = magic_enum::enum_cast<Algorithm>(std::string(DEFAULT_ALG));
-    if (vm.count("algo")) {
+    if (vm.count("algo"))
+    {
       algo = magic_enum::enum_cast<Algorithm>(vm["algo"].as<std::string>());
-      if (!algo.has_value()) {
+      if (!algo.has_value())
+      {
         LOG_FATAL("The algorithm " << vm["algo"].as<std::string>() << " is unkown !");
         return 1;
       }
@@ -114,40 +143,47 @@ int main(int argc, const char* argv[]) {
 
     std::unique_ptr<Solver<ExplicitGraph, ExplicitGraph>> solver = nullptr;
 
-    switch (algo.value()) {
-      case Algorithm::CBS: {
-        decoupled::conflict_selection::FirstConflictStrategy con;
-        solver = std::make_unique<
-            decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
-            il.instance(), *objective.get(), con);
-        break;
-      }
-      case Algorithm::CCBS: {
-        decoupled::conflict_selection::FirstConflictStrategy con;
-        solver = std::make_unique<
-            decoupled::high_level::CCBS<ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
-            il.instance(), *objective.get(), con);
-        break;
-      }
-      case Algorithm::CA:
-        solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 3);
-        break;
-      case Algorithm::MAS:
-        solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
-        break;
-      case Algorithm::DFS:
-        solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
-        break;
-      case Algorithm::COORD:
-        solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(), 
-                                  *objective.get(), 
-                                  vm["window"].as<int>(),
-                                  coordinated::collision_mode_t::IGNORE_COLLISIONS);
-        break;
-      case Algorithm::CMARRT:
-        srand(time(NULL));
-        solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
-        break;
+    switch (algo.value())
+    {
+    case Algorithm::CBS:
+    {
+      decoupled::conflict_selection::FirstConflictStrategy con;
+      solver = std::make_unique<
+          decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
+          il.instance(), *objective.get(), con);
+      break;
+    }
+    case Algorithm::CCBS:
+    {
+      decoupled::conflict_selection::FirstConflictStrategy con;
+      solver = std::make_unique<
+          decoupled::high_level::CCBS<ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
+          il.instance(), *objective.get(), con);
+      break;
+    }
+    case Algorithm::CA:
+      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 3);
+      break;
+    case Algorithm::MAS:
+      solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
+      break;
+    case Algorithm::DFS:
+      solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
+      break;
+    case Algorithm::COORD:
+      solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(),
+                                                                                        *objective.get(),
+                                                                                        vm["window"].as<int>(),
+                                                                                        coordinated::collision_mode_t::IGNORE_COLLISIONS);
+      break;
+    case Algorithm::CMARRT:
+      srand(time(NULL));
+      solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(
+          il.instance(),
+          *objective.get(),
+          vm["prob2goal"].as<int>(),
+          vm["step_size"].as<int>());
+      break;
     }
 
     LOG_TRACE("Solver created!");
@@ -157,8 +193,9 @@ int main(int argc, const char* argv[]) {
     LOG_TRACE("Solver terminated!");
     LOG_INFO("Execution cost:" << objective->cost(execution));
     LOG_INFO("Execution:" << execution);
-
-  } catch (const error& ex) {
+  }
+  catch (const error &ex)
+  {
     std::cerr << ex.what() << '\n';
   }
 }
