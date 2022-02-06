@@ -35,34 +35,57 @@ namespace cmarrt
     class ExplorationTree
     {
     private:
-      float p;
-      int step; // TODO: to define
+      float p =
+          90;       // bias in % to use the target configuration for the random one
+      int step = 1; // TODO: to define
       float neardist = 1;
 
       std::vector<std::shared_ptr<Configuration>> vertices_;
-      std::vector<std::shared_ptr<Configuration>> parents_; // for edges
+      // FIXME is parents_[i] the parent node of vertices_[i]?
+      std::vector<std::shared_ptr<Configuration>> parents_;
+      std::map<Configuration, int> index_of_vertex_;
+      std::map<Configuration, int> index_of_parent_;
 
       const Instance<GraphMove, GraphComm> &instance_;
       const Objective &objective_;
 
       int index_of_configuration(const Configuration &c)
       {
-        for (int i = 0; i < vertices_.size(); i++)
+        if (index_of_vertex_.find(c) == index_of_vertex_.end())
         {
-          if (*vertices_.at(i) == c)
+          return -1;
+        }
+        else
+        {
+          return index_of_vertex_[c];
+        }
+        /*
+        for (int i = 0; i < vertices_.size(); i++) {
+          if (*vertices_[i] == c)
             return i;
         }
         return -1;
+        */
       };
 
       int parent_index_of_configuration(const Configuration &c)
       {
+        if (index_of_parent_.find(c) == index_of_parent_.end())
+        {
+          return -1;
+        }
+        else
+        {
+          return index_of_parent_[c];
+        }
+        /*
         for (int i = 0; i < parents_.size(); i++)
         {
-          if (*parents_.at(i) == c)
+          if (*parents_[i] == c)
             return i;
         }
         return -1;
+        */
       };
 
       /**
@@ -134,6 +157,10 @@ namespace cmarrt
        * by the configuration rand. We use the barycenter for evaluating the
        * distance from an existing configuration to rand.
        *
+       * Linear in the size of the tree.
+       *
+       * @todo Complexity can be improved with space partitioning
+       *
        * @param rand
        * @return std::shared_ptr<Configuration>
        */
@@ -141,8 +168,7 @@ namespace cmarrt
           const Configuration &rand)
       {
         int mindist = -1;
-        std::shared_ptr<Configuration> c_nearest =
-            std::make_shared<Configuration>();
+        std::shared_ptr<Configuration> c_nearest = nullptr;
         std::pair<int, int> rand_pos = barycenter(rand);
         for (auto v : this->get_vertices())
         {
@@ -156,6 +182,7 @@ namespace cmarrt
             c_nearest = v;
           }
         }
+        assert(c_nearest);
         return c_nearest;
       };
 
@@ -183,6 +210,10 @@ namespace cmarrt
 
       /**
        * @brief compute the neighbors of the configuration in the tree
+       *
+       * Complexity is linear in the size of the tree.
+       *
+       * @todo Complexity can be improved using space partitioning
        *
        * @param config
        * @return std::vector<std::shared_ptr<Configuration>>
@@ -242,6 +273,9 @@ namespace cmarrt
             std::cout << "here\n";
             this->parents_.at(index_of_configuration(*c)) =
                 std::make_shared<Configuration>(cnew);
+            auto parent_index = index_of_configuration(cnew);
+            assert(parent_index >= 0);
+            this->index_of_parent_[*c] = parent_index;
           }
         }
       };
@@ -343,6 +377,8 @@ namespace cmarrt
 
       bool TreeHasConfig(const Configuration &config)
       {
+        return index_of_vertex_.find(config) != index_of_vertex_.end();
+        /*
         for (auto found : this->get_vertices())
         {
           if (config == *found)
@@ -351,32 +387,43 @@ namespace cmarrt
           }
         }
         return false;
+        */
       }
 
       void extend()
       {
-        // std::cout << "Tree has ";
+        std::cout << "Tree size: " << vertices_.size() << "\n";
         // this->print_vertices();
         std::shared_ptr<Configuration> c_rand =
             pick_config_at_random(this->instance().goal());
-        // std::cout << "Crand is " << (*c_rand);
+        std::cout << "Crand is " << (*c_rand) << "\n";
+
         std::shared_ptr<Configuration> c_nearest =
             get_nearest_configuration(*c_rand);
-        // std::cout << "Cnearest is " << *c_nearest;
+        std::cout << "Cnearest is " << *c_nearest << "\n";
+        std::cout.flush();
+
         std::shared_ptr<Configuration> c_new = move_towards(*c_nearest, *c_rand);
         auto source = this->instance().start();
         if (c_new->size() == 0)
+        {
+          std::cout << "move_towards failed.\n";
+          std::cout.flush();
           return;
+        }
         if (not(this->TreeHasConfig(*c_new)))
         {
           this->vertices_.push_back(c_new);
           this->parents_.push_back(c_nearest);
+          this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
+          this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_nearest];
+          assert(this->index_of_vertex_.find(*c_nearest) != this->index_of_vertex_.end());
           // std::cout << "Cnew added: " << *c_new << "\n";
           // std::cout.flush();
         }
         else
         {
-          // std::cout << "Cnew is already in the tree : " << *c_new;
+          std::cout << "Cnew is already in the tree : " << *c_new << "\n";
         }
 
         // RRT* component
@@ -418,6 +465,7 @@ namespace cmarrt
           auto parents =
               this->get_parents(); // not necessary anymore except for the assert
           assert(id <= parents.size());
+          // FIXME Why id-1? What is this configuration?
           auto parent = this->get_parents().at(id - 1);
           auto smallpath = computeSmallPath(*current, *parent);
           for (int i = 0; i < smallpath.size(); i++)
@@ -448,7 +496,8 @@ namespace cmarrt
       {
         // std::cout << "finished\n Exploration tree : \n";
         explorationtree_.print_vertices_parents();
-        std::cout << "iterations :" << iterations << "\n";
+        std::cout << "Done after " << iterations << " iterations\n";
+        std::cout.flush();
         auto exec = explorationtree_.ComputeExecution(this->instance().start(),
                                                       this->instance().goal());
         for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
@@ -462,9 +511,13 @@ namespace cmarrt
         }
         return true;
       }
-      iterations++;
-      explorationtree_.extend();
-      return false;
+      else
+      {
+        std::cout << "#Iterations: " << iterations << "\n";
+        iterations++;
+        explorationtree_.extend();
+        return false;
+      }
     }
   };
 
