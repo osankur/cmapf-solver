@@ -20,6 +20,17 @@
 #include <utility>
 #include <vector>
 
+#define ANSI_RESET  "\u001B[0m"
+#define ANSI_BLACK  "\u001B[30m"
+#define ANSI_RED  "\u001B[31m"
+#define ANSI_GREEN  "\u001B[32m"
+#define ANSI_YELLOW  "\u001B[33m"
+#define ANSI_BLUE  "\u001B[34m"
+#define ANSI_PURPLE  "\u001B[35m"
+#define ANSI_CYAN  "\u001B[36m"
+#define ANSI_WHITE  "\u001B[37m"
+
+
 namespace cmarrt
 {
 
@@ -138,12 +149,12 @@ namespace cmarrt
        * @param config
        * @return std::pair<int, int>
        */
-      std::pair<int, int> barycenter(const Configuration &config)
+      std::pair<float, float> barycenter(const Configuration &config)
       {
         int nb_agents = config.size();
         assert(nb_agents != 0);
-        int x = 0;
-        int y = 0;
+        float x = 0;
+        float y = 0;
         for (size_t agt = 0; agt < config.size(); agt++)
         {
           std::pair<int, int> pos_agt =
@@ -151,7 +162,7 @@ namespace cmarrt
           x += pos_agt.first;
           y += pos_agt.second;
         }
-        return std::make_pair((int)x / nb_agents, (int)y / nb_agents);
+        return std::make_pair(x / nb_agents, y / nb_agents);
       }
 
       /**
@@ -171,11 +182,11 @@ namespace cmarrt
       {
         int mindist = -1;
         std::shared_ptr<Configuration> c_nearest = nullptr;
-        std::pair<int, int> rand_pos = barycenter(rand);
+        std::pair<float, float> rand_pos = barycenter(rand);
         for (auto v : this->get_vertices())
         {
           // distance v->rand
-          std::pair<int, int> v_pos = barycenter(*v);
+          std::pair<float, float> v_pos = barycenter(*v);
           int dist = (abs(v_pos.first - rand_pos.first) +
                       abs(v_pos.second - rand_pos.second));
           if (dist < mindist || mindist == -1)
@@ -187,6 +198,45 @@ namespace cmarrt
         assert(c_nearest);
         return c_nearest;
       };
+
+      /**
+       * @brief Get the nearest configuration in the tree in the direction given
+       * by the configuration rand. The distance is computed with the l1 metric.
+       *
+       * Linear in the size of the tree.
+       *
+       * @todo Complexity can be improved with space partitioning
+       *
+       * @param rand
+       * @return std::shared_ptr<Configuration>
+       */
+      std::shared_ptr<Configuration> get_nearest_configuration_l1(
+          const Configuration &c)
+      {
+        int mindist = -1;
+        std::shared_ptr<Configuration> c_nearest = nullptr;
+
+        for (auto v : this->get_vertices())
+        {
+          int dist = 0;
+          for(int agt = 0; agt < this->instance().nb_agents(); agt++){
+            auto cpos = this->instance().graph().movement().get_position(c.at(agt));
+            auto vpos = this->instance().graph().movement().get_position((*v).at(agt));
+            dist += (abs(vpos.first - cpos.first) +
+                      abs(vpos.second - cpos.second));
+          }
+          if (dist < mindist || mindist == -1)
+          {
+            mindist = dist;
+            c_nearest = v;
+          }
+        }
+        assert(c_nearest);
+        return c_nearest;
+      };
+
+
+
 
       /**
        * @brief returns configuration from source in the direction of target
@@ -394,22 +444,31 @@ namespace cmarrt
 
       void extend()
       {
-        std::cout << "Tree size: " << vertices_.size() << "\n";
+        std::cout << "\nTree size: " << vertices_.size() << "\n";
         // this->print_vertices();
         std::shared_ptr<Configuration> c_rand =
             pick_config_at_random(this->instance().goal());
-        std::cout << "Crand is " << (*c_rand) << "\n";
+        auto c_rand_barycenter = barycenter(*c_rand);
+        if (*c_rand == this->instance().goal()){
+          std::cout << ANSI_PURPLE << "Moving towards GOAL: " << ANSI_RESET << (*c_rand) << " barycenter: " << 
+            c_rand_barycenter.first << ", " << c_rand_barycenter.second << "\n";
+        } else {
+          std::cout << ANSI_CYAN << "Moving towards crand: " << (*c_rand) << ANSI_RESET << " barycenter: " <<  
+          c_rand_barycenter.first << ", " << c_rand_barycenter.second << "\n";
+        }
 
         std::shared_ptr<Configuration> c_nearest =
-            get_nearest_configuration(*c_rand);
-        std::cout << "Cnearest is " << *c_nearest << "\n";
+            get_nearest_configuration_l1(*c_rand);
+        auto c_nearest_barycenter = barycenter(*c_nearest);
+        std::cout << "Cnearest is "<< ANSI_YELLOW << *c_nearest << ANSI_RESET << " barycenter: " << 
+        c_nearest_barycenter.first << ", " << c_nearest_barycenter.second << "\n";
         std::cout.flush();
 
         std::shared_ptr<Configuration> c_new = move_towards(*c_nearest, *c_rand);
         auto source = this->instance().start();
         if (c_new->size() == 0)
         {
-          std::cout << "move_towards failed.\n";
+          std::cout << ANSI_RED << "move_towards failed.\n" << ANSI_RESET;
           std::cout.flush();
           return;
         }
@@ -420,12 +479,13 @@ namespace cmarrt
           this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
           this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_nearest];
           assert(this->index_of_vertex_.find(*c_nearest) != this->index_of_vertex_.end());
+          std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
           // std::cout << "Cnew added: " << *c_new << "\n";
           // std::cout.flush();
         }
         else
         {
-          std::cout << "Cnew is already in the tree : " << *c_new << "\n";
+          std::cout << ANSI_RED << "Cnew is already in the tree : " << *c_new << ANSI_RESET << "\n";
         }
 
         // RRT* component
@@ -479,6 +539,33 @@ namespace cmarrt
         }
         return exec;
       };
+      void print_tree(){
+        int node_count = this->vertices_.size();
+        std::shared_ptr<bool[]> visited(new bool[node_count]);
+        for(int i = 0; i < node_count; i++){
+          visited[i] = false;
+        }
+        for(int v = 0; v < node_count; v++){
+          if (visited[v]){
+            continue;
+          }
+          while( !visited[v] ){
+            visited[v] = true;
+            int parent_of_v = this->index_of_parent_[*(this->vertices_[v])];
+            if (v != parent_of_v){
+              std::cout << "RRT edge: " << (*this->vertices_[v]) << " -- " << (*this->vertices_[parent_of_v]) << "\n";
+            }
+            v = parent_of_v;
+          }
+        }
+        /*
+        std::vector<std::shared_ptr<Configuration>> vertices_;
+        // FIXME is parents_[i] the parent node of vertices_[i]?
+        std::vector<std::shared_ptr<Configuration>> parents_;
+        std::map<Configuration, int> index_of_vertex_;
+        std::map<Configuration, int> index_of_parent_;
+        */
+      }
     };
 
     ExplorationTree explorationtree_;
@@ -515,9 +602,12 @@ namespace cmarrt
       }
       else
       {
-        std::cout << "#Iterations: " << iterations << "\n";
+        std::cout << "\n#Iterations: " << iterations << "\n";
         iterations++;
         explorationtree_.extend();
+        if (iterations % 10 == 0 ){
+          explorationtree_.print_tree();
+        }
         return false;
       }
     }

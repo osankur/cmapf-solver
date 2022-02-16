@@ -100,6 +100,8 @@ int main(int argc, const char *argv[])
     il.Load();
 
     LOG_TRACE("Instance loaded!");
+    LOG_TRACE("Number of nodes: " + std::to_string(il.instance().graph().movement().node_count()));
+    LOG_TRACE("Number of edges: " + std::to_string(il.instance().graph().movement().edge_count()));
 
     auto obj = magic_enum::enum_cast<ObjectiveEnum>(std::string(DEFAULT_OBJ));
     if (vm.count("objective"))

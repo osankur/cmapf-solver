@@ -252,20 +252,19 @@ class DFS : public Solver<GraphMove, GraphComm> {
             }
             this->execution_.set_path(agt, p_agt);
           }
-          return *exec_.back();
+          break;
         }
 
         std::shared_ptr<Configuration> config = FindBestChild(exec_.back());
         if (config == nullptr)
         {
-          return *exec_.back();
-        }
-        closed_.insert(config);
-        if (config == nullptr)
-          return *exec_.back();
-        else
+          break;
+        } else {
+          closed_.insert(config);
           exec_.push_back(config);
+        }
       }
+      std::cout << "* Exec has size: " << exec_.size() << "\n";
       return *exec_.back();
     }
   };
