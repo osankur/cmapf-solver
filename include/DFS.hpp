@@ -228,39 +228,47 @@ class DFS : public Solver<GraphMove, GraphComm> {
       exec_.push_back(config);
     return false;
   }
-
-  /**
-   * @brief compute one step of computation to produce an execution that goes
-   * towards the goal (but not necessary reaching the goal)
-   *
-   * @return true if it has produced a execution (not necessary reaching the
-   * goal)
-   * @return false if the work is not finished
-   */
-  Configuration smallStepCompute(int step) {
-    for (int i = 0; i < step; i++) {
-      if (exec_.empty())
-        return this->execution().get_configuration(this->execution().size());
-      if (IsGoal(exec_.back())) {
-        for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++) {
-          std::shared_ptr<Path> p_agt = std::make_shared<Path>();
-          for (size_t t = 0; t < exec_.size(); t++) {
-            p_agt->PushBack(exec_[t]->at(agt));
+    /**
+     * @brief compute an execution that goes
+     * step steps towards the goal (but not necessary reaching the goal), and return the last configuration of this execution.
+     * If the greedy algorithm is stuck, the function returns the last configuration that was generated.
+     *
+     * @return last configuration of the computed execution.
+     */
+    Configuration smallStepCompute(int step)
+    {
+      for (int i = 0; i < step; i++)
+      {
+        if (exec_.empty())
+          return this->execution().get_configuration(this->execution().size());
+        if (IsGoal(exec_.back()))
+        {
+          for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
+          {
+            std::shared_ptr<Path> p_agt = std::make_shared<Path>();
+            for (size_t t = 0; t < exec_.size(); t++)
+            {
+              p_agt->PushBack(exec_[t]->at(agt));
+            }
+            this->execution_.set_path(agt, p_agt);
           }
-          this->execution_.set_path(agt, p_agt);
+          return *exec_.back();
         }
-        return *exec_.back();
-      }
 
-      std::shared_ptr<Configuration> config = FindBestChild(exec_.back());
-      closed_.insert(config);
-      if (config == nullptr)
-        return *exec_.back();
-      else
-        exec_.push_back(config);
+        std::shared_ptr<Configuration> config = FindBestChild(exec_.back());
+        if (config == nullptr)
+        {
+          return *exec_.back();
+        }
+        closed_.insert(config);
+        if (config == nullptr)
+          return *exec_.back();
+        else
+          exec_.push_back(config);
+      }
+      return *exec_.back();
     }
-    return *exec_.back();
-  }
-};
+  };
+
 
 }  // namespace coupled

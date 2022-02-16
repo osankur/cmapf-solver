@@ -106,12 +106,14 @@ namespace cmarrt
           Node first = (uint64_t)rand() % (nb_nodes - 1);
           Configuration configuration;
           configuration.PushBack(first);
+          std::unordered_set<Node> neighbors;
           // Pick in the Gc neighbors the position for the 2nd, etc
           for (size_t agt = 1; agt < this->instance().nb_agents(); agt++)
           {
-            auto neighbors =
-                this->instance().graph().communication().get_neighbors(
+            auto new_neighbors = this->instance().graph().communication().get_neighbors(
                     configuration.at(agt - 1));
+            neighbors.insert(new_neighbors.begin(), new_neighbors.end());
+                
             auto neighbors_vector =
                 std::vector<Node>(neighbors.begin(), neighbors.end());
             auto size = neighbors_vector.size();
