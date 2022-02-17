@@ -104,6 +104,18 @@ int main(int argc, const char *argv[])
     LOG_TRACE("Number of edges: " + std::to_string(il.instance().graph().movement().edge_count()));
     LOG_TRACE("Number of agents: " + std::to_string(il.instance().start().size()));
 
+    auto cgoal = il.instance().goal();
+    auto cstart = il.instance().start();
+    if (!il.instance().graph().communication().is_configuration_connected(cstart)){
+      LOG_FATAL("Start configuration is not connected.");
+      throw "Error";
+    }
+    if (!il.instance().graph().communication().is_configuration_connected(cgoal)){
+      LOG_FATAL("Goal configuration is not connected.");
+      throw "Error";
+    }
+
+
     auto obj = magic_enum::enum_cast<ObjectiveEnum>(std::string(DEFAULT_OBJ));
     if (vm.count("objective"))
     {

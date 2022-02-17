@@ -32,6 +32,7 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include <ctime>
 
 namespace coupled
 {
@@ -60,6 +61,8 @@ namespace coupled
         const std::shared_ptr<Configuration> pi)
     {
       assert(this->instance_.nb_agents() == pi->size());
+      auto cstart = clock();
+
       PartialCostMap g_local;
       PartialConfQueue open_local;
 
@@ -74,7 +77,9 @@ namespace coupled
         // std::cout << "\n";
         if (a->size() == this->instance_.nb_agents() && this->instance_.graph().communication().is_configuration_connected(*a) && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
         {
-          // std::cout << "open.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
+          auto cend = clock();
+          // std::cout << "\topen.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
+          // std::cout << "\tElapsed time: " << (cend -cstart) / (float) CLOCKS_PER_SEC << "\n";
           // std::cout.flush();
           return a;
         }
@@ -115,39 +120,17 @@ namespace coupled
       return nullptr;
     }
 
-    bool IsGoal(const std::shared_ptr<Configuration> &config)
-    {
-      if (config->size() != this->instance_.nb_agents())
-        return false;
-      for (size_t agt = 0; agt < config->size(); agt++)
-        if (config->at(agt) != this->instance_.goal()[agt])
-          return false;
-      return true;
-    }
-
-  public:
-    DFS(const Instance<GraphMove, GraphComm> &instance,
-        const Objective &objective)
-        : Solver<GraphMove, GraphComm>(instance, objective), exec_(), shortestPathHeuristics_(instance)
-    {
-      std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
-      for (size_t agt = 0; agt < instance.start().size(); agt++)
-        start->PushBack(instance.start()[agt]);
-      exec_.push_back(start);
-      closed_.insert(start);
-    }
-
     /**
-     * @brief execute one step of computation of DFS from [Tateo et al.]
+     * @brief execute one step of computation of DFS from [Tateo et al.] towards given custom goal
      *
      * @return true if the work is finished (we then found a solution)
      * @return false if the work is not finished
      */
-    bool StepCompute() override
+    bool StepCompute(const Configuration & goal)
     {
       if (exec_.empty())
         return true;
-      if (IsGoal(exec_.back()))
+      if ((*exec_.back()) == goal)
       {
         for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
         {
@@ -174,46 +157,47 @@ namespace coupled
       }
       return false;
     }
+
+
+  public:
+    DFS(const Instance<GraphMove, GraphComm> &instance,
+        const Objective &objective)
+        : Solver<GraphMove, GraphComm>(instance, objective), exec_(), shortestPathHeuristics_(instance)
+    {
+      std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
+      for (size_t agt = 0; agt < instance.start().size(); agt++)
+        start->PushBack(instance.start()[agt]);
+      exec_.push_back(start);
+      closed_.insert(start);
+    }
+
+    /**
+     * @brief execute one step of computation of DFS from [Tateo et al.]
+     *
+     * @return true if the work is finished (we then found a solution)
+     * @return false if the work is not finished
+     */
+    bool StepCompute() override
+    {
+      StepCompute(this->instance_.goal());
+    }
+
     /**
      * @brief compute an execution that goes
-     * step steps towards the goal (but not necessary reaching the goal), and return the last configuration of this execution.
-     * If the greedy algorithm is stuck, the function returns the last configuration that was generated.
+     * `steps` steps from source towards goal (but not necessary reaching the goal), and return the last configuration of this execution.
+     * If the greedy algorithm is stuck (retuning nullptr), the function returns the last configuration that was generated.
      *
      * @return last configuration of the computed execution.
      */
-    Configuration smallStepCompute(int step)
+    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps)
     {
-      for (int i = 0; i < step; i++)
+      exec_.clear();
+      exec_.push_back(std::make_shared<Configuration>(source));
+      for (int i = 0; i < steps; i++)
       {
-        if (exec_.empty())
-          return this->execution().get_configuration(this->execution().size());
-        if (IsGoal(exec_.back()))
-        {
-          for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
-          {
-            std::shared_ptr<Path> p_agt = std::make_shared<Path>();
-            for (size_t t = 0; t < exec_.size(); t++)
-            {
-              p_agt->PushBack(exec_[t]->at(agt));
-            }
-            this->execution_.set_path(agt, p_agt);
-          }
-          break;
-        }
-
-        std::shared_ptr<Configuration> config = FindBestConfiguration(exec_.back());
-        if (config == nullptr)
-        {
-          break;
-        }
-        else
-        {
-          closed_.insert(config);
-          exec_.push_back(config);
-        }
+        StepCompute(goal);
       }
-      std::cout << "* Exec has size: " << exec_.size() << "\n";
-      return *exec_.back();
+      return exec_;
     }
   };
 

@@ -9,6 +9,7 @@
 #include <LowLevel.hpp>
 #include <Objective.hpp>
 #include <Solver.hpp>
+
 #include <boost/heap/fibonacci_heap.hpp>
 #include <list>
 #include <map>
@@ -47,9 +48,8 @@ namespace cmarrt
     class ExplorationTree
     {
     private:
-      float p =
-          90;       // bias in % to use the target configuration for the random one
-      int step = 1; // TODO: to define
+      float prob2target;       // bias in % to use the target configuration for the random one
+      int step_size;
       float neardist = 1;
 
       std::vector<std::shared_ptr<Configuration>> vertices_;
@@ -57,9 +57,12 @@ namespace cmarrt
       std::vector<std::shared_ptr<Configuration>> parents_;
       std::map<Configuration, int> index_of_vertex_;
       std::map<Configuration, int> index_of_parent_;
+      // given configuration c in the tree, path_to_parent_[c] is the path from the parent to itself
+      std::map<Configuration, std::vector<std::shared_ptr<Configuration> > > path_to_parent_;
 
       const Instance<GraphMove, GraphComm> &instance_;
       const Objective &objective_;
+      coupled::DFS<GraphMove,GraphComm> dfs_solver_;
 
       int index_of_configuration(const Configuration &c)
       {
@@ -71,13 +74,6 @@ namespace cmarrt
         {
           return index_of_vertex_[c];
         }
-        /*
-        for (int i = 0; i < vertices_.size(); i++) {
-          if (*vertices_[i] == c)
-            return i;
-        }
-        return -1;
-        */
       };
 
       int parent_index_of_configuration(const Configuration &c)
@@ -90,14 +86,6 @@ namespace cmarrt
         {
           return index_of_parent_[c];
         }
-        /*
-        for (int i = 0; i < parents_.size(); i++)
-        {
-          if (*parents_[i] == c)
-            return i;
-        }
-        return -1;
-        */
       };
 
       /**
@@ -111,7 +99,7 @@ namespace cmarrt
           const Configuration &goal)
       {
         int irand = rand() % 100;
-        if (irand < this->p)
+        if (irand > this->prob2target)
         {
           // Pick a node of Gc for the 1st agent
           size_t nb_nodes = this->instance().graph().communication().node_count();
@@ -143,28 +131,6 @@ namespace cmarrt
         }
       };
 
-      /**
-       * @brief compute the point in the plane that is the barycenter of all
-       * locations of agents in config
-       *
-       * @param config
-       * @return std::pair<int, int>
-       */
-      std::pair<float, float> barycenter(const Configuration &config)
-      {
-        int nb_agents = config.size();
-        assert(nb_agents != 0);
-        float x = 0;
-        float y = 0;
-        for (size_t agt = 0; agt < config.size(); agt++)
-        {
-          std::pair<int, int> pos_agt =
-              this->instance().graph().movement().get_position(config.at(agt));
-          x += pos_agt.first;
-          y += pos_agt.second;
-        }
-        return std::make_pair(x / nb_agents, y / nb_agents);
-      }
 
       /**
        * @brief Get the nearest configuration in the tree in the direction given
@@ -178,16 +144,16 @@ namespace cmarrt
        * @param rand
        * @return std::shared_ptr<Configuration>
        */
-      std::shared_ptr<Configuration> get_nearest_configuration(
+      std::shared_ptr<Configuration> get_nearest_configuration_barycenter(
           const Configuration &rand)
       {
         int mindist = -1;
         std::shared_ptr<Configuration> c_nearest = nullptr;
-        std::pair<float, float> rand_pos = barycenter(rand);
+        std::pair<float, float> rand_pos = this->instance_.graph().movement().getBarycenter(rand);
         for (auto v : this->get_vertices())
         {
           // distance v->rand
-          std::pair<float, float> v_pos = barycenter(*v);
+          std::pair<float, float> v_pos = this->instance_.graph().movement().getBarycenter(*v);
           int dist = (abs(v_pos.first - rand_pos.first) +
                       abs(v_pos.second - rand_pos.second));
           if (dist < mindist || mindist == -1)
@@ -238,34 +204,6 @@ namespace cmarrt
 
 
 
-
-      /**
-       * @brief returns configuration from source in the direction of target
-       * that configuration is reachable from source
-       * if we are lucky, that returned configuration is target
-       *
-       * @param source
-       * @param target
-       * @return std::shared_ptr<Configuration>
-       */
-      std::shared_ptr<Configuration> move_towards(const Configuration &source,
-                                                  const Configuration &target)
-      {
-        std::cout << "Creating small instance\n";  std::cout.flush();
-        Instance smallInstance(this->instance().graph(), source, target);
-        std::cout << "Creating dfs solver\n";  std::cout.flush();
-        coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
-                                                      this->objective_);
-        std::cout << "Launching DFS for " << step << " steps\n";  std::cout.flush();
-        auto cstart = clock();
-        auto cnew =
-            std::make_shared<Configuration>(dfs_solver.smallStepCompute(step));
-        auto cend = clock();
-        assert((*cnew).size() > 0);
-        std::cout << "DFS ended in " << (cend-cstart) / CLOCKS_PER_SEC << "s\n";  std::cout.flush();
-        return cnew;
-      };
-
       /**
        * @brief compute the neighbors of the configuration in the tree
        *
@@ -276,17 +214,17 @@ namespace cmarrt
        * @param config
        * @return std::vector<std::shared_ptr<Configuration>>
        */
-      std::vector<std::shared_ptr<Configuration>> Neighbors(
-          const Configuration &config)
+      std::vector<std::shared_ptr<Configuration>> NeighborsAtDistance(
+          const Configuration &config, int neardist)
       {
         std::vector<std::shared_ptr<Configuration>> neighbors;
-        std::pair<int, int> pos = barycenter(config);
+        std::pair<int, int> pos = this->instance_.graph().movement().getBarycenter(config);
         for (auto c : this->get_vertices())
         {
-          std::pair<int, int> c_pos = barycenter(*c);
+          std::pair<int, int> c_pos = this->instance_.graph().movement().getBarycenter(*c);
           int dist =
               (abs(c_pos.first - pos.first) + abs(c_pos.second - pos.second));
-          if (dist < this->neardist)
+          if (dist < neardist)
           {
             neighbors.push_back(c);
           }
@@ -296,7 +234,9 @@ namespace cmarrt
 
       /**
        * @brief compute the number of steps required to go from first to second
-       *
+       * 
+       * TODO The name Cost is too ambiguous.
+       * 
        * @param first
        * @param second
        * @return int
@@ -338,31 +278,6 @@ namespace cmarrt
         }
       };
 
-      /**
-       * @brief compute the path between two vertices for the final execution
-       *
-       * @param first
-       * @param second
-       * @return smallExec
-       */
-      std::vector<std::shared_ptr<Configuration>> computeSmallPath(
-          const Configuration &first,
-          const Configuration &second)
-      {
-        Instance smallInstance(this->instance().graph(), first, second);
-        coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
-                                                      this->objective_);
-        Execution exec(dfs_solver.computeAllPairs());
-        std::vector<std::shared_ptr<Configuration>> smallExec;
-        // std::cout << "\nExecution " << exec;
-        for (int i = 1; i < exec.max_path() - 1; i++)
-        {
-          smallExec.push_back(
-              std::make_shared<Configuration>(exec.get_configuration(i)));
-        }
-        return smallExec;
-      }
-
     public:
       /**
        * @brief Construct a new Exploration Tree that initially contains the
@@ -379,19 +294,15 @@ namespace cmarrt
                                const Objective &objective,
                                int prob2target,
                                int step_size)
-          : instance_(instance), objective_(objective), vertices_(), parents_(), p(prob2target), step(step_size)
+          : instance_(instance), objective_(objective), vertices_(), parents_(), prob2target(prob2target), step_size(step_size), dfs_solver_(instance, objective) 
       {
-        std::cout << "Exploration tree built\n";
-        std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
-        for (size_t agt = 0; agt < instance.start().size(); agt++)
-          start->PushBack(instance.start().at(agt));
+        auto start = std::make_shared<Configuration>(instance.start());
         vertices_.push_back(start);
         parents_.push_back(start);
         // step and neardist
         // int size = instance.graph().movement().node_count();
         // step = size / 30;
         // neardist = size / 50;
-        std::cout << "Step is " << step << " and neardist " << neardist << "\n";
       };
 
       std::vector<std::shared_ptr<Configuration>> &get_vertices()
@@ -436,45 +347,30 @@ namespace cmarrt
       bool TreeHasConfig(const Configuration &config)
       {
         return index_of_vertex_.find(config) != index_of_vertex_.end();
-        /*
-        for (auto found : this->get_vertices())
-        {
-          if (config == *found)
-          {
-            return true;
-          }
-        }
-        return false;
-        */
       }
 
       void extend()
       {
-        std::cout << "\nTree size: " << vertices_.size() << "\n";
-        // this->print_vertices();
         std::shared_ptr<Configuration> c_rand =
             pick_config_at_random(this->instance().goal());
-        auto c_rand_barycenter = barycenter(*c_rand);
+
         if (*c_rand == this->instance().goal()){
-          std::cout << ANSI_PURPLE << "Moving towards GOAL: " << ANSI_RESET << (*c_rand) << " barycenter: " << 
-            c_rand_barycenter.first << ", " << c_rand_barycenter.second << "\n";
+          std::cout << ANSI_PURPLE << "Moving towards GOAL: " << ANSI_RESET << (*c_rand) << "\n";
         } else {
-          std::cout << ANSI_CYAN << "Moving towards crand: " << (*c_rand) << ANSI_RESET << " barycenter: " <<  
-          c_rand_barycenter.first << ", " << c_rand_barycenter.second << "\n";
+          std::cout << ANSI_CYAN << "Moving towards crand: " << (*c_rand) << ANSI_RESET << "\n";
         }
 
         std::shared_ptr<Configuration> c_nearest =
             get_nearest_configuration_l1(*c_rand);
-        auto c_nearest_barycenter = barycenter(*c_nearest);
-        std::cout << "Cnearest is "<< ANSI_YELLOW << *c_nearest << ANSI_RESET << " barycenter: " << 
-        c_nearest_barycenter.first << ", " << c_nearest_barycenter.second << "\n";
+
+        std::cout << "Cnearest is "<< ANSI_YELLOW << *c_nearest << ANSI_RESET << "\n";
         std::cout.flush();
 
-        std::shared_ptr<Configuration> c_new = move_towards(*c_nearest, *c_rand);
-        auto source = this->instance().start();
+        std::vector<std::shared_ptr<Configuration>> small_path = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+        std::shared_ptr<Configuration> c_new = small_path.back();
         if (c_new->size() == 0)
         {
-          std::cout << ANSI_RED << "move_towards failed.\n" << ANSI_RESET;
+          std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n" << ANSI_RESET;
           std::cout.flush();
           return;
         }
@@ -484,21 +380,20 @@ namespace cmarrt
           this->parents_.push_back(c_nearest);
           this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
           this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_nearest];
-          assert(this->index_of_vertex_.find(*c_nearest) != this->index_of_vertex_.end());
+          this->path_to_parent_[*c_new] = small_path;
           std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
-          // std::cout << "Cnew added: " << *c_new << "\n";
-          // std::cout.flush();
         }
         else
         {
           std::cout << ANSI_RED << "Cnew is already in the tree : " << *c_new << ANSI_RESET << "\n";
         }
 
+        // auto source = this->instance().start();
         // RRT* component
         //  std::shared_ptr<Configuration> c_min = c_nearest;
         //  int costmin = Cost(source, *c_min) + Cost(*c_min, *c_new);
         //  std::vector<std::shared_ptr<Configuration>> Neighborhood =
-        //      Neighbors(*c_new);
+        //      Neighbors(*c_new, this->neardist);
 
         // for (auto cnear : Neighborhood) {
         //   int cost = Cost(source, *cnear) + Cost(*cnear, *c_new);
@@ -513,38 +408,21 @@ namespace cmarrt
       }
 
       /**
-       * @brief Given an ExplorationTree, compute the execution from start to goal
-       *
+       * @brief Given an ExplorationTree, compute an execution from start to goal
+       * @pre goal is a node in the tree
+       * 
        * @param start
        * @param goal
        * @return std::vector<std::shared_ptr<Configuration>>
        */
-      std::vector<std::shared_ptr<Configuration>> ComputeExecution(
-          const Configuration &start,
-          const Configuration &goal)
+      std::vector<std::shared_ptr<Configuration>> getExecution(
+          const Configuration & goal)
       {
         std::vector<std::shared_ptr<Configuration>> exec;
-        std::shared_ptr<Configuration> current =
-            std::make_shared<Configuration>(goal);
-        exec.insert(exec.begin(), current);
-        while (not(*current == start))
-        {
-          int id = this->index_of_configuration(*current);
-          auto parents =
-              this->get_parents(); // not necessary anymore except for the assert
-          assert(id <= parents.size());
-          // FIXME Why id-1? What is this configuration?
-          auto parent = this->get_parents().at(id - 1);
-          auto smallpath = computeSmallPath(*current, *parent);
-          for (int i = 0; i < smallpath.size(); i++)
-          {
-            exec.insert(exec.begin(), smallpath.at(i));
-          }
-          exec.insert(exec.begin(), parent);
-          current = parent;
-        }
+        // TODO Compute the execution using path_to_parent
         return exec;
       };
+
       void print_tree(){
         int node_count = this->vertices_.size();
         std::shared_ptr<bool[]> visited(new bool[node_count]);
@@ -564,13 +442,6 @@ namespace cmarrt
             v = parent_of_v;
           }
         }
-        /*
-        std::vector<std::shared_ptr<Configuration>> vertices_;
-        // FIXME is parents_[i] the parent node of vertices_[i]?
-        std::vector<std::shared_ptr<Configuration>> parents_;
-        std::map<Configuration, int> index_of_vertex_;
-        std::map<Configuration, int> index_of_parent_;
-        */
       }
     };
 
@@ -582,18 +453,7 @@ namespace cmarrt
            int prob2target,
            int step_size)
         : Solver<GraphMove, GraphComm>(instance, objective),
-          explorationtree_(instance, objective, prob2target, step_size){
-            auto cgoal = instance.goal();
-            auto cstart = instance.start();
-            if (!instance.graph().communication().is_configuration_connected(cstart)){
-              LOG_FATAL("Start configuration is not connected.");
-              throw "Error";
-            }
-            if (!instance.graph().communication().is_configuration_connected(cgoal)){
-              LOG_FATAL("Goal configuration is not connected.");
-              throw "Error";
-            }
-          };
+          explorationtree_(instance, objective, prob2target, step_size){};
 
     bool StepCompute() override
     {
@@ -603,8 +463,7 @@ namespace cmarrt
         explorationtree_.print_tree();
         std::cout << "Done after " << iterations << " iterations\n";
         std::cout.flush();
-        auto exec = explorationtree_.ComputeExecution(this->instance().start(),
-                                                      this->instance().goal());
+        auto exec = explorationtree_.getExecution(this->instance().goal());
         for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
         {
           std::shared_ptr<Path> p_agt = std::make_shared<Path>();

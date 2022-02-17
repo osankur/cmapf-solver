@@ -11,7 +11,7 @@
  * all copies or substantial portions of the Software.
  */
 #include <Graph.hpp>
-
+#include <cassert>
 size_t ExplicitGraph::node_count() const { return adjacency_->size(); }
 
 size_t ExplicitGraph::edge_count() const {
@@ -77,3 +77,19 @@ bool ExplicitGraph::is_configuration_connected(const Configuration& config) cons
     }
     return agent_count == nb_agents;
   }
+
+std::pair<float, float> ExplicitGraph::getBarycenter(const Configuration &config)
+{
+  int nb_agents = config.size();
+  assert(nb_agents != 0);
+  float x = 0;
+  float y = 0;
+  for (size_t agt = 0; agt < config.size(); agt++)
+  {
+    std::pair<int, int> pos_agt =
+        this->get_position(config.at(agt));
+    x += pos_agt.first;
+    y += pos_agt.second;
+  }
+  return std::make_pair(x / nb_agents, y / nb_agents);
+}

@@ -35,6 +35,7 @@ class FloydWarshall {
   enum class NodeColor { kWhite, kGray, kBlack };
 
   void computeShortestPaths(const Node &target) {
+    std::cout << "Computing shortest paths for target = " << target << "\n";
     mem_paths_.insert(std::make_pair(target, std::vector<Node>{}));
     std::vector<Node> &mem = mem_paths_[target];
     mem.resize(instance_.graph().movement().node_count(), std::numeric_limits<Node>::max());
