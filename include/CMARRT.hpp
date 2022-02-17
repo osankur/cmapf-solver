@@ -600,7 +600,7 @@ namespace cmarrt
       // std::cout << "\nStep \n";
       if (explorationtree_.TreeHasConfig(this->instance().goal()))
       {
-        explorationtree_.print_vertices_parents();
+        explorationtree_.print_tree();
         std::cout << "Done after " << iterations << " iterations\n";
         std::cout.flush();
         auto exec = explorationtree_.ComputeExecution(this->instance().start(),

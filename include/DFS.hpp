@@ -40,84 +40,6 @@ namespace coupled
   class DFS : public Solver<GraphMove, GraphComm>
   {
   private:
-    struct ConfigurationPtrEqual
-    {
-      bool operator()(const std::shared_ptr<Configuration> &a,
-                      const std::shared_ptr<Configuration> &b) const
-      {
-        if (a->size() != b->size())
-          return false;
-
-        for (size_t index = 0; index < a->size(); index++)
-          if (a->at(index) != b->at(index))
-            return false;
-        return true;
-      }
-    };
-
-    struct ConfigurationPtrHash
-    {
-      size_t operator()(const std::shared_ptr<Configuration> &that) const
-      {
-        size_t h = 0;
-        for (size_t index = 0; index < that->size(); index++)
-          h += that->at(index) ^ index;
-
-        return h;
-      }
-    };
-
-    class HeapComparator
-    {
-    private:
-      const Instance<GraphMove, GraphComm> &instance_;
-      const std::shared_ptr<Configuration> config_;
-      FloydWarshall<GraphMove, GraphComm> floydwarshall_;
-
-    public:
-      explicit HeapComparator(const Instance<GraphMove, GraphComm> &instance,
-                              const std::shared_ptr<Configuration> config)
-          : instance_(instance), config_(config), floydwarshall_(instance)
-      {
-        floydwarshall_.computeAllPairs();
-      }
-
-      bool operator()(const std::shared_ptr<Configuration> &a,
-                      const std::shared_ptr<Configuration> &b)
-      {
-        size_t costA = 0;
-        size_t costB = 0;
-        costA += a->size();
-        costB += b->size();
-        for (size_t agt = 0; agt < config_->size(); agt++)
-        {
-          if (agt < a->size())
-            costA += 1 + floydwarshall_.getShortestPathDistance(
-                             a->at(agt), instance_.goal()[agt]);
-          /*instance_.graph().movement().get_distance(config_->at(agt),
-          a->at(agt)) + instance_.graph().movement().get_distance(a->at(agt),
-          instance_.goal()[agt]);*/
-          else
-            costA += floydwarshall_.getShortestPathDistance(config_->at(agt),
-                                                            instance_.goal()[agt]);
-          // instance_.graph().movement().get_distance(config_->at(agt),
-          // instance_.goal()[agt]);
-          if (agt < b->size())
-            costB += 1 + floydwarshall_.getShortestPathDistance(
-                             b->at(agt), instance_.goal()[agt]);
-          /*instance_.graph().movement().get_distance(config_->at(agt),
-          b->at(agt)) + instance_.graph().movement().get_distance(b->at(agt),
-          instance_.goal()[agt]);*/
-          else
-            costB += floydwarshall_.getShortestPathDistance(config_->at(agt),
-                                                            instance_.goal()[agt]);
-          // instance_.graph().movement().get_distance(config_->at(agt),
-          // instance_.goal()[agt]);
-        }
-        return costA > costB;
-      }
-    };
-
     std::vector<std::shared_ptr<Configuration>> exec_;
     std::unordered_set<std::shared_ptr<Configuration>,
                        ConfigurationPtrHash,
@@ -141,41 +63,55 @@ namespace coupled
       PartialCostMap g_local;
       PartialConfQueue open_local;
 
-      g_local[pi] = 0;
-
-      open_local.insert(pi, 0, shortestPathHeuristics_.getHeuristic(*pi));
-      int max_size = -1;
+      auto pi0 = std::make_shared<Configuration>();
+      g_local[pi0] = 0;
+      open_local.insert(pi0, 0, shortestPathHeuristics_.getHeuristic(*pi));
       while (!open_local.empty())
       {
-        if (open_local.size() > max_size)
-        {
-          max_size = open_local.size();
-        }
         auto a = open_local.pop();
-
-        if (a->size() == this->instance_.nb_agents()
-            && this->instance_.graph().communication().is_configuration_connected(*a) 
-            && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
+        // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
+        // std::cout << *a;
+        // std::cout << "\n";
+        if (a->size() == this->instance_.nb_agents() && this->instance_.graph().communication().is_configuration_connected(*a) && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
         {
-          std::cout << "open.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "     ";
-          std::cout.flush();
+          // std::cout << "open.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
+          // std::cout.flush();
           return a;
-        } else if (a->size() < pi->size()) {
+        }
+        else if (a->size() < pi->size())
+        {
           Agent next_agt = (Agent)a->size();
+          // std::cout << "Agent " << next_agt << " (out of " << pi->size() << ") is at node " << pi->at(next_agt) << " and has "
+          //           << this->instance_.graph().movement().get_neighbors(pi->at(next_agt)).size()
+          //           << " neighbors\n";
+
           for (Node neighbor : this->instance_.graph().movement().get_neighbors(
-                  pi->at(next_agt)))
+                   pi->at(next_agt)))
           {
+            // std::cout << "Setting agent " << next_agt << " to node " << neighbor << "\n";
             std::shared_ptr<Configuration> next = std::make_shared<Configuration>();
             for (Agent agt = 0; agt < next_agt; agt++)
               next->PushBack(a->at(agt));
             next->PushBack(neighbor);
-            double g = g_local[a] + 1;
+            double g = g_local[a];
+            if (neighbor != pi->at(next_agt))
+            {
+              g += 1;
+            }
             g_local[next] = g;
-            open_local.insert(next, g, this->shortestPathHeuristics_.getHeuristic(*next));
+
+            Configuration completed_next(*next);
+            for(Agent agt = next->size(); agt < pi->size(); agt++){
+              completed_next.PushBack(pi->at(agt));
+            }
+            open_local.insert(next, g, this->shortestPathHeuristics_.getHeuristic(completed_next));
+            // std::cout << "\tAdded next with " << next->size() << " agents, total cost: " << g+ this->shortestPathHeuristics_.getHeuristic(*next) << "\n";
+            // std::cout << "Next: ";
+            // std::cout << *next;
+            // std::cout << "\n";
           }
         }
       }
-
       return nullptr;
     }
 
@@ -187,50 +123,6 @@ namespace coupled
         if (config->at(agt) != this->instance_.goal()[agt])
           return false;
       return true;
-    }
-
-    std::shared_ptr<Configuration> FindBestChild(
-        const std::shared_ptr<Configuration> config)
-    {
-      HeapComparator cmp(this->instance_, config);
-      std::priority_queue<std::shared_ptr<Configuration>,
-                          std::vector<std::shared_ptr<Configuration>>,
-                          HeapComparator>
-          open(cmp);
-      std::cout << "\tRunning findBestChild:\n";
-      std::cout.flush();
-      std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
-      open.push(start);
-      while (!open.empty())
-      {
-        std::cout << "\ropen.size() == " << open.size() << " closed.size() == " << closed_.size() << "     ";
-        std::cout.flush();
-        std::shared_ptr<Configuration> current = open.top();
-        open.pop();
-
-        if (current->size() == this->instance_.nb_agents())
-        {
-          if (this->instance_.graph().communication().is_configuration_connected(*current) &&
-              closed_.find(current) == closed_.end())
-          {
-            return current;
-          }
-          else
-            continue;
-        }
-
-        for (Node neighbor : this->instance_.graph().movement().get_neighbors(
-                 config->at(current->size())))
-        {
-          std::shared_ptr<Configuration> next = std::make_shared<Configuration>();
-          for (Agent agt = 0; agt < static_cast<Agent>(current->size()); agt++)
-            next->PushBack(current->at(agt));
-          next->PushBack(neighbor);
-          open.push(next);
-        }
-      }
-      std::cout << "\n";
-      return nullptr;
     }
 
   public:
@@ -309,7 +201,7 @@ namespace coupled
           break;
         }
 
-        std::shared_ptr<Configuration> config = FindBestChild(exec_.back());
+        std::shared_ptr<Configuration> config = FindBestConfiguration(exec_.back());
         if (config == nullptr)
         {
           break;

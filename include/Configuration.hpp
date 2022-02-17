@@ -14,29 +14,58 @@
 
 #include <ostream>
 #include <vector>
+#include <memory>
 #include <Common.hpp>
 
-class Configuration {
- private:
+class Configuration
+{
+private:
   std::vector<Node> config_;
 
- public:
+public:
   Configuration();
   Configuration(size_t size);
   void PushBack(Node);
 
   // Operators
-  Node& operator[](Agent);
-  const Node& operator[](Agent) const;
+  Node &operator[](Agent);
+  const Node &operator[](Agent) const;
   bool operator==(const Configuration &) const;
 
   // Properties
   size_t size() const;
-  const Node& at(Agent) const;
+  const Node &at(Agent) const;
 
   // Friends
-  friend std::ostream& operator<<(std::ostream&, const Configuration&);
-  friend bool operator<(const Configuration&,const Configuration&);
+  friend std::ostream &operator<<(std::ostream &, const Configuration &);
+  friend bool operator<(const Configuration &, const Configuration &);
 };
 
-bool operator<(const Configuration& c1,const Configuration& c2);
+bool operator<(const Configuration &c1, const Configuration &c2);
+
+struct ConfigurationPtrEqual
+{
+  bool operator()(const std::shared_ptr<Configuration> &a,
+                  const std::shared_ptr<Configuration> &b) const
+  {
+    if (a->size() != b->size())
+      return false;
+
+    for (size_t index = 0; index < a->size(); index++)
+      if (a->at(index) != b->at(index))
+        return false;
+    return true;
+  }
+};
+
+struct ConfigurationPtrHash
+{
+  size_t operator()(const std::shared_ptr<Configuration> &that) const
+  {
+    size_t h = 0;
+    for (size_t index = 0; index < that->size(); index++)
+      h += that->at(index) ^ index;
+
+    return h;
+  }
+};
