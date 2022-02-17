@@ -190,7 +190,7 @@ int main(int argc, const char *argv[])
 
     LOG_TRACE("Solver created!");
 
-    const auto execution = solver->Compute();
+    const auto execution = solver->computeAllPairs();
 
     LOG_TRACE("Solver terminated!");
     LOG_INFO("Execution cost:" << objective->cost(execution));

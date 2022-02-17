@@ -17,6 +17,8 @@
 #include <utility>
 #include <Common.hpp>
 #include <unordered_set>
+#include <Configuration.hpp>
+#include <stack>
 
 class Graph {
  public:
@@ -45,6 +47,9 @@ class ExplicitGraph : public Graph {
   const std::unordered_set<Node>& get_neighbors(Node) const override;
   size_t get_distance(Node, Node) const override;
   std::pair<int,int> get_position(Node) const;
+  bool is_configuration_connected(const Configuration & c) const;
+
+  
 };
 
 class RadiusGraph : public Graph {

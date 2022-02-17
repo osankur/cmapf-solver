@@ -128,7 +128,7 @@ namespace coordinated{
             } else if( this->collision_mode_ == collision_mode_t::CHECK_COLLISIONS && !this->isCollisionless(our_nodes)) {
                 return INFINITY;
             } else {
-                auto d = this->fw_.ComputeShortestPathSize(next_partial_conf.find(agent_)->second, 
+                auto d = this->fw_.getShortestPathDistance(next_partial_conf.find(agent_)->second, 
                     this->instance_.goal()[agent_]);
                 // LOG_DEBUG("Evaluating weight for node=" + std::to_string(agent_) 
                 //     + ". Distance from node " + std::to_string(next_partial_conf.find(agent_)->second)

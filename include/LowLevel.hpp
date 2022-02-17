@@ -243,19 +243,19 @@ class PositiveAStar : public LowLevel<GraphMove, GraphComm> {
     test_size += c.time > 0 ? 1 : 0;
     if (constraints.size() != test_size) throw "Size mismatch";
 #endif
-    if (constraints.empty()) return fw_.ComputeShortestPath(source, target);
+    if (constraints.empty()) return fw_.getShortestPath(source, target);
 
     Path final_path;
     auto iter = constraints.cbegin();
     // Source to first constraint
-    Path p = fw_.ComputeShortestPath(source, iter->second.node);
+    Path p = fw_.getShortestPath(source, iter->second.node);
     if (p.size() == 0 || p.size() - 1 > (iter->second.time - time)) return Path();
     for (size_t i = 0; i < p.size(); i++) final_path.PushBack(p.at(i));
     while (final_path.size() <= (iter->second.time - time)) final_path.PushBack(final_path.at(final_path.size() - 1));
 
     // Constraint to Constraint
     while (std::next(iter) != constraints.cend()) {
-      p = fw_.ComputeShortestPath(iter->second.node, std::next(iter)->second.node);
+      p = fw_.getShortestPath(iter->second.node, std::next(iter)->second.node);
       if (p.size() == 0 || p.size() - 1> (std::next(iter)->second.time - iter->second.time)) return Path();
       for (size_t i = 1; i < p.size(); i++) final_path.PushBack(p.at(i));
       while (final_path.size() <= (std::next(iter)->second.time - time))
@@ -264,7 +264,7 @@ class PositiveAStar : public LowLevel<GraphMove, GraphComm> {
     }
     // Constraint to target
     if (final_path.at(final_path.size() - 1) != target) {
-      p = fw_.ComputeShortestPath(constraints.crbegin()->second.node, target);
+      p = fw_.getShortestPath(constraints.crbegin()->second.node, target);
       if (p.size() == 0) return Path();
       for (size_t i = 1; i < p.size(); i++) final_path.PushBack(p.at(i));
     }

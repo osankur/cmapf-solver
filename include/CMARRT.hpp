@@ -19,6 +19,7 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include <ctime>
 
 #define ANSI_RESET  "\u001B[0m"
 #define ANSI_BLACK  "\u001B[30m"
@@ -250,13 +251,18 @@ namespace cmarrt
       std::shared_ptr<Configuration> move_towards(const Configuration &source,
                                                   const Configuration &target)
       {
+        std::cout << "Creating small instance\n";  std::cout.flush();
         Instance smallInstance(this->instance().graph(), source, target);
+        std::cout << "Creating dfs solver\n";  std::cout.flush();
         coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
                                                       this->objective_);
-
+        std::cout << "Launching DFS for " << step << " steps\n";  std::cout.flush();
+        auto cstart = clock();
         auto cnew =
             std::make_shared<Configuration>(dfs_solver.smallStepCompute(step));
+        auto cend = clock();
         assert((*cnew).size() > 0);
+        std::cout << "DFS ended in " << (cend-cstart) / CLOCKS_PER_SEC << "s\n";  std::cout.flush();
         return cnew;
       };
 
@@ -300,7 +306,7 @@ namespace cmarrt
         Instance smallInstance(this->instance().graph(), first, second);
         coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
                                                       this->objective_);
-        Execution smallExec = dfs_solver.Compute();
+        Execution smallExec = dfs_solver.computeAllPairs();
         return smallExec.size();
       };
 
@@ -346,7 +352,7 @@ namespace cmarrt
         Instance smallInstance(this->instance().graph(), first, second);
         coupled::DFS<GraphMove, GraphComm> dfs_solver(smallInstance,
                                                       this->objective_);
-        Execution exec(dfs_solver.Compute());
+        Execution exec(dfs_solver.computeAllPairs());
         std::vector<std::shared_ptr<Configuration>> smallExec;
         // std::cout << "\nExecution " << exec;
         for (int i = 1; i < exec.max_path() - 1; i++)
@@ -576,14 +582,24 @@ namespace cmarrt
            int prob2target,
            int step_size)
         : Solver<GraphMove, GraphComm>(instance, objective),
-          explorationtree_(instance, objective, prob2target, step_size){};
+          explorationtree_(instance, objective, prob2target, step_size){
+            auto cgoal = instance.goal();
+            auto cstart = instance.start();
+            if (!instance.graph().communication().is_configuration_connected(cstart)){
+              LOG_FATAL("Start configuration is not connected.");
+              throw "Error";
+            }
+            if (!instance.graph().communication().is_configuration_connected(cgoal)){
+              LOG_FATAL("Goal configuration is not connected.");
+              throw "Error";
+            }
+          };
 
     bool StepCompute() override
     {
       // std::cout << "\nStep \n";
       if (explorationtree_.TreeHasConfig(this->instance().goal()))
       {
-        // std::cout << "finished\n Exploration tree : \n";
         explorationtree_.print_vertices_parents();
         std::cout << "Done after " << iterations << " iterations\n";
         std::cout.flush();

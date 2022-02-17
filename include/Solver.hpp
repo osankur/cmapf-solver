@@ -30,7 +30,7 @@ class Solver {
 
   virtual bool StepCompute() = 0;
 
-  const Execution Compute() {
+  const Execution computeAllPairs() {
     while (!StepCompute()) {
     }
     return execution_;

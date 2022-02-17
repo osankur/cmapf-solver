@@ -34,7 +34,8 @@ class FloydWarshall {
 
   enum class NodeColor { kWhite, kGray, kBlack };
 
-  void ComputeShortestPaths(const Node &target) {
+  void computeShortestPaths(const Node &target) {
+    std::cout << "Computing shortest paths for target = " << target << "\n";
     mem_paths_.insert(std::make_pair(target, std::vector<Node>{}));
     std::vector<Node> &mem = mem_paths_[target];
     mem.resize(instance_.graph().movement().node_count(), std::numeric_limits<Node>::max());
@@ -51,7 +52,7 @@ class FloydWarshall {
 
       for (Node neighbor : instance_.graph().movement().get_neighbors(head)) {
         if (colored[neighbor] == NodeColor::kBlack) continue;
-        if (GetShortestPathSize(head, target) + 1 < GetShortestPathSize(neighbor, target)) mem[neighbor] = head;
+        if (getShortestPathDistance(head, target) + 1 < getShortestPathDistance(neighbor, target)) mem[neighbor] = head;
         if (colored[neighbor] == NodeColor::kWhite) {
           open.push_back(neighbor);
           colored[neighbor] = NodeColor::kGray;
@@ -67,13 +68,9 @@ class FloydWarshall {
   explicit FloydWarshall(const Instance<GraphMove, GraphComm> &instance) : mem_paths_(), instance_(instance) {}
   virtual ~FloydWarshall() {}
 
-  Path ComputeShortestPath(const Node &source, const Node &target) {
-    const auto &memIt = mem_paths_.find(target);
-    if (memIt == mem_paths_.cend()) ComputeShortestPaths(target);
-    return GetShortestPath(source, target);
-  }
-
-  Path GetShortestPath(const Node &source, const Node &target) const {
+  Path getShortestPath(const Node &source, const Node &target) {
+    auto memIt = mem_paths_.find(target);
+    if (memIt == mem_paths_.end()) computeShortestPaths(target);
     const std::vector<Node> &mem = mem_paths_.at(target);
     Path p;
     Node current = source;
@@ -86,13 +83,9 @@ class FloydWarshall {
     return p;
   }
 
-  size_t ComputeShortestPathSize(const Node &source, const Node &target) {
+  size_t getShortestPathDistance(const Node &source, const Node &target) {
     auto memIt = mem_paths_.find(target);
-    if (memIt == mem_paths_.end()) ComputeShortestPaths(target);
-    return GetShortestPathSize(source, target);
-  }
-
-  size_t GetShortestPathSize(const Node &source, const Node &target) const {
+    if (memIt == mem_paths_.end()) computeShortestPaths(target);
     const std::vector<Node> &mem = mem_paths_.at(target);
     size_t size = 0;
     Node current = source;
@@ -106,12 +99,12 @@ class FloydWarshall {
     return size;
   }
 
-  void Compute() {
+  void computeAllPairs() {
     const Configuration &goal = instance_.goal();
 
     for (size_t i = 0; i < goal.size(); i++) {
       Node target = goal[i];
-      ComputeShortestPaths(target);
+      computeShortestPaths(target);
     }
   }
 };

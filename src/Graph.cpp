@@ -42,3 +42,38 @@ size_t ExplicitGraph::get_distance(Node a, Node b) const {
   return static_cast<size_t>(abs((*positions_)[a].first - (*positions_)[b].first) +
                              abs((*positions_)[a].second - (*positions_)[b].second));
 }
+
+bool ExplicitGraph::is_configuration_connected(const Configuration& config) const {
+  int nb_agents = config.size();
+    std::vector<bool> agent_treated =
+        std::vector<bool>(nb_agents, false);
+    std::stack<Agent> agent_stack;
+    size_t agent_count = 0;
+    std::vector<bool>::iterator it;
+
+    agent_stack.push(0);
+    while (!agent_stack.empty()) {
+      Agent a = agent_stack.top();
+      agent_stack.pop();
+
+      if (!agent_treated[a]) {
+        agent_treated[a] = true;
+        agent_count++;
+
+        Node aPos = config.at(a);
+
+        for (Agent b = 0; b < static_cast<Agent>(nb_agents);
+             b++) {
+          if (a != b && !agent_treated[b]) {
+            Node bPos = config.at(b);
+            const auto& neighbors =
+                get_neighbors(aPos);
+            if (neighbors.find(bPos) != neighbors.end()) {
+              agent_stack.push(b);
+            }
+          }
+        }
+      }
+    }
+    return agent_count == nb_agents;
+  }
