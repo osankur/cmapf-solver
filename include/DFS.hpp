@@ -21,7 +21,7 @@
 #include <Objective.hpp>
 #include <Solver.hpp>
 #include <PriorityQueue.hpp>
-#include <ShortestPathHeuristics.hpp>
+#include <Heuristics.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
 #include <list>
 #include <map>
@@ -46,7 +46,7 @@ namespace coupled
                        ConfigurationPtrHash,
                        ConfigurationPtrEqual>
         closed_;
-    ShortestPathHeuristics<GraphMove, GraphComm> shortestPathHeuristics_;
+    Heuristics<GraphMove, GraphComm> & heuristics_;
 
     typedef std::map<std::shared_ptr<Configuration>, double> PartialCostMap;
     typedef PriorityQueue<std::shared_ptr<Configuration>> PartialConfQueue;
@@ -58,7 +58,8 @@ namespace coupled
      * @return std::shared_ptr<Configuration>
      */
     std::shared_ptr<Configuration> FindBestConfiguration(
-        const std::shared_ptr<Configuration> pi)
+        const std::shared_ptr<Configuration> pi,
+        const Configuration & goal)
     {
       assert(this->instance_.nb_agents() == pi->size());
       auto cstart = clock();
@@ -68,7 +69,7 @@ namespace coupled
 
       auto pi0 = std::make_shared<Configuration>();
       g_local[pi0] = 0;
-      open_local.insert(pi0, 0, shortestPathHeuristics_.getHeuristic(*pi));
+      open_local.insert(pi0, 0, heuristics_.getHeuristic(*pi, goal));
       while (!open_local.empty())
       {
         auto a = open_local.pop();
@@ -109,8 +110,8 @@ namespace coupled
             for(Agent agt = next->size(); agt < pi->size(); agt++){
               completed_next.PushBack(pi->at(agt));
             }
-            open_local.insert(next, g, this->shortestPathHeuristics_.getHeuristic(completed_next));
-            // std::cout << "\tAdded next with " << next->size() << " agents, total cost: " << g+ this->shortestPathHeuristics_.getHeuristic(*next) << "\n";
+            open_local.insert(next, g, this->heuristics_.getHeuristic(completed_next, goal));
+            // std::cout << "\tAdded next with " << next->size() << " agents, total cost: " << g+ this->heuristics_.getHeuristic(*next) << "\n";
             // std::cout << "Next: ";
             // std::cout << *next;
             // std::cout << "\n";
@@ -144,7 +145,7 @@ namespace coupled
         return true;
       }
 
-      std::shared_ptr<Configuration> config = FindBestConfiguration(exec_.back());
+      std::shared_ptr<Configuration> config = FindBestConfiguration(exec_.back(), goal);
 
       if (config == nullptr)
       {
@@ -161,8 +162,9 @@ namespace coupled
 
   public:
     DFS(const Instance<GraphMove, GraphComm> &instance,
-        const Objective &objective)
-        : Solver<GraphMove, GraphComm>(instance, objective), exec_(), shortestPathHeuristics_(instance)
+        const Objective &objective,
+        Heuristics<GraphMove, GraphComm>& heuristics)
+        : Solver<GraphMove, GraphComm>(instance, objective), exec_(), heuristics_(heuristics)
     {
       std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
       for (size_t agt = 0; agt < instance.start().size(); agt++)
@@ -195,7 +197,7 @@ namespace coupled
       exec_.push_back(std::make_shared<Configuration>(source));
       for (int i = 0; i < steps; i++)
       {
-        StepCompute(goal);
+        if(StepCompute(goal)) break;
       }
       return exec_;
     }

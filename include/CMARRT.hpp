@@ -9,7 +9,7 @@
 #include <LowLevel.hpp>
 #include <Objective.hpp>
 #include <Solver.hpp>
-
+#include <Heuristics.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
 #include <list>
 #include <map>
@@ -292,9 +292,10 @@ namespace cmarrt
        */
       explicit ExplorationTree(const Instance<GraphMove, GraphComm> &instance,
                                const Objective &objective,
+                               coupled::Heuristics<GraphMove, GraphComm>& heuristics, 
                                int prob2target,
                                int step_size)
-          : instance_(instance), objective_(objective), vertices_(), parents_(), prob2target(prob2target), step_size(step_size), dfs_solver_(instance, objective) 
+          : instance_(instance), objective_(objective), vertices_(), parents_(), prob2target(prob2target), step_size(step_size), dfs_solver_(instance, objective, heuristics) 
       {
         auto start = std::make_shared<Configuration>(instance.start());
         vertices_.push_back(start);
@@ -450,10 +451,11 @@ namespace cmarrt
   public:
     CMARRT(const Instance<GraphMove, GraphComm> &instance,
            const Objective &objective,
+          coupled::Heuristics<GraphMove, GraphComm> &heuristics,
            int prob2target,
            int step_size)
         : Solver<GraphMove, GraphComm>(instance, objective),
-          explorationtree_(instance, objective, prob2target, step_size){};
+          explorationtree_(instance, objective, heuristics, prob2target, step_size){};
 
     bool StepCompute() override
     {

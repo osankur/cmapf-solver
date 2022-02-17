@@ -33,6 +33,7 @@ using namespace boost::program_options;
 
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
+constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
 
 enum class Algorithm : int
 {
@@ -50,6 +51,11 @@ enum class ObjectiveEnum : int
   MAX
 };
 
+enum class HeuristicsEnum : int {
+  SHORTEST_PATH,
+  BIRDEYE
+};
+
 int main(int argc, const char *argv[])
 {
   try
@@ -60,6 +66,7 @@ int main(int argc, const char *argv[])
         "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run.")(
         "window,w", value<int>()->default_value(2), "Window size.")(
         "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize")(
+        "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: birdeye or shortest_paths")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
 
@@ -115,7 +122,6 @@ int main(int argc, const char *argv[])
       throw "Error";
     }
 
-
     auto obj = magic_enum::enum_cast<ObjectiveEnum>(std::string(DEFAULT_OBJ));
     if (vm.count("objective"))
     {
@@ -154,7 +160,19 @@ int main(int argc, const char *argv[])
       }
     }
 
-    LOG_INFO("Algorithm :" << vm["algo"].as<std::string>());
+    LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
+    std::unique_ptr<coupled::Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
+    auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
+    switch (heuristics_mode.value()){
+      case HeuristicsEnum::BIRDEYE:
+      heuristics = std::make_unique<coupled::BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance());
+      break;
+      case HeuristicsEnum::SHORTEST_PATH:
+      heuristics = std::make_unique<coupled::ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance());
+      break;
+    }
+
+    LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
 
     std::unique_ptr<Solver<ExplicitGraph, ExplicitGraph>> solver = nullptr;
 
@@ -183,7 +201,7 @@ int main(int argc, const char *argv[])
       solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
       break;
     case Algorithm::DFS:
-      solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
+      solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get());
       break;
     case Algorithm::COORD:
       solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(),
@@ -196,6 +214,7 @@ int main(int argc, const char *argv[])
       solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(
           il.instance(),
           *objective.get(),
+          *heuristics.get(),
           vm["prob2goal"].as<int>(),
           vm["step_size"].as<int>());
       break;
