@@ -38,7 +38,7 @@ namespace cmarrt
     class ExplorationTree
     {
     private:
-      float prob2target;       // bias in % to use the target configuration for the random one
+      int prob2target;       // bias in % to use the target configuration for the random one
       int step_size;
       float neardist = 1;
 

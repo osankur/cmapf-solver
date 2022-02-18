@@ -66,7 +66,7 @@ int main(int argc, const char *argv[])
         "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run.")(
         "window,w", value<int>()->default_value(2), "Window size.")(
         "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize")(
-        "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: birdeye or shortest_paths")(
+        "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: BIRDEYE or SHORTEST_PATH")(
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
@@ -217,6 +217,9 @@ int main(int argc, const char *argv[])
       } else {
         srand(random_seed);
       }
+      LOG_INFO("Prob2goal:" << vm["prob2goal"].as<int>());
+      LOG_INFO("Step size:" << vm["step_size"].as<int>());
+
       solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(
           il.instance(),
           *objective.get(),
