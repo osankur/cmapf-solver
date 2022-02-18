@@ -356,7 +356,7 @@ namespace cmarrt
                     << ANSI_RESET;
         }
       case SubsolverEnum::DFS_SOLVER:
-        pathSegment = decoupled_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+        pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
         break;
       }
       auto cend = clock();

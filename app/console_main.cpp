@@ -33,31 +33,10 @@ using namespace boost::program_options;
 
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
-constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
+constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
 constexpr char DEFAULT_COLLISIONS[] = "IGNORE_COLLISIONS";
 constexpr char DEFAULT_SUBSOLVER[] = "DFS_SOLVER";
 
-enum class Algorithm : int
-{
-  CBS = 0,
-  CCBS,
-  CA,
-  MAS,
-  DFS,
-  COORD,
-  CMARRT
-};
-enum class ObjectiveEnum : int
-{
-  SUM = 0,
-  MAX
-};
-
-enum class HeuristicsEnum : int
-{
-  SHORTEST_PATH,
-  BIRDEYE
-};
 
 int main(int argc, const char *argv[])
 {
