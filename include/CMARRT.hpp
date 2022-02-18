@@ -91,17 +91,19 @@ namespace cmarrt
         int irand = rand() % 100;
         if (irand > this->prob2target)
         {
+
           // Pick a node of Gc for the 1st agent
           size_t nb_nodes = this->instance().graph().communication().node_count();
           Node first = (uint64_t)rand() % (nb_nodes - 1);
-          Configuration configuration;
-          configuration.PushBack(first);
+
+          std::vector<Node> config = {first};
+          // config.push_back(first);
           std::unordered_set<Node> neighbors;
           // Pick in the Gc neighbors the position for the 2nd, etc
           for (size_t agt = 1; agt < this->instance().nb_agents(); agt++)
           {
             auto new_neighbors = this->instance().graph().communication().get_neighbors(
-                    configuration.at(agt - 1));
+                    config.at(agt - 1));
             neighbors.insert(new_neighbors.begin(), new_neighbors.end());
                 
             auto neighbors_vector =
@@ -109,11 +111,16 @@ namespace cmarrt
             auto size = neighbors_vector.size();
             // std::cout << "size for agt " << agt << ":" << size;
             auto nextagt = rand() % (size - 1);
-            configuration.PushBack(neighbors_vector.at(nextagt));
+            config.push_back(neighbors_vector.at(nextagt));
             assert(neighbors_vector.at(nextagt) <
                    this->instance().graph().movement().node_count());
           }
-          return (std::make_shared<Configuration>(configuration));
+          std::random_shuffle(config.begin(), config.end());
+          auto configuration = std::make_shared<Configuration>();
+          for(int agt = 0; agt < this->instance().nb_agents(); agt++){
+            configuration->PushBack(config.at(agt));
+          }
+          return configuration;
         }
         else
         {
