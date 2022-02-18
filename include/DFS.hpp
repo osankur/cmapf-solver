@@ -23,6 +23,7 @@
 #include <PriorityQueue.hpp>
 #include <Heuristics.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
+#include <BoundedSolver.hpp>
 #include <list>
 #include <map>
 #include <memory>
@@ -38,7 +39,7 @@ namespace coupled
 {
 
   template <class GraphMove, class GraphComm>
-  class DFS : public Solver<GraphMove, GraphComm>
+  class DFS : public Solver<GraphMove, GraphComm>, public BoundedSolver<GraphMove,GraphComm>
   {
   private:
     std::vector<std::shared_ptr<Configuration>> exec_;
@@ -197,7 +198,7 @@ namespace coupled
      *
      * @return last configuration of the computed execution.
      */
-    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps)
+    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps) override
     {
       exec_.clear();
       exec_.push_back(std::make_shared<Configuration>(source));

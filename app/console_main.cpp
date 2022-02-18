@@ -34,6 +34,8 @@ using namespace boost::program_options;
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
+constexpr char DEFAULT_COLLISIONS[] = "IGNORE_COLLISIONS";
+constexpr char DEFAULT_SUBSOLVER[] = "DFS_SOLVER";
 
 enum class Algorithm : int
 {
@@ -51,7 +53,8 @@ enum class ObjectiveEnum : int
   MAX
 };
 
-enum class HeuristicsEnum : int {
+enum class HeuristicsEnum : int
+{
   SHORTEST_PATH,
   BIRDEYE
 };
@@ -66,7 +69,9 @@ int main(int argc, const char *argv[])
         "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run.")(
         "window,w", value<int>()->default_value(2), "Window size.")(
         "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize")(
+        "collisions,c", value<std::string>()->default_value(DEFAULT_COLLISIONS), "Whether to check for collisions: CHECK_COLLISIONS | IGNORE_COLLISIONS")(
         "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: BIRDEYE or SHORTEST_PATH")(
+        "subsolver,ss", value<std::string>()->default_value(DEFAULT_SUBSOLVER), "Which solver to use to generate segment paths in CMARRT: DECOUPLED_SOLVER | DFS_SOLVER | COORD_SOLVER.")(
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
@@ -114,11 +119,13 @@ int main(int argc, const char *argv[])
 
     auto cgoal = il.instance().goal();
     auto cstart = il.instance().start();
-    if (!il.instance().graph().communication().is_configuration_connected(cstart)){
+    if (!il.instance().graph().communication().is_configuration_connected(cstart))
+    {
       LOG_FATAL("Start configuration is not connected.");
       throw "Error";
     }
-    if (!il.instance().graph().communication().is_configuration_connected(cgoal)){
+    if (!il.instance().graph().communication().is_configuration_connected(cgoal))
+    {
       LOG_FATAL("Goal configuration is not connected.");
       throw "Error";
     }
@@ -161,19 +168,26 @@ int main(int argc, const char *argv[])
       }
     }
 
-    LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
-    std::unique_ptr<coupled::Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
-    auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
-    switch (heuristics_mode.value()){
+      LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
+      auto floydwarshall = std::make_shared<FloydWarshall<ExplicitGraph, ExplicitGraph>>(il.instance());
+      std::unique_ptr<Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
+      auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
+      switch (heuristics_mode.value())
+      {
       case HeuristicsEnum::BIRDEYE:
-      heuristics = std::make_unique<coupled::BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance());
-      break;
+        heuristics = std::make_unique<BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
+        break;
       case HeuristicsEnum::SHORTEST_PATH:
-      heuristics = std::make_unique<coupled::ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance());
-      break;
-    }
+        heuristics = std::make_unique<ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
+        break;
+      }
 
-    int random_seed = vm["random_seed"].as<int>();
+    LOG_INFO("Collisions:" << vm["collisions"].as<std::string>());
+    auto collision_mode = magic_enum::enum_cast<CollisionsEnum>(vm["collisions"].as<std::string>()).value();
+
+    LOG_INFO("Subsolver:" << vm["subsolver"].as<std::string>());
+    SubsolverEnum subsolver = magic_enum::enum_cast<SubsolverEnum>(vm["subsolver"].as<std::string>()).value();
+
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
 
     std::unique_ptr<Solver<ExplicitGraph, ExplicitGraph>> solver = nullptr;
@@ -209,12 +223,16 @@ int main(int argc, const char *argv[])
       solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(),
                                                                                         *objective.get(),
                                                                                         vm["window"].as<int>(),
-                                                                                        coordinated::collision_mode_t::IGNORE_COLLISIONS);
+                                                                                        collision_mode);
       break;
     case Algorithm::CMARRT:
-      if (random_seed < 0 ){
+      int random_seed = vm["random_seed"].as<int>();
+      if (random_seed < 0)
+      {
         srand(time(NULL));
-      } else {
+      }
+      else
+      {
         srand(random_seed);
       }
       LOG_INFO("Prob2goal:" << vm["prob2goal"].as<int>());
@@ -224,6 +242,9 @@ int main(int argc, const char *argv[])
           il.instance(),
           *objective.get(),
           *heuristics.get(),
+          floydwarshall,
+          subsolver,
+          collision_mode,
           vm["prob2goal"].as<int>(),
           vm["step_size"].as<int>());
       break;
@@ -231,7 +252,7 @@ int main(int argc, const char *argv[])
 
     LOG_TRACE("Solver created!");
 
-    const auto execution = solver->computeAllPairs();
+    const auto execution = solver->compute();
 
     LOG_TRACE("Solver terminated!");
     LOG_INFO("Execution cost:" << objective->cost(execution));

@@ -8,6 +8,7 @@
 #include <Configuration.hpp>
 #include <Solver.hpp>
 #include <Logger.hpp>
+#include <Common.hpp>
 #include <set>
 
 /**
@@ -16,7 +17,6 @@
  */
 
 namespace coordinated{
-    enum class collision_mode_t {CHECK_COLLISIONS, IGNORE_COLLISIONS};
 
 
     template <class GraphMove, class GraphComm>
@@ -28,7 +28,7 @@ namespace coordinated{
             const Instance<GraphMove,GraphComm> & instance_;
             FloydWarshall<GraphMove,GraphComm> & fw_;
 
-            const collision_mode_t collision_mode_;
+            const CollisionsEnum collision_mode_;
         public:
         
         bool isCollisionless(const std::vector<Node> & next_conf){
@@ -72,7 +72,7 @@ namespace coordinated{
         LocalQ(const Instance<GraphMove,GraphComm> & instance,
                 FloydWarshall<GraphMove,GraphComm> & fw,
                const Configuration & source_conf, 
-               const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS)
+               const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS)
             : source_conf_(source_conf), instance_(instance), fw_(fw), collision_mode_(collision_mode) {
             }
 
@@ -106,7 +106,7 @@ namespace coordinated{
                const Configuration & source_conf, 
                const std::vector<Agent> & args,
                Agent agent, 
-               const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS)
+               const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS)
             : LocalQ<GraphMove,GraphComm>(instance,fw,source_conf,collision_mode), agent_(agent), args_(args){
             }
         
@@ -125,7 +125,7 @@ namespace coordinated{
             // LOG_DEBUG("Are they connected: " + std::to_string(this->isConnected(our_nodes)));
             if (!this->isConnected(our_nodes)){
                 return INFINITY;
-            } else if( this->collision_mode_ == collision_mode_t::CHECK_COLLISIONS && !this->isCollisionless(our_nodes)) {
+            } else if( this->collision_mode_ == CollisionsEnum::CHECK_COLLISIONS && !this->isCollisionless(our_nodes)) {
                 return INFINITY;
             } else {
                 auto d = this->fw_.getShortestPathDistance(next_partial_conf.find(agent_)->second, 
@@ -247,7 +247,7 @@ namespace coordinated{
                const Configuration & source_conf, 
                const std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > & qfuncs,
                const Agent agent_to_eliminate, 
-               const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS)
+               const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS)
             : LocalQ<GraphMove,GraphComm>(instance,fw,source_conf,collision_mode), 
                 qfuncs_(qfuncs), 
                 agent_to_eliminate_(agent_to_eliminate)
@@ -311,7 +311,7 @@ namespace coordinated{
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_;
         unsigned int window_size_;
         FloydWarshall<GraphMove,GraphComm> fw_;
-        const collision_mode_t collision_mode_;
+        const CollisionsEnum collision_mode_;
 
         std::vector<Configuration> config_stack_;
         std::set<Configuration> closed_;
@@ -406,7 +406,7 @@ namespace coordinated{
                     }
                     for(auto p : successors ){
                         // If a node was selected by another agent, we skip it
-                        if (collision_mode_ == collision_mode_t::CHECK_COLLISIONS && node_support.contains(p.second)){
+                        if (collision_mode_ == CollisionsEnum::CHECK_COLLISIONS && node_support.contains(p.second)){
                             continue;
                         }
                         // Otherwise, select it
@@ -471,7 +471,7 @@ namespace coordinated{
     CoordSolver(const Instance<GraphMove, GraphComm>& instance, 
                 const Objective& objective,
                 unsigned int window_size,
-                const collision_mode_t collision_mode = collision_mode_t::CHECK_COLLISIONS
+                const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS
                 )
       : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode), 
         window_size_(window_size),fw_(instance) {

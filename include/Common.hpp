@@ -13,6 +13,11 @@
 #pragma once
 #include <stdint.h>
 #include <cmath>
+
+enum class CollisionsEnum : int {CHECK_COLLISIONS, IGNORE_COLLISIONS};
+
+enum class SubsolverEnum : int { DECOUPLED_SOLVER, DFS_SOLVER, COORD_SOLVER };
+
 using Agent = int64_t;
 using Node = uint64_t;
 
