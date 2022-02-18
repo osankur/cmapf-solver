@@ -22,16 +22,6 @@
 #include <vector>
 #include <ctime>
 
-#define ANSI_RESET  "\u001B[0m"
-#define ANSI_BLACK  "\u001B[30m"
-#define ANSI_RED  "\u001B[31m"
-#define ANSI_GREEN  "\u001B[32m"
-#define ANSI_YELLOW  "\u001B[33m"
-#define ANSI_BLUE  "\u001B[34m"
-#define ANSI_PURPLE  "\u001B[35m"
-#define ANSI_CYAN  "\u001B[36m"
-#define ANSI_WHITE  "\u001B[37m"
-
 
 namespace cmarrt
 {
@@ -356,9 +346,9 @@ namespace cmarrt
             pick_config_at_random(this->instance().goal());
 
         if (*c_rand == this->instance().goal()){
-          std::cout << ANSI_PURPLE << "Moving towards GOAL: " << ANSI_RESET << (*c_rand) << "\n";
+          std::cout << ANSI_PURPLE << "Moving towards " << ANSI_BOLD << "GOAL: " << ANSI_RESET << (*c_rand) << "\n";
         } else {
-          std::cout << ANSI_CYAN << "Moving towards crand: " << (*c_rand) << ANSI_RESET << "\n";
+          std::cout << ANSI_CYAN << "Moving towards " << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_rand) << "\n";
         }
 
         std::shared_ptr<Configuration> c_nearest =
@@ -373,13 +363,13 @@ namespace cmarrt
         if ((cend - cstart) / (double) CLOCKS_PER_SEC > 0.1){
           std::cout << ANSI_RED << "computeBoundedPathTowards took " << (cend - cstart) / (double) CLOCKS_PER_SEC << " seconds\n" << ANSI_RESET;
         }
-        std::shared_ptr<Configuration> c_new = small_path.back();
-        if (c_new->size() == 0)
+        if (small_path.size() == 0)
         {
           std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n" << ANSI_RESET;
           std::cout.flush();
           return;
         }
+        std::shared_ptr<Configuration> c_new = small_path.back();
         if (not(this->TreeHasConfig(*c_new)))
         {
           this->vertices_.push_back(c_new);

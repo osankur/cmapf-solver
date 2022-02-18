@@ -67,18 +67,24 @@ namespace coupled
       PartialCostMap g_local;
       PartialConfQueue open_local;
 
+      int iteration_count = 0;
+
       auto pi0 = std::make_shared<Configuration>();
       g_local[pi0] = 0;
       open_local.insert(pi0, 0, heuristics_.getHeuristic(*pi, goal));
       while (!open_local.empty())
       {
+        iteration_count++;
         auto a = open_local.pop();
         // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
         // std::cout << *a;
         // std::cout << "\n";
         if (a->size() == this->instance_.nb_agents() && this->instance_.graph().communication().is_configuration_connected(*a) && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
         {
-          auto cend = clock();
+          if (iteration_count > 1000){
+            std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;
+          }
+          // auto cend = clock();
           // std::cout << "\topen.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
           // std::cout << "\tElapsed time: " << (cend -cstart) / (float) CLOCKS_PER_SEC << "\n";
           // std::cout.flush();

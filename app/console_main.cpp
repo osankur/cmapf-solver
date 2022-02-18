@@ -67,6 +67,7 @@ int main(int argc, const char *argv[])
         "window,w", value<int>()->default_value(2), "Window size.")(
         "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize")(
         "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: birdeye or shortest_paths")(
+        "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
 
@@ -172,6 +173,7 @@ int main(int argc, const char *argv[])
       break;
     }
 
+    int random_seed = vm["random_seed"].as<int>();
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
 
     std::unique_ptr<Solver<ExplicitGraph, ExplicitGraph>> solver = nullptr;
@@ -210,7 +212,11 @@ int main(int argc, const char *argv[])
                                                                                         coordinated::collision_mode_t::IGNORE_COLLISIONS);
       break;
     case Algorithm::CMARRT:
-      srand(time(NULL));
+      if (random_seed < 0 ){
+        srand(time(NULL));
+      } else {
+        srand(random_seed);
+      }
       solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(
           il.instance(),
           *objective.get(),
