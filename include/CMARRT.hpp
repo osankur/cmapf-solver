@@ -57,8 +57,8 @@ namespace cmarrt
       std::vector<std::shared_ptr<Configuration>> parents_;
       std::map<Configuration, int> index_of_vertex_;
       std::map<Configuration, int> index_of_parent_;
-      // given configuration c in the tree, path_to_parent_[c] is the path from the parent to itself
-      std::map<Configuration, std::vector<std::shared_ptr<Configuration> > > path_to_parent_;
+      // given configuration c in the tree, path_from_parent_[c] is the path from the parent to itself
+      std::map<Configuration, std::vector<std::shared_ptr<Configuration> > > path_from_parent_;
 
       const Instance<GraphMove, GraphComm> &instance_;
       const Objective &objective_;
@@ -367,7 +367,12 @@ namespace cmarrt
         std::cout << "Cnearest is "<< ANSI_YELLOW << *c_nearest << ANSI_RESET << "\n";
         std::cout.flush();
 
+        auto cstart = clock();
         std::vector<std::shared_ptr<Configuration>> small_path = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+        auto cend = clock();
+        if ((cend - cstart) / (double) CLOCKS_PER_SEC > 0.1){
+          std::cout << ANSI_RED << "computeBoundedPathTowards took " << (cend - cstart) / (double) CLOCKS_PER_SEC << " seconds\n" << ANSI_RESET;
+        }
         std::shared_ptr<Configuration> c_new = small_path.back();
         if (c_new->size() == 0)
         {
@@ -381,7 +386,7 @@ namespace cmarrt
           this->parents_.push_back(c_nearest);
           this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
           this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_nearest];
-          this->path_to_parent_[*c_new] = small_path;
+          this->path_from_parent_[*c_new] = small_path;
           std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
         }
         else
@@ -410,8 +415,7 @@ namespace cmarrt
 
       /**
        * @brief Given an ExplorationTree, compute an execution from start to goal
-       * @pre goal is a node in the tree
-       * 
+       * @pre goal belongs to the tree
        * @param start
        * @param goal
        * @return std::vector<std::shared_ptr<Configuration>>
@@ -420,7 +424,12 @@ namespace cmarrt
           const Configuration & goal)
       {
         std::vector<std::shared_ptr<Configuration>> exec;
-        // TODO Compute the execution using path_to_parent
+        auto c = std::make_shared<Configuration>(goal);
+        while ( this->path_from_parent_.count(*c) > 0 ){
+          std::vector<std::shared_ptr<Configuration>> segment = this->path_from_parent_[*c];
+          exec.insert(exec.begin(), segment.begin(), segment.end());
+          c = this->vertices_[this->index_of_parent_[*c]];
+        }
         return exec;
       };
 
