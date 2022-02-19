@@ -11,14 +11,21 @@
 #include <Common.hpp>
 #include <set>
 
-/**
- * 
- * - Arthur: DFS uses a closed list of type shared_ptr<Configuration> ???
- */
-
 namespace coordinated{
 
 
+    /**
+     * @brief An instance of LocalQ represents a Q-function for a given source and successor configuration,
+     * that is, it is of type sourceConfiguration() x Configuration -> size_t.
+     * Moreover, this class fixes the first argument, and the function only depends on the positions of arguments() in the second argument.
+     * Given a configuration c that is successor of sourceConfiguration(), the value of the Q-function depends on agents that are in arguments().
+     * and it second argument
+     * LocalQIdentity implements a function that returns a shortest path distance to goal for a given agent
+     * 
+     * 
+     * @tparam GraphMove 
+     * @tparam GraphComm 
+     */
     template <class GraphMove, class GraphComm>
     class LocalQ {
         protected:
@@ -77,10 +84,19 @@ namespace coordinated{
             }
 
 
-        /** @pre next_partial_conf contains an entry for each element of arguments()
+        /**
+         * @brief Given a successor partial configuration which assigns nodes to arguments(),
+         * return the value of the Q-function.
+         * 
+         * @pre next_partial_conf contains an entry for each element of arguments()
          */
         virtual size_t getValue(const std::map<Agent,Node> & next_partial_conf) = 0;
 
+        /**
+         * @brief The list of agents on which the Q-function depends.
+         * 
+         * @return const std::vector<Agent>& 
+         */
         virtual const std::vector<Agent> & arguments() = 0;
 
         const Configuration & sourceConfiguration(){
@@ -89,7 +105,7 @@ namespace coordinated{
     };
 
     /** 
-     * Original local Q functions such that Q_i(source_conf, next_conf) returns the Q-value for agent agent.
+     * @brief Original local Q functions such that Q_i(source_conf, next_conf) returns the Q-value for agent i.
      * This returns infty if next_conf is not connected or has collisions, and the remaining distance 
      * to the target of Agent i from next_conf otherwise.
      */
@@ -306,7 +322,7 @@ namespace coordinated{
 
 
     template <class GraphMove, class GraphComm>
-    class CoordSolver : public Solver<GraphMove,GraphComm> {
+    class CoordSolver : public Solver<GraphMove,GraphComm>, public BoundedSolver<GraphMove,GraphComm> {
     private:
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_;
         unsigned int window_size_;
@@ -528,6 +544,11 @@ namespace coordinated{
             return false;
         }
     }
+    std::vector<std::shared_ptr<Configuration>> computeBoundedPathTowards(const Configuration &source, const Configuration &goal, int steps){
+        std::vector<std::shared_ptr<Configuration>> pathSegment;
+        return pathSegment;
+    }
+
     void test(){
         /*
         const Configuration & start = this->instance_.start();

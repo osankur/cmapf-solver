@@ -17,28 +17,22 @@
 #include <memory>
 #include <Common.hpp>
 
-class Configuration
+
+class Configuration : public std::vector<Node>
 {
-private:
-  std::vector<Node> config_;
-
 public:
-  Configuration();
-  Configuration(size_t size);
-  void PushBack(Node);
+  Configuration() : std::vector<Node>(){}
+  Configuration(size_t size) : std::vector<Node>(){
+    this->resize(size);
+  }
 
-  // Operators
-  Node &operator[](Agent);
-  const Node &operator[](Agent) const;
+  void PushBack(Node n){
+    this->push_back(n);
+  }
   bool operator==(const Configuration &) const;
-
-  // Properties
-  size_t size() const;
-  const Node &at(Agent) const;
   
   // Friends
   friend std::ostream &operator<<(std::ostream &, const Configuration &);
-  friend bool operator<(const Configuration &, const Configuration &);
 };
 
 bool operator<(const Configuration &c1, const Configuration &c2);
