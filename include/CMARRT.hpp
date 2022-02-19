@@ -24,10 +24,17 @@
 
 namespace cmarrt
 {
+  /**
+   * @class CMARRT for the algorithm Connected Multi-agent RRT (Rapidly-exploring
+   * random tree)
+   *
+   * @todo Make CMARRT inherit from ExplorationTree or just merge the two classes
+   * */
   template <class GraphMove, class GraphComm>
-  class ExplorationTree
+  class CMARRT : public Solver<GraphMove, GraphComm>
   {
   private:
+    int iterations = 0;
     int prob2target; // bias in % to use the target configuration for the random one
     int step_size;
     float neardist = 1;
@@ -41,9 +48,6 @@ namespace cmarrt
     std::map<Configuration, int> index_of_parent_;
     // given configuration c in the tree, path_from_parent_[c] is the path from the parent to itself
     std::map<Configuration, std::vector<std::shared_ptr<Configuration>>> path_from_parent_;
-
-    const Instance<GraphMove, GraphComm> &instance_;
-    const Objective &objective_;
 
     coupled::DFS<GraphMove, GraphComm> dfs_solver_;
     decoupled::BoundedDecoupledSolver<GraphMove, GraphComm> decoupled_solver_;
@@ -105,7 +109,7 @@ namespace cmarrt
               std::vector<Node>(neighbors.begin(), neighbors.end());
           auto size = neighbors_vector.size();
           // std::cout << "size for agt " << agt << ":" << size;
-          auto nextagt = rand() % (size - 1);
+          auto nextagt = rand() % size;
           config.push_back(neighbors_vector.at(nextagt));
           assert(neighbors_vector.at(nextagt) <
                  this->instance().graph().movement().node_count());
@@ -267,56 +271,20 @@ namespace cmarrt
           this->index_of_parent_[*c] = parent_index;
         }
       }
-    };
+    }
 
     std::vector<std::shared_ptr<Configuration>> &getVertices()
     {
       return vertices_;
-    };
+    }
+
     std::vector<std::shared_ptr<Configuration>> &getParents()
     {
       return parents_;
     }
 
-    const Instance<GraphMove, GraphComm> &instance() { return instance_; };
-
-  public:
-    /**
-     * @brief Construct a new Exploration Tree that initially contains the
-     * starting configuration of the instance.
-     *
-     *
-     *
-     * @param instance
-     * @param objective
-     * @param prob2target probability of picking goal configuration at a given iteration as a direction to expand the tree
-     * @param step_size the number of steps the tree is expanded towards a given direction
-     */
-    explicit ExplorationTree(const Instance<GraphMove, GraphComm> &instance,
-                             const Objective &objective,
-                             Heuristics<GraphMove, GraphComm> &heuristics,
-                             std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
-                             SubsolverEnum subsolver,
-                             CollisionMode collision_mode,
-                             int prob2target,
-                             int step_size)
-        : instance_(instance),
-          objective_(objective),
-          prob2target(prob2target),
-          step_size(step_size),
-          subsolver(subsolver),
-          collision_mode(collision_mode),
-          dfs_solver_(instance, objective, heuristics),
-          decoupled_solver_(instance, objective, fw),
-          coord_solver_(instance, objective, heuristics, 2, collision_mode)
-    {
-      auto start = std::make_shared<Configuration>(instance.start());
-      vertices_.push_back(start);
-      parents_.push_back(start);
-      // step and neardist
-      // int size = instance.graph().movement().node_count();
-      // step = size / 30;
-      // neardist = size / 50;
+    const Instance<GraphMove, GraphComm> &instance() { 
+      return this->instance_; 
     }
 
     bool treeContains(const Configuration &config)
@@ -427,7 +395,7 @@ namespace cmarrt
       while (this->path_from_parent_.count(*c) > 0)
       {
         std::vector<std::shared_ptr<Configuration>> segment = this->path_from_parent_[*c];
-        exec.insert(exec.begin(), segment.begin(), segment.end());
+        exec.insert(exec.begin(), segment.begin(), (segment.end()-1));
         c = this->vertices_[this->index_of_parent_[*c]];
       }
       return exec;
@@ -459,44 +427,55 @@ namespace cmarrt
         }
       }
     }
-  };
-
-  /**
-   * @class CMARRT for the algorithm Connected Multi-agent RRT (Rapidly-exploring
-   * random tree)
-   *
-   * @todo Make CMARRT inherit from ExplorationTree or just merge the two classes
-   * */
-  template <class GraphMove, class GraphComm>
-  class CMARRT : public Solver<GraphMove, GraphComm>
-  {
-  private:
-    int iterations = 0;
-    ExplorationTree<GraphMove, GraphComm> explorationtree_;
-    CollisionMode collision_mode;
 
   public:
+    /**
+     * @brief Construct a new Exploration Tree that initially contains the
+     * starting configuration of the instance.
+     *
+     *
+     *
+     * @param instance
+     * @param objective
+     * @param prob2target probability of picking goal configuration at a given iteration as a direction to expand the tree
+     * @param step_size the number of steps the tree is expanded towards a given direction
+     */
     CMARRT(const Instance<GraphMove, GraphComm> &instance,
-           const Objective &objective,
-           Heuristics<GraphMove, GraphComm> &heuristics,
-           std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
-           SubsolverEnum subsolver,
-           CollisionMode collision_mode,
-           int prob2target,
-           int step_size)
-        : Solver<GraphMove, GraphComm>(instance, objective),
-          explorationtree_(instance, objective, heuristics, fw, subsolver, collision_mode, prob2target, step_size),
-          collision_mode(collision_mode) {}
+          const Objective &objective,
+          Heuristics<GraphMove, GraphComm> &heuristics,
+          std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
+          SubsolverEnum subsolver,
+          CollisionMode collision_mode,
+          int prob2target,
+          int step_size)
+        :  Solver<GraphMove, GraphComm>(instance, objective),
+          prob2target(prob2target),
+          step_size(step_size),
+          subsolver(subsolver),
+          collision_mode(collision_mode),
+          dfs_solver_(instance, objective, heuristics),
+          decoupled_solver_(instance, objective, fw),
+          coord_solver_(instance, objective, heuristics, 2, collision_mode)
+    {
+      auto start = std::make_shared<Configuration>(instance.start());
+      vertices_.push_back(start);
+      parents_.push_back(start);
+      // step and neardist
+      // int size = instance.graph().movement().node_count();
+      // step = size / 30;
+      // neardist = size / 50;
+    }
+
 
     bool StepCompute() override
     {
       // std::cout << "\nStep \n";
-      if (explorationtree_.treeContains(this->instance().goal()))
+      if (this->treeContains(this->instance().goal()))
       {
-        explorationtree_.printTree();
+        this->printTree();
         std::cout << "Done after " << iterations << " iterations\n";
         std::cout.flush();
-        auto exec = explorationtree_.getExecution(this->instance().goal());
+        auto exec = this->getExecution(this->instance().goal());
         for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
         {
           std::shared_ptr<Path> p_agt = std::make_shared<Path>();
@@ -512,10 +491,10 @@ namespace cmarrt
       {
         std::cout << "\n#Iterations: " << iterations << "\n";
         iterations++;
-        explorationtree_.extend();
+        this->extend();
         if (iterations % 10 == 0)
         {
-          explorationtree_.printTree();
+          this->printTree();
         }
         return false;
       }

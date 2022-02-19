@@ -383,11 +383,11 @@ namespace coordinated{
                 int cluster_index = (i==0)? 0 : (i-1) / (window_size_-1);
                 auto cl = clusters[cluster_index];
                 
-                // std::cerr << "Creating Q function for agent " << i << " with args=[";
-                // for(auto j : cl){
-                //     std::cerr << j << " ";
-                // }
-                // std::cerr << "]\n";
+                std::cerr << "Creating Q function for agent " << i << " with args=[";
+                for(auto j : cl){
+                    std::cerr << j << " ";
+                }
+                std::cerr << "]\n";
 
                 std::shared_ptr<LocalQIdentity<GraphMove,GraphComm>> qf = 
                     std::make_shared<LocalQIdentity<GraphMove,GraphComm>>(this->instance_,heuristics_,
@@ -468,14 +468,14 @@ namespace coordinated{
         Configuration get_next_best(const Configuration & source, const Configuration & goal, bool & success){
             initialize_qfuncs(source, goal);
             for(int i =0; i < this->instance_.nb_agents(); i++){                                
-                // for(auto qf : qfuncs_){
-                //     std::cerr << "[";
-                //     for(auto i : qf->arguments()){
-                //         std::cerr << i << " ";
-                //     }
-                //     std::cerr << "] ";
-                // }
-                // std::cerr<<"\n";
+                for(auto qf : qfuncs_){
+                    std::cerr << "[";
+                    for(auto i : qf->arguments()){
+                        std::cerr << i << " ";
+                    }
+                    std::cerr << "] ";
+                }
+                std::cerr<<"\n";
                 reduce_qfuncs(i);
             }
             // std::cerr << "There are " << qfuncs_.size() << " Q functions\n";
@@ -522,8 +522,18 @@ namespace coordinated{
       : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode), 
         window_size_(window_size),heuristics_(heuristics) {
             config_stack_.push_back(instance.start());
+            if (window_size<2){
+                throw std::runtime_error("Windows size for CoordSolver must be at least 2");
+            }
         }
 
+    /**
+     * @brief Make one-step of computation using get_next_best
+     * @pre The path 0-1-2-3-...-n belongs to the connectivity graph of agents.
+     * 
+     * @return true if the goal was reached
+     * @return false otherwise
+     */
     virtual bool StepCompute() override {
         // Solution found?
         if (config_stack_.back() == this->instance_.goal()){
@@ -575,13 +585,16 @@ namespace coordinated{
     }
     std::vector<std::shared_ptr<Configuration>> computeBoundedPathTowards(const Configuration &source, const Configuration &goal, int steps){
         bool success;
-        std::vector<std::shared_ptr<Configuration>> pathSegment;
-        pathSegment.push_back(std::make_shared<Configuration>(source));
+        std::vector<std::shared_ptr<Configuration>> pathSegment{std::make_shared<Configuration>(source)};
         for(int i = 0; i < steps; i++){
             Configuration next = get_next_best(*pathSegment.back().get(), goal, success);
             if (!success) break;
             pathSegment.push_back(std::make_shared<Configuration>(next));
             if (next == goal) break;
+        }
+        // Return empty path if source is the only element
+        if (pathSegment.size() == 1){
+            pathSegment.clear();
         }
         return pathSegment;
     }
