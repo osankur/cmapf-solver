@@ -31,7 +31,7 @@ namespace cmarrt
     int prob2target; // bias in % to use the target configuration for the random one
     int step_size;
     float neardist = 1;
-    CollisionsEnum collision_mode;
+    CollisionMode collision_mode;
     SubsolverEnum subsolver;
 
     std::vector<std::shared_ptr<Configuration>> vertices_;
@@ -47,6 +47,7 @@ namespace cmarrt
 
     coupled::DFS<GraphMove, GraphComm> dfs_solver_;
     decoupled::BoundedDecoupledSolver<GraphMove, GraphComm> decoupled_solver_;
+    coordinated::CoordSolver<GraphMove, GraphComm> coord_solver_;
 
     int indexOfConfiguration(const Configuration &c)
     {
@@ -296,7 +297,7 @@ namespace cmarrt
                              Heuristics<GraphMove, GraphComm> &heuristics,
                              std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
                              SubsolverEnum subsolver,
-                             CollisionsEnum collision_mode,
+                             CollisionMode collision_mode,
                              int prob2target,
                              int step_size)
         : instance_(instance),
@@ -306,7 +307,8 @@ namespace cmarrt
           subsolver(subsolver),
           collision_mode(collision_mode),
           dfs_solver_(instance, objective, heuristics),
-          decoupled_solver_(instance, objective, fw)
+          decoupled_solver_(instance, objective, fw),
+          coord_solver_(instance, objective, heuristics, 2, collision_mode)
     {
       auto start = std::make_shared<Configuration>(instance.start());
       vertices_.push_back(start);
@@ -357,6 +359,9 @@ namespace cmarrt
         }
       case SubsolverEnum::DFS_SOLVER:
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+        break;
+      case SubsolverEnum::COORD_SOLVER:
+        pathSegment = coord_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
         break;
       }
       auto cend = clock();
@@ -468,7 +473,7 @@ namespace cmarrt
   private:
     int iterations = 0;
     ExplorationTree<GraphMove, GraphComm> explorationtree_;
-    CollisionsEnum collision_mode;
+    CollisionMode collision_mode;
 
   public:
     CMARRT(const Instance<GraphMove, GraphComm> &instance,
@@ -476,7 +481,7 @@ namespace cmarrt
            Heuristics<GraphMove, GraphComm> &heuristics,
            std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
            SubsolverEnum subsolver,
-           CollisionsEnum collision_mode,
+           CollisionMode collision_mode,
            int prob2target,
            int step_size)
         : Solver<GraphMove, GraphComm>(instance, objective),

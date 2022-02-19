@@ -37,7 +37,6 @@ constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
 constexpr char DEFAULT_COLLISIONS[] = "IGNORE_COLLISIONS";
 constexpr char DEFAULT_SUBSOLVER[] = "DFS_SOLVER";
 
-
 int main(int argc, const char *argv[])
 {
   try
@@ -162,7 +161,7 @@ int main(int argc, const char *argv[])
       }
 
     LOG_INFO("Collisions:" << vm["collisions"].as<std::string>());
-    auto collision_mode = magic_enum::enum_cast<CollisionsEnum>(vm["collisions"].as<std::string>()).value();
+    auto collision_mode = magic_enum::enum_cast<CollisionMode>(vm["collisions"].as<std::string>()).value();
 
     LOG_INFO("Subsolver:" << vm["subsolver"].as<std::string>());
     SubsolverEnum subsolver = magic_enum::enum_cast<SubsolverEnum>(vm["subsolver"].as<std::string>()).value();
@@ -175,6 +174,9 @@ int main(int argc, const char *argv[])
     {
     case Algorithm::CBS:
     {
+      if (collision_mode == CollisionMode::CHECK_COLLISIONS){
+        throw std::runtime_error("Collisions are not supported in this algorithm");
+      }
       decoupled::conflict_selection::FirstConflictStrategy con;
       solver = std::make_unique<
           decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
@@ -201,6 +203,7 @@ int main(int argc, const char *argv[])
     case Algorithm::COORD:
       solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(),
                                                                                         *objective.get(),
+                                                                                        *heuristics.get(),
                                                                                         vm["window"].as<int>(),
                                                                                         collision_mode);
       break;

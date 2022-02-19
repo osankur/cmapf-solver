@@ -9,6 +9,7 @@
 #include <Solver.hpp>
 #include <Logger.hpp>
 #include <Common.hpp>
+#include <Heuristics.hpp>
 #include <set>
 
 namespace coordinated{
@@ -16,9 +17,9 @@ namespace coordinated{
 
     /**
      * @brief An instance of LocalQ represents a Q-function for a given source and successor configuration,
-     * that is, it is of type sourceConfiguration() x Configuration -> size_t.
+     * that is, it is of type getSourceConfiguration() x Configuration -> size_t.
      * Moreover, this class fixes the first argument, and the function only depends on the positions of arguments() in the second argument.
-     * Given a configuration c that is successor of sourceConfiguration(), the value of the Q-function depends on agents that are in arguments().
+     * Given a configuration c that is successor of getSourceConfiguration(), the value of the Q-function depends on agents that are in arguments().
      * and it second argument
      * LocalQIdentity implements a function that returns a shortest path distance to goal for a given agent
      * 
@@ -29,13 +30,15 @@ namespace coordinated{
     template <class GraphMove, class GraphComm>
     class LocalQ {
         protected:
-            // Full configuration for agents. The local Q function only depends on some of the components
+            // Fixed source configuration from which the Q function is to be computed
             const Configuration source_conf_;
+            // Fixed goal configuration which determine the heuristic values used in the Q functions
+            const Configuration goal_conf_;
             
             const Instance<GraphMove,GraphComm> & instance_;
-            FloydWarshall<GraphMove,GraphComm> & fw_;
+            Heuristics<GraphMove,GraphComm> & heuristics_;
 
-            const CollisionsEnum collision_mode_;
+            const CollisionMode collision_mode_;
         public:
         
         bool isCollisionless(const std::vector<Node> & next_conf){
@@ -77,16 +80,17 @@ namespace coordinated{
 
         public:
         LocalQ(const Instance<GraphMove,GraphComm> & instance,
-                FloydWarshall<GraphMove,GraphComm> & fw,
+                Heuristics<GraphMove,GraphComm> & heuristics,
                const Configuration & source_conf, 
-               const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS)
-            : source_conf_(source_conf), instance_(instance), fw_(fw), collision_mode_(collision_mode) {
+               const Configuration & goal_conf, 
+               const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
+            : source_conf_(source_conf), goal_conf_(goal_conf), instance_(instance), heuristics_(heuristics), collision_mode_(collision_mode) {
             }
 
 
         /**
-         * @brief Given a successor partial configuration which assigns nodes to arguments(),
-         * return the value of the Q-function.
+         * @brief Given a successor partial configuration which is defined for arguments(),
+         * returns the value of the Q-function.
          * 
          * @pre next_partial_conf contains an entry for each element of arguments()
          */
@@ -99,8 +103,11 @@ namespace coordinated{
          */
         virtual const std::vector<Agent> & arguments() = 0;
 
-        const Configuration & sourceConfiguration(){
+        const Configuration & getSourceConfiguration(){
             return source_conf_;
+        }
+        const Configuration & getGoalConfiguration(){
+            return goal_conf_;
         }
     };
 
@@ -118,16 +125,23 @@ namespace coordinated{
 
         public:
         LocalQIdentity(const Instance<GraphMove,GraphComm> & instance,
-               FloydWarshall<GraphMove,GraphComm> & fw,
+               Heuristics<GraphMove,GraphComm> & heuristics,
                const Configuration & source_conf, 
+               const Configuration & goal_conf, 
                const std::vector<Agent> & args,
                Agent agent, 
-               const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS)
-            : LocalQ<GraphMove,GraphComm>(instance,fw,source_conf,collision_mode), agent_(agent), args_(args){
+               const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
+            : LocalQ<GraphMove,GraphComm>(instance,heuristics,source_conf,goal_conf,collision_mode), agent_(agent), args_(args){
             }
         
+        /**
+         * @brief Return if next_partial_conf is disconnected or has collisions, return INFINITY; otherwise return the heuristic for agent this->agent_.
+         * 
+         * @param next_partial_conf 
+         * @return size_t 
+         */
         size_t getValue(const std::map<Agent,Node> & next_partial_conf){
-            assert(this->args_.size() <= this->instance_.start().size());
+            assert(this->args_.size() <= this->instance_.nb_agents());
             //std::cerr << "Computing value of the following next_partial_conf (size: " 
             //          <<  next_partial_conf.size() << "): ";
             // for(Node node : next_partial_conf){
@@ -141,12 +155,22 @@ namespace coordinated{
             // LOG_DEBUG("Are they connected: " + std::to_string(this->isConnected(our_nodes)));
             if (!this->isConnected(our_nodes)){
                 return INFINITY;
-            } else if( this->collision_mode_ == CollisionsEnum::CHECK_COLLISIONS && !this->isCollisionless(our_nodes)) {
+            } else if( this->collision_mode_ == CollisionMode::CHECK_COLLISIONS && !this->isCollisionless(our_nodes)) {
                 return INFINITY;
             } else {
-                auto d = this->fw_.getShortestPathDistance(next_partial_conf.find(agent_)->second, 
-                    this->instance_.goal()[agent_]);
-                // LOG_DEBUG("Evaluating weight for node=" + std::to_string(agent_) 
+                //auto d = this->heuristics_.getHeuristic(next_partial_conf.find(agent_)->second, this->instance_.goal()[agent_]);
+                // std::cout << "getValue called for " << next_partial_conf.find(agent_)->second << " to " <<
+                //       this->instance_.goal()[agent_] << "\n";
+                // auto d1 = this->heuristics_.getFloyd()->getShortestPathDistance(next_partial_conf.find(agent_)->second, 
+                //      this->instance_.goal()[agent_]);
+                auto d = this->heuristics_.getHeuristic(next_partial_conf.find(agent_)->second, this->goal_conf_[agent_]);
+                // if (d1 != d2){
+                //     std::cout << "FW = " << d1 << " but heuristics = " << d2 << "\n";
+                //     std::cout << "source: " << next_partial_conf.find(agent_)->second;
+                //     std::cout << " target: " << this->instance_.goal()[agent_];
+                //     std::cout << "\n";
+                // }
+                // // LOG_DEBUG("Evaluating weight for node=" + std::to_string(agent_) 
                 //     + ". Distance from node " + std::to_string(next_partial_conf.find(agent_)->second)
                 //     + " to node " + std::to_string(this->instance_.goal()[agent_]) + " = " + std::to_string(d));
                 return d;
@@ -172,11 +196,11 @@ namespace coordinated{
         const Agent agent_to_eliminate_;
 
         /**
-         * @pre neighbors is a vector neighbors of all nodes except for that of agent_to_eliminate
+         * @pre neighbors is a vector neighbors of all nodes (parallel to args_) except for that of agent_to_eliminate
          * @pre next_partial_conf is an empty vector
          * @pre index is 0 
          */
-        void fill_data(std::vector<std::unordered_set<Node>> & neighbors,
+        void fill_data_rec(std::vector<std::unordered_set<Node>> & neighbors,
                         std::vector<Node> & next_partial_conf,
                         std::map<Agent,Node> & next_partial_conf_m,
                         int index)
@@ -185,10 +209,12 @@ namespace coordinated{
                     for(auto next_node : neighbors[index]){
                         next_partial_conf.push_back(next_node);
                         next_partial_conf_m[args_[index]] = next_node;
-                        fill_data(neighbors, next_partial_conf, next_partial_conf_m, index+1);
+                        fill_data_rec(neighbors, next_partial_conf, next_partial_conf_m, index+1);
                         next_partial_conf.pop_back();
                     }
                 } else {
+                    // At this point, next_partial_conf contains a successor node for all agents in arguments().
+                    // We are going to sort the values of the sum of qfuncs_ by quantifying over the successors for agent_to_eliminate_
                     std::vector<std::pair<size_t,Node> > image;
                     std::unordered_set<Node> pivot_neighbors(this->instance_.graph().movement().get_neighbors(this->source_conf_[agent_to_eliminate_]));
                     pivot_neighbors.insert(this->source_conf_[agent_to_eliminate_]); // add the self-loop
@@ -253,18 +279,20 @@ namespace coordinated{
                 // }
                 // std::cerr << "\n";
 
+                // Auxiliary fields for the recursive call to fill_data_rec
                 std::vector<Node> next_partial_conf;
                 std::map<Agent,Node> next_partial_conf_m;
-                fill_data(neighbors,next_partial_conf,next_partial_conf_m,0);
+                fill_data_rec(neighbors,next_partial_conf,next_partial_conf_m,0);
             }
         public:
         LocalQCompound(const Instance<GraphMove,GraphComm> & instance,
-               FloydWarshall<GraphMove,GraphComm> & fw,
+               Heuristics<GraphMove,GraphComm> & heuristics,
                const Configuration & source_conf, 
+               const Configuration & goal_conf, 
                const std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > & qfuncs,
                const Agent agent_to_eliminate, 
-               const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS)
-            : LocalQ<GraphMove,GraphComm>(instance,fw,source_conf,collision_mode), 
+               const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
+            : LocalQ<GraphMove,GraphComm>(instance,heuristics,source_conf,goal_conf, collision_mode), 
                 qfuncs_(qfuncs), 
                 agent_to_eliminate_(agent_to_eliminate)
             {
@@ -282,7 +310,7 @@ namespace coordinated{
 
         /**
          * @pre next_partial_conf_m contains a key agent for each agent in arguments(), and next_partial_conf_m[agent] is 
-         * a movement-neighbor of the node of in sourceConfiguration()[agent]
+         * a movement-neighbor of the node of in getSourceConfiguration()[agent]
          */
         const std::vector<std::pair<size_t,Node> > & getValueVector(const std::map<Agent,Node> & next_partial_conf_m){
             std::vector<Node> next_partial_conf;
@@ -326,13 +354,13 @@ namespace coordinated{
     private:
         std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > qfuncs_;
         unsigned int window_size_;
-        FloydWarshall<GraphMove,GraphComm> fw_;
-        const CollisionsEnum collision_mode_;
+        Heuristics<GraphMove,GraphComm> & heuristics_;
+        const CollisionMode collision_mode_;
 
         std::vector<Configuration> config_stack_;
         std::set<Configuration> closed_;
 
-        void initialize_qfuncs(const Configuration & source_conf){
+        void initialize_qfuncs(const Configuration & source_conf, const Configuration & goal_conf){
             qfuncs_.clear();
             size_t nb_agents = this->instance_.nb_agents();
             std::vector<std::vector<Agent>> clusters;
@@ -362,8 +390,8 @@ namespace coordinated{
                 // std::cerr << "]\n";
 
                 std::shared_ptr<LocalQIdentity<GraphMove,GraphComm>> qf = 
-                    std::make_shared<LocalQIdentity<GraphMove,GraphComm>>(this->instance_,fw_,
-                                                                            source_conf,cl,i,collision_mode_);
+                    std::make_shared<LocalQIdentity<GraphMove,GraphComm>>(this->instance_,heuristics_,
+                                                                            source_conf, goal_conf, cl,i,collision_mode_);
                 qfuncs_.push_back(qf);
                 
             }
@@ -389,8 +417,9 @@ namespace coordinated{
             if (qfuncs_elim.size() == 0)
                 return;
             std::shared_ptr<LocalQCompound<GraphMove,GraphComm>> qf_comp
-                = std::make_shared<LocalQCompound<GraphMove,GraphComm>>(this->instance_, this->fw_,
-                                                        qfuncs_elim[0]->sourceConfiguration(),
+                = std::make_shared<LocalQCompound<GraphMove,GraphComm>>(this->instance_, this->heuristics_,
+                                                        qfuncs_elim[0]->getSourceConfiguration(),
+                                                        qfuncs_elim[0]->getGoalConfiguration(),
                                                         qfuncs_elim,
                                                         agent_to_eliminate,
                                                         collision_mode_);
@@ -422,7 +451,7 @@ namespace coordinated{
                     }
                     for(auto p : successors ){
                         // If a node was selected by another agent, we skip it
-                        if (collision_mode_ == CollisionsEnum::CHECK_COLLISIONS && node_support.contains(p.second)){
+                        if (collision_mode_ == CollisionMode::CHECK_COLLISIONS && node_support.contains(p.second)){
                             continue;
                         }
                         // Otherwise, select it
@@ -436,8 +465,8 @@ namespace coordinated{
                     return false;
                 }                
             }
-        Configuration get_next_best(const Configuration & source, bool & success){
-            initialize_qfuncs(source);
+        Configuration get_next_best(const Configuration & source, const Configuration & goal, bool & success){
+            initialize_qfuncs(source, goal);
             for(int i =0; i < this->instance_.nb_agents(); i++){                                
                 // for(auto qf : qfuncs_){
                 //     std::cerr << "[";
@@ -486,11 +515,12 @@ namespace coordinated{
     public:
     CoordSolver(const Instance<GraphMove, GraphComm>& instance, 
                 const Objective& objective,
+                Heuristics<GraphMove, GraphComm> & heuristics,
                 unsigned int window_size,
-                const CollisionsEnum collision_mode = CollisionsEnum::CHECK_COLLISIONS
+                const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS
                 )
       : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode), 
-        window_size_(window_size),fw_(instance) {
+        window_size_(window_size),heuristics_(heuristics) {
             config_stack_.push_back(instance.start());
         }
 
@@ -518,9 +548,8 @@ namespace coordinated{
             */           
             return true;
         }
-        bool success;
-        Configuration next = get_next_best(config_stack_.back(), success);
-
+        bool success = true;
+        Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
         /*
         std::cerr << "[";
         for(int i = 0; i< next.size();i++){
@@ -545,7 +574,15 @@ namespace coordinated{
         }
     }
     std::vector<std::shared_ptr<Configuration>> computeBoundedPathTowards(const Configuration &source, const Configuration &goal, int steps){
+        bool success;
         std::vector<std::shared_ptr<Configuration>> pathSegment;
+        pathSegment.push_back(std::make_shared<Configuration>(source));
+        for(int i = 0; i < steps; i++){
+            Configuration next = get_next_best(*pathSegment.back().get(), goal, success);
+            if (!success) break;
+            pathSegment.push_back(std::make_shared<Configuration>(next));
+            if (next == goal) break;
+        }
         return pathSegment;
     }
 
@@ -575,7 +612,7 @@ namespace coordinated{
         my_qfuncs.push_back(qfuncs_[1]);
         std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp =
             std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                    qfuncs_[0]->sourceConfiguration(),
+                                                    qfuncs_[0]->getSourceConfiguration(),
                                                     my_qfuncs,
                                                     1,
                                                     collision_mode_);
@@ -592,7 +629,7 @@ namespace coordinated{
         my_qfuncs.push_back(qfuncs_[2]);
         std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp2 =
             std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                    qfuncs_[0]->sourceConfiguration(),
+                                                    qfuncs_[0]->getSourceConfiguration(),
                                                     my_qfuncs,
                                                     2,
                                                     collision_mode_);
@@ -603,7 +640,7 @@ namespace coordinated{
         my_qfuncs.push_back(qf_comp2);
         std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp3 =
             std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                    qfuncs_[0]->sourceConfiguration(),
+                                                    qfuncs_[0]->getSourceConfiguration(),
                                                     my_qfuncs,
                                                     0,
                                                     collision_mode_);

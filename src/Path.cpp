@@ -12,6 +12,7 @@
  */
 #include <string>
 #include <Path.hpp>
+#include <memory>
 
 Path::Path() : path_() {}
 

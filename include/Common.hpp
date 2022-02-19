@@ -17,8 +17,6 @@
 using Agent = int64_t;
 using Node = uint64_t;
 
-
-enum class CollisionsEnum : int {CHECK_COLLISIONS, IGNORE_COLLISIONS};
 enum class SubsolverEnum : int { DECOUPLED_SOLVER, DFS_SOLVER, COORD_SOLVER };
 enum class Algorithm : int
 {
@@ -41,6 +39,8 @@ enum class HeuristicsEnum : int
   SHORTEST_PATH,
   BIRDEYE
 };
+enum class CollisionMode : int {CHECK_COLLISIONS, IGNORE_COLLISIONS};
+
 
 #define ANSI_BOLD  "\u001B[1m"
 #define ANSI_RESET  "\u001B[0m"

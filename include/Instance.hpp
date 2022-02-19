@@ -22,12 +22,15 @@ class Instance {
   Configuration start_;
   Configuration goal_;
   size_t nb_agents_;
+  CollisionMode collision_mode_;
 
  public:
   Instance() : topo_graph_(), start_(), goal_(), nb_agents_(0) {}
   Instance(const TopologicalGraph<GraphMove,GraphComm> & topo_graph,
            const Configuration & start,
-           const Configuration & goal) : topo_graph_(topo_graph), start_(start), goal_(goal), nb_agents_(start.size())
+           const Configuration & goal,
+           CollisionMode collision_mode = CollisionMode::IGNORE_COLLISIONS) : topo_graph_(topo_graph), start_(start), goal_(goal), nb_agents_(start.size()),
+           collision_mode_(collision_mode)
            {}
   ~Instance() = default;
   Instance(const Instance& other) = default;
@@ -46,4 +49,7 @@ class Instance {
   const Configuration& start() const { return start_; }
   const Configuration& goal() const { return goal_; }
   size_t nb_agents() const { return nb_agents_; }
+  CollisionMode getCollisionMode() const {
+    return collision_mode_;
+  }
 };
