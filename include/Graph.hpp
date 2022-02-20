@@ -19,12 +19,13 @@
 #include <unordered_set>
 #include <Configuration.hpp>
 #include <stack>
+#include <iostream>
 
 class Graph {
  public:
   virtual const std::unordered_set<Node>& get_neighbors(Node) const = 0;
   virtual size_t node_count() const = 0;
-  virtual size_t get_distance(Node, Node) const = 0;
+  virtual size_t getDistance(Node, Node) const = 0;
 };
 
 class ExplicitGraph : public Graph {
@@ -46,11 +47,9 @@ class ExplicitGraph : public Graph {
   size_t node_count() const override;
   size_t edge_count() const;
   const std::unordered_set<Node>& get_neighbors(Node) const override;
-  size_t get_distance(Node, Node) const override;
-  std::pair<int,int> get_position(Node) const;
-  bool is_configuration_connected(const Configuration & c) const;
-
-  
+  size_t getDistance(Node, Node) const override;
+  std::pair<int,int> getPosition(Node) const;
+  bool isConfigurationConnected(const Configuration & c) const;
 };
 
 class RadiusGraph : public Graph {

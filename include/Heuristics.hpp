@@ -4,16 +4,6 @@
 #include <Configuration.hpp>
 #include <memory>
 
-float getEuclidianDistance(std::pair<int, int> &p1, std::pair<int, int> &p2)
-{
-    return sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
-}
-
-float getL1Distance(std::pair<int, int> &p1, std::pair<int, int> &p2)
-{
-    return abs(p1.first - p2.first) + abs(p1.second - p2.second);
-}
-
 template <class GraphMove, class GraphComm>
 class Heuristics
 {
@@ -21,32 +11,64 @@ public:
     Heuristics() {}
     virtual double getHeuristic(const Configuration &c, const Configuration &goal) = 0;
     virtual double getHeuristic(const Node &n, const Node &goal) = 0;
-    virtual std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> getFloyd() = 0;
+    virtual int getBirdEyeHeuristic(const Configuration &c, const Configuration &goal) = 0;
+    virtual int getShortestPathHeuristic(const Configuration &c, const Configuration &goal) = 0;
+    virtual int getShortestPathDistance(const Node & c, const Node & goal) = 0;
+    virtual int getBirdEyeDistance(const Node & c, const Node & goal) = 0;
 };
 
 template <class GraphMove, class GraphComm>
 class ShortestPathHeuristics : public Heuristics<GraphMove, GraphComm>
 {
+private:
+    double getEuclidianDistance(std::pair<int, int> &p1, std::pair<int, int> &p2)
+    {
+        return sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
+    }
+
+    double getL1Distance(std::pair<int, int> &p1, std::pair<int, int> &p2)
+    {
+        return abs(p1.first - p2.first) + abs(p1.second - p2.second);
+    }
 public:
     ShortestPathHeuristics(const Instance<GraphMove, GraphComm> &instance) : instance_(instance), floydwarshall_(std::make_shared<FloydWarshall<GraphMove, GraphComm>>(instance)) {}
     ShortestPathHeuristics(const Instance<GraphMove, GraphComm> &instance, std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> floydwarshall) : instance_(instance), floydwarshall_(floydwarshall) {}
-    std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> getFloyd()
-    {
-        return this->floydwarshall_;
+
+
+    int getBirdEyeHeuristic(const Configuration &c, const Configuration &goal){
+            double d = 0;
+            for (int agt = 0; agt < c.size(); agt++)
+            {
+                d += this->getBirdEyeDistance(c.at(agt), goal.at(agt));
+            }
+            return d;
+
+    }
+    int getShortestPathHeuristic(const Configuration &c, const Configuration &goal){
+        double d = 0;
+        for (int agt = 0; agt < c.size(); agt++)
+        {
+            d += this->getShortestPathDistance(c.at(agt), goal.at(agt));
+        }
+        return d;
+    }
+
+    int getShortestPathDistance(const Node & c, const Node & goal) override {
+        return this->floydwarshall_->getShortestPathDistance(c, goal);
+    }
+    int getBirdEyeDistance(const Node & c, const Node & goal) override{
+        auto cpos = this->instance_.graph().movement().getPosition(c);
+        auto gpos = this->instance_.graph().movement().getPosition(goal);
+        return this->getL1Distance(cpos, gpos);
     }
 
     double getHeuristic(const Configuration &c, const Configuration &goal) override
     {
-        double d = 0;
-        for (int agt = 0; agt < c.size(); agt++)
-        {
-            d += floydwarshall_->getShortestPathDistance(c.at(agt), goal.at(agt));
-        }
-        return d;
+        return this->getShortestPathHeuristic(c,goal);
     }
     double getHeuristic(const Node &c, const Node &goal) override
     {
-        return this->floydwarshall_->getShortestPathDistance(c, goal);
+        return this->getShortestPathDistance(c, goal);
     }
 
 protected:
@@ -79,27 +101,18 @@ public:
         }
         else
         {
-            double d = 0;
-            for (int agt = 0; agt < c.size(); agt++)
-            {
-                auto cpos = this->instance_.graph().movement().get_position(c.at(agt));
-                auto gpos = this->instance_.graph().movement().get_position(goal.at(agt));
-                d += getL1Distance(cpos, gpos);
-            }
-            return d;
+            return this->getBirdEyeHeuristic(c, goal);
         }
     }
     double getHeuristic(const Node &c, const Node &goal) override
     {
         if (targetNodes.find(goal) != targetNodes.end())
         {
-            return this->floydwarshall_->getShortestPathDistance(c, goal);
+            return this->getShortestPathDistance(c, goal);
         }
         else
         {
-            auto cpos = this->instance_.graph().movement().get_position(c);
-            auto gpos = this->instance_.graph().movement().get_position(goal);
-            return getL1Distance(cpos, gpos);
+            return this->getBirdEyeDistance(c, goal);
         }
     }
 };

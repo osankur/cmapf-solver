@@ -65,7 +65,7 @@ namespace decoupled
                 {
                     c.PushBack(spaths[agt].GetAtTimeOrLast(i));
                 }
-                if (instance_.graph().communication().is_configuration_connected(c))
+                if (instance_.graph().communication().isConfigurationConnected(c))
                 {
                     segment.push_back(std::make_shared<Configuration>(c));
                 }

@@ -97,16 +97,19 @@ int main(int argc, const char *argv[])
 
     auto cgoal = il.instance().goal();
     auto cstart = il.instance().start();
-    if (!il.instance().graph().communication().is_configuration_connected(cstart))
+    if (!il.instance().graph().communication().isConfigurationConnected(cstart))
     {
       LOG_FATAL("Start configuration is not connected.");
       throw "Error";
     }
-    if (!il.instance().graph().communication().is_configuration_connected(cgoal))
+    if (!il.instance().graph().communication().isConfigurationConnected(cgoal))
     {
       LOG_FATAL("Goal configuration is not connected.");
       throw "Error";
     }
+    LOG_INFO("Start configuration: " << il.instance().start());
+    LOG_INFO("Goal configuration: " << il.instance().start());
+    LOG_INFO("Start and goal configurations are connected.");
 
     auto obj = magic_enum::enum_cast<ObjectiveEnum>(std::string(DEFAULT_OBJ));
     if (vm.count("objective"))
@@ -146,25 +149,28 @@ int main(int argc, const char *argv[])
       }
     }
 
-      LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
-      auto floydwarshall = std::make_shared<FloydWarshall<ExplicitGraph, ExplicitGraph>>(il.instance());
-      std::unique_ptr<Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
-      auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
-      switch (heuristics_mode.value())
-      {
-      case HeuristicsEnum::BIRDEYE:
-        heuristics = std::make_unique<BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
-        break;
-      case HeuristicsEnum::SHORTEST_PATH:
-        heuristics = std::make_unique<ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
-        break;
-      }
+    LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
+    auto floydwarshall = std::make_shared<FloydWarshall<ExplicitGraph, ExplicitGraph>>(il.instance());
+    std::unique_ptr<Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
+    auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
+    switch (heuristics_mode.value())
+    {
+    case HeuristicsEnum::BIRDEYE:
+      heuristics = std::make_unique<BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
+      break;
+    case HeuristicsEnum::SHORTEST_PATH:
+      heuristics = std::make_unique<ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
+      break;
+    }
 
     LOG_INFO("Collisions:" << vm["collisions"].as<std::string>());
     auto collision_mode = magic_enum::enum_cast<CollisionMode>(vm["collisions"].as<std::string>()).value();
 
     LOG_INFO("Subsolver:" << vm["subsolver"].as<std::string>());
     SubsolverEnum subsolver = magic_enum::enum_cast<SubsolverEnum>(vm["subsolver"].as<std::string>()).value();
+
+    int window_size = vm["window"].as<int>();
+    LOG_INFO("Window size:" << window_size);
 
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
 
@@ -174,7 +180,8 @@ int main(int argc, const char *argv[])
     {
     case Algorithm::CBS:
     {
-      if (collision_mode == CollisionMode::CHECK_COLLISIONS){
+      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      {
         throw std::runtime_error("Collisions are not supported in this algorithm");
       }
       decoupled::conflict_selection::FirstConflictStrategy con;
@@ -185,6 +192,10 @@ int main(int argc, const char *argv[])
     }
     case Algorithm::CCBS:
     {
+      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      {
+        throw std::runtime_error("Collisions are not supported in this algorithm");
+      }
       decoupled::conflict_selection::FirstConflictStrategy con;
       solver = std::make_unique<
           decoupled::high_level::CCBS<ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
@@ -192,19 +203,31 @@ int main(int argc, const char *argv[])
       break;
     }
     case Algorithm::CA:
+      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      {
+        throw std::runtime_error("Collisions are not supported in this algorithm");
+      }
       solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 3);
       break;
     case Algorithm::MAS:
+      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      {
+        throw std::runtime_error("Collisions are not supported in this algorithm");
+      }
       solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
       break;
     case Algorithm::DFS:
       solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get());
       break;
     case Algorithm::COORD:
+      if (!coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size))
+      {
+        throw std::runtime_error("Starting configuration must be window-connected.");
+      }
       solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(),
                                                                                         *objective.get(),
                                                                                         *heuristics.get(),
-                                                                                        vm["window"].as<int>(),
+                                                                                        window_size,
                                                                                         collision_mode);
       break;
     case Algorithm::CMARRT:
@@ -219,6 +242,12 @@ int main(int argc, const char *argv[])
       }
       LOG_INFO("Prob2goal:" << vm["prob2goal"].as<int>());
       LOG_INFO("Step size:" << vm["step_size"].as<int>());
+      bool window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size);
+      LOG_INFO("Start is window-connected: " << window_connected);
+      if (subsolver == SubsolverEnum::COORD_SOLVER && !window_connected)
+      {
+        LOG_WARNING("Start configuration is not window-connected. CoordSolver may not work properly.");
+      }
 
       solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(
           il.instance(),
@@ -228,7 +257,8 @@ int main(int argc, const char *argv[])
           subsolver,
           collision_mode,
           vm["prob2goal"].as<int>(),
-          vm["step_size"].as<int>());
+          vm["step_size"].as<int>(),
+          window_size);
       break;
     }
 

@@ -80,7 +80,7 @@ namespace coupled
         // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
         // std::cout << *a;
         // std::cout << "\n";
-        if (a->size() == this->instance_.nb_agents() && this->instance_.graph().communication().is_configuration_connected(*a) && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
+        if (a->size() == this->instance_.nb_agents() && this->instance_.graph().communication().isConfigurationConnected(*a) && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
         {
           if (iteration_count > 1000){
             std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;

@@ -38,6 +38,9 @@ namespace cmarrt
     int prob2target; // bias in % to use the target configuration for the random one
     int step_size;
     float neardist = 1;
+
+    Heuristics<GraphMove, GraphComm> &heuristics_;
+
     CollisionMode collision_mode;
     SubsolverEnum subsolver;
 
@@ -184,8 +187,8 @@ namespace cmarrt
         int dist = 0;
         for (int agt = 0; agt < this->instance().nb_agents(); agt++)
         {
-          auto cpos = this->instance().graph().movement().get_position(c.at(agt));
-          auto vpos = this->instance().graph().movement().get_position((*v).at(agt));
+          auto cpos = this->instance().graph().movement().getPosition(c.at(agt));
+          auto vpos = this->instance().graph().movement().getPosition((*v).at(agt));
           dist += (abs(vpos.first - cpos.first) +
                    abs(vpos.second - cpos.second));
         }
@@ -283,8 +286,9 @@ namespace cmarrt
       return parents_;
     }
 
-    const Instance<GraphMove, GraphComm> &instance() { 
-      return this->instance_; 
+    const Instance<GraphMove, GraphComm> &instance()
+    {
+      return this->instance_;
     }
 
     bool treeContains(const Configuration &config)
@@ -313,24 +317,50 @@ namespace cmarrt
       std::cout.flush();
 
       std::vector<std::shared_ptr<Configuration>> pathSegment;
-      auto cstart = clock();
+      BoundedSolver<GraphMove, GraphComm> *currentSubsolver = nullptr;
+
       switch (this->subsolver)
       {
       case SubsolverEnum::DECOUPLED_SOLVER:
-        pathSegment = decoupled_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
-        if (pathSegment.size() >= this->step_size / 2)
-        {
-          break;
-        } else {
-          std::cout << ANSI_RED << "decoupled_solver returned path that is too short. Falling back to dfs_solver.\n"
-                    << ANSI_RESET;
-        }
-      case SubsolverEnum::DFS_SOLVER:
-        pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+        currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&decoupled_solver_;
         break;
       case SubsolverEnum::COORD_SOLVER:
-        pathSegment = coord_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+        currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&coord_solver_;
+        if (*c_rand == this->instance().goal())
+        {
+          // If all shortestpaths are close to birdeye distances, then use dfs_solver
+          bool use_dfs = true;
+          for (int agt = 0; agt < instance().nb_agents(); agt++)
+          {
+            if (this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_rand->at(agt)) >
+                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_rand->at(agt)) + 2)
+            {
+              use_dfs = false;
+              break;
+            }
+          }
+          if (use_dfs)
+          {
+            std::cout << ANSI_BOLD << ANSI_BLUE << "Near target: using dfs_solver.\n" << ANSI_RESET;
+            currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
+          }
+        }
         break;
+      case SubsolverEnum::DFS_SOLVER:
+        currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
+        break;
+      }
+      assert(currentSubsolver != nullptr);
+      auto cstart = clock();
+      pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
+
+      // In case of failure, try again with a dfs_solver
+      if (this->subsolver == SubsolverEnum::COORD_SOLVER && pathSegment.size() == 0 ||
+          this->subsolver == SubsolverEnum::DECOUPLED_SOLVER && pathSegment.size() < this->step_size / 2)
+      {
+        std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
+                  << ANSI_RESET;
+        pathSegment = decoupled_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
       }
       auto cend = clock();
       if ((cend - cstart) / (double)CLOCKS_PER_SEC > 0.1)
@@ -346,6 +376,7 @@ namespace cmarrt
         std::cout.flush();
         return;
       }
+
       std::shared_ptr<Configuration> c_new = pathSegment.back();
       if (not(this->treeContains(*c_new)))
       {
@@ -395,7 +426,7 @@ namespace cmarrt
       while (this->path_from_parent_.count(*c) > 0)
       {
         std::vector<std::shared_ptr<Configuration>> segment = this->path_from_parent_[*c];
-        exec.insert(exec.begin(), segment.begin(), (segment.end()-1));
+        exec.insert(exec.begin(), segment.begin(), (segment.end() - 1));
         c = this->vertices_[this->index_of_parent_[*c]];
       }
       return exec;
@@ -433,29 +464,29 @@ namespace cmarrt
      * @brief Construct a new Exploration Tree that initially contains the
      * starting configuration of the instance.
      *
-     *
-     *
      * @param instance
      * @param objective
      * @param prob2target probability of picking goal configuration at a given iteration as a direction to expand the tree
      * @param step_size the number of steps the tree is expanded towards a given direction
      */
     CMARRT(const Instance<GraphMove, GraphComm> &instance,
-          const Objective &objective,
-          Heuristics<GraphMove, GraphComm> &heuristics,
-          std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
-          SubsolverEnum subsolver,
-          CollisionMode collision_mode,
-          int prob2target,
-          int step_size)
-        :  Solver<GraphMove, GraphComm>(instance, objective),
+           const Objective &objective,
+           Heuristics<GraphMove, GraphComm> &heuristics,
+           std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
+           SubsolverEnum subsolver,
+           CollisionMode collision_mode,
+           int prob2target,
+           int step_size,
+           int window_size)
+        : Solver<GraphMove, GraphComm>(instance, objective),
+          heuristics_(heuristics),
           prob2target(prob2target),
           step_size(step_size),
           subsolver(subsolver),
           collision_mode(collision_mode),
           dfs_solver_(instance, objective, heuristics),
           decoupled_solver_(instance, objective, fw),
-          coord_solver_(instance, objective, heuristics, 2, collision_mode)
+          coord_solver_(instance, objective, heuristics, window_size, collision_mode)
     {
       auto start = std::make_shared<Configuration>(instance.start());
       vertices_.push_back(start);
@@ -465,7 +496,6 @@ namespace cmarrt
       // step = size / 30;
       // neardist = size / 50;
     }
-
 
     bool StepCompute() override
     {

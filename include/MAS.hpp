@@ -86,7 +86,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
         auto found = pheromone_map_.find(std::make_pair(n, time));
         if (found != pheromone_map_.end())
           sum_pheromone += found->second *
-                           (1 / (this->instance_.graph().movement().get_distance(n, this->instance_.goal()[agt]) + 1));
+                           (1 / (this->instance_.graph().movement().getDistance(n, this->instance_.goal()[agt]) + 1));
       }
       float current_pheromone = 0.0f;
       for (auto n : neighbors) {
@@ -95,7 +95,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
         if (found != pheromone_map_.end())
           pheromone_value +=
               found->second *
-              (1 / (this->instance_.graph().movement().get_distance(n, this->instance_.goal()[agt]) + 1)) /
+              (1 / (this->instance_.graph().movement().getDistance(n, this->instance_.goal()[agt]) + 1)) /
               sum_pheromone;
         if (choice <= pheromone_value) return n;
         current_pheromone = pheromone_value;
@@ -111,7 +111,7 @@ class MAS : public Solver<GraphMove, GraphComm> {
       Node min_node = std::numeric_limits<Node>::max();
       size_t min_dist = std::numeric_limits<size_t>::max();
       for (auto n : neighbors) {
-        size_t current_dist = this->instance_.graph().movement().get_distance(n, this->instance_.goal()[agt]);
+        size_t current_dist = this->instance_.graph().movement().getDistance(n, this->instance_.goal()[agt]);
         if (current_dist < min_dist) {
           min_dist = current_dist;
           min_node = n;

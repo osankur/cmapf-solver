@@ -158,8 +158,8 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
     explicit HeapComparator(const Instance<GraphMove, GraphComm> &instance, const Node &target)
         : instance_(instance), target_(target) {}
     bool operator()(const std::shared_ptr<AStarNode> &a, const std::shared_ptr<AStarNode> &b) const {
-      return a->time + instance_.graph().movement().get_distance(a->node, target_) >
-             b->time + instance_.graph().movement().get_distance(b->node, target_);
+      return a->time + instance_.graph().movement().getDistance(a->node, target_) >
+             b->time + instance_.graph().movement().getDistance(b->node, target_);
     }
   };
 
