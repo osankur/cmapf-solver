@@ -41,7 +41,6 @@ namespace cmarrt
 
     Heuristics<GraphMove, GraphComm> &heuristics_;
 
-    CollisionMode collision_mode;
     SubsolverEnum subsolver;
 
     std::vector<std::shared_ptr<Configuration>> vertices_;
@@ -333,7 +332,7 @@ namespace cmarrt
           for (int agt = 0; agt < instance().nb_agents(); agt++)
           {
             if (this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_rand->at(agt)) >
-                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_rand->at(agt)) + 2)
+                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_rand->at(agt)) + 1)
             {
               use_dfs = false;
               break;
@@ -354,7 +353,7 @@ namespace cmarrt
       auto cstart = clock();
       pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
 
-      // In case of failure, try again with a dfs_solver
+      // In case of failure, try again with dfs_solver
       if (this->subsolver == SubsolverEnum::COORD_SOLVER && pathSegment.size() == 0 ||
           this->subsolver == SubsolverEnum::DECOUPLED_SOLVER && pathSegment.size() < this->step_size / 2)
       {
@@ -474,7 +473,6 @@ namespace cmarrt
            Heuristics<GraphMove, GraphComm> &heuristics,
            std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> &fw,
            SubsolverEnum subsolver,
-           CollisionMode collision_mode,
            int prob2target,
            int step_size,
            int window_size)
@@ -483,10 +481,9 @@ namespace cmarrt
           prob2target(prob2target),
           step_size(step_size),
           subsolver(subsolver),
-          collision_mode(collision_mode),
           dfs_solver_(instance, objective, heuristics),
           decoupled_solver_(instance, objective, fw),
-          coord_solver_(instance, objective, heuristics, window_size, collision_mode)
+          coord_solver_(instance, objective, heuristics, window_size)
     {
       auto start = std::make_shared<Configuration>(instance.start());
       vertices_.push_back(start);

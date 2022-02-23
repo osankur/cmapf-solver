@@ -30,7 +30,7 @@ public:
     this->push_back(n);
   }
   bool operator==(const Configuration &) const;
-  
+  bool hasCollisions() const;
   // Friends
   friend std::ostream &operator<<(std::ostream &, const Configuration &);
 };

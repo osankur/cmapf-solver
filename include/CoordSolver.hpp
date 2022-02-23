@@ -39,8 +39,6 @@ namespace coordinated
         const Instance<GraphMove, GraphComm> &instance_;
         Heuristics<GraphMove, GraphComm> &heuristics_;
 
-        const CollisionMode collision_mode_;
-
     public:
         bool isCollisionless(const std::vector<Node> &next_conf)
         {
@@ -92,9 +90,8 @@ namespace coordinated
         LocalQ(const Instance<GraphMove, GraphComm> &instance,
                Heuristics<GraphMove, GraphComm> &heuristics,
                const Configuration &source_conf,
-               const Configuration &goal_conf,
-               const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
-            : source_conf_(source_conf), goal_conf_(goal_conf), instance_(instance), heuristics_(heuristics), collision_mode_(collision_mode)
+               const Configuration &goal_conf)
+            : source_conf_(source_conf), goal_conf_(goal_conf), instance_(instance), heuristics_(heuristics)
         {
         }
 
@@ -142,9 +139,8 @@ namespace coordinated
                        const Configuration &source_conf,
                        const Configuration &goal_conf,
                        const std::vector<Agent> &args,
-                       Agent agent,
-                       const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
-            : LocalQ<GraphMove, GraphComm>(instance, heuristics, source_conf, goal_conf, collision_mode), agent_(agent), args_(args)
+                       Agent agent)
+            : LocalQ<GraphMove, GraphComm>(instance, heuristics, source_conf, goal_conf), agent_(agent), args_(args)
         {
         }
 
@@ -173,7 +169,7 @@ namespace coordinated
             {
                 return INFINITY;
             }
-            else if (this->collision_mode_ == CollisionMode::CHECK_COLLISIONS && !this->isCollisionless(our_nodes))
+            else if (this->instance_.getCollisionMode() == CollisionMode::CHECK_COLLISIONS && !this->isCollisionless(our_nodes))
             {
                 return INFINITY;
             }
@@ -324,9 +320,9 @@ namespace coordinated
                        const Configuration &source_conf,
                        const Configuration &goal_conf,
                        const std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> &qfuncs,
-                       const Agent agent_to_eliminate,
-                       const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
-            : LocalQ<GraphMove, GraphComm>(instance, heuristics, source_conf, goal_conf, collision_mode),
+                       const Agent agent_to_eliminate
+                       )
+            : LocalQ<GraphMove, GraphComm>(instance, heuristics, source_conf, goal_conf),
               qfuncs_(qfuncs),
               agent_to_eliminate_(agent_to_eliminate)
         {
@@ -400,7 +396,6 @@ namespace coordinated
         std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> qfuncs_;
         unsigned int window_size_;
         Heuristics<GraphMove, GraphComm> &heuristics_;
-        const CollisionMode collision_mode_;
 
         std::vector<Configuration> config_stack_;
         std::set<Configuration> closed_;
@@ -442,7 +437,7 @@ namespace coordinated
 
                 std::shared_ptr<LocalQIdentity<GraphMove, GraphComm>> qf =
                     std::make_shared<LocalQIdentity<GraphMove, GraphComm>>(this->instance_, heuristics_,
-                                                                           source_conf, goal_conf, cl, i, collision_mode_);
+                                                                           source_conf, goal_conf, cl, i);
                 qfuncs_.push_back(qf);
             }
         }
@@ -473,8 +468,8 @@ namespace coordinated
                                                                                                                                    qfuncs_elim[0]->getSourceConfiguration(),
                                                                                                                                    qfuncs_elim[0]->getGoalConfiguration(),
                                                                                                                                    qfuncs_elim,
-                                                                                                                                   agent_to_eliminate,
-                                                                                                                                   collision_mode_);
+                                                                                                                                   agent_to_eliminate
+                                                                                                                                   );
             qfuncs_rem.push_back(qf_comp);
             qfuncs_ = qfuncs_rem;
         }
@@ -512,7 +507,7 @@ namespace coordinated
                 for (auto p : successors)
                 {
                     // If a node was selected by another agent, we skip it
-                    if (collision_mode_ == CollisionMode::CHECK_COLLISIONS && node_support.contains(p.second))
+                    if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && node_support.contains(p.second))
                     {
                         continue;
                     }
@@ -594,9 +589,8 @@ namespace coordinated
         CoordSolver(const Instance<GraphMove, GraphComm> &instance,
                     const Objective &objective,
                     Heuristics<GraphMove, GraphComm> &heuristics,
-                    unsigned int window_size,
-                    const CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS)
-            : Solver<GraphMove, GraphComm>(instance, objective), collision_mode_(collision_mode),
+                    unsigned int window_size)
+            : Solver<GraphMove, GraphComm>(instance, objective),
               window_size_(window_size), heuristics_(heuristics)
         {
             config_stack_.push_back(instance.start());

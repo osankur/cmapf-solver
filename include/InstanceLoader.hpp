@@ -17,7 +17,7 @@
 #include <string>
 
 #include <InstanceCreator.hpp>
-
+#include <Common.hpp>
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
 
@@ -33,6 +33,7 @@ class XMLInstanceLoader : public InstanceLoader<ExplicitGraph, ExplicitGraph> {
  private:
   const std::string file_path_;
   const std::string graph_folder_;
+  const CollisionMode collision_mode_;
 
   struct XMLNode {
    private:
@@ -48,7 +49,7 @@ class XMLInstanceLoader : public InstanceLoader<ExplicitGraph, ExplicitGraph> {
   std::vector<XMLNode> nodes_;
 
  public:
-  XMLInstanceLoader(const std::string& filepath, const std::string& location);
+  XMLInstanceLoader(const std::string& filepath, const std::string& location, const CollisionMode collision_mode);
   void Load() override;
 };
 

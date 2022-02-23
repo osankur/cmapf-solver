@@ -70,6 +70,7 @@ namespace coupled
 
       int iteration_count = 0;
 
+
       auto pi0 = std::make_shared<Configuration>();
       g_local[pi0] = 0;
       open_local.insert(pi0, 0, heuristics_.getHeuristic(*pi, goal));
@@ -80,7 +81,15 @@ namespace coupled
         // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
         // std::cout << *a;
         // std::cout << "\n";
-        if (a->size() == this->instance_.nb_agents() && this->instance_.graph().communication().isConfigurationConnected(*a) && (closed_.find(a) == closed_.end()) && !((*a) == (*pi)))
+        if (a->size() == this->instance_.nb_agents() && 
+            this->instance_.graph().communication().isConfigurationConnected(*a) && 
+            (closed_.find(a) == closed_.end()) && 
+            !((*a) == (*pi)) &&
+            (
+                this->instance().getCollisionMode() == CollisionMode::IGNORE_COLLISIONS
+                || std::set<Node>(a->begin(), a->end()).size() == this->instance().nb_agents()
+            )
+          )
         {
           if (iteration_count > 1000){
             std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;

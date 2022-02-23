@@ -23,8 +23,8 @@ inline static bool file_exists (const std::string & name) {
     return f.good();
 }
 
-XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath, const std::string& location)
-    : file_path_(filepath), graph_folder_(location) {}
+XMLInstanceLoader::XMLInstanceLoader(const std::string& filepath, const std::string& location, const CollisionMode collision_mode)
+    : file_path_(filepath), graph_folder_(location), collision_mode_(collision_mode) {}
 
 void XMLInstanceLoader::Load() {
   if (!file_exists(file_path_)) 
@@ -146,6 +146,7 @@ void XMLInstanceLoader::Load() {
   }
 
   instance_.set_nb_agents(instance_.start().size());
+  instance_.set_collision_mode(this->collision_mode_);
 }
 
 }  // namespace instance

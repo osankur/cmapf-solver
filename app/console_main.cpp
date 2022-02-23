@@ -84,7 +84,9 @@ int main(int argc, const char *argv[])
       LOG_INFO("Graph Folder: " << vm["graph-folder"].as<std::string>());
     }
 
-    instance::XMLInstanceLoader il(vm["experience"].as<std::string>(), vm["graph-folder"].as<std::string>());
+    LOG_INFO("Collisions:" << vm["collisions"].as<std::string>());
+    auto collision_mode = magic_enum::enum_cast<CollisionMode>(vm["collisions"].as<std::string>()).value();
+    instance::XMLInstanceLoader il(vm["experience"].as<std::string>(), vm["graph-folder"].as<std::string>(), collision_mode);
 
     LOG_TRACE("Instance created!");
 
@@ -108,8 +110,14 @@ int main(int argc, const char *argv[])
       throw "Error";
     }
     LOG_INFO("Start configuration: " << il.instance().start());
-    LOG_INFO("Goal configuration: " << il.instance().start());
+    LOG_INFO("Goal configuration: " << il.instance().goal());
     LOG_INFO("Start and goal configurations are connected.");
+    if (collision_mode == CollisionMode::CHECK_COLLISIONS){
+      if (il.instance().start().hasCollisions() || il.instance().goal().hasCollisions()){
+        LOG_FATAL("Start or goal configuration has collisions.");
+        throw std::runtime_error("Error");
+      }
+    }
 
     auto obj = magic_enum::enum_cast<ObjectiveEnum>(std::string(DEFAULT_OBJ));
     if (vm.count("objective"))
@@ -163,8 +171,6 @@ int main(int argc, const char *argv[])
       break;
     }
 
-    LOG_INFO("Collisions:" << vm["collisions"].as<std::string>());
-    auto collision_mode = magic_enum::enum_cast<CollisionMode>(vm["collisions"].as<std::string>()).value();
 
     LOG_INFO("Subsolver:" << vm["subsolver"].as<std::string>());
     SubsolverEnum subsolver = magic_enum::enum_cast<SubsolverEnum>(vm["subsolver"].as<std::string>()).value();
@@ -180,7 +186,7 @@ int main(int argc, const char *argv[])
     {
     case Algorithm::CBS:
     {
-      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
       {
         throw std::runtime_error("Collisions are not supported in this algorithm");
       }
@@ -192,7 +198,7 @@ int main(int argc, const char *argv[])
     }
     case Algorithm::CCBS:
     {
-      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
       {
         throw std::runtime_error("Collisions are not supported in this algorithm");
       }
@@ -203,14 +209,14 @@ int main(int argc, const char *argv[])
       break;
     }
     case Algorithm::CA:
-      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
       {
         throw std::runtime_error("Collisions are not supported in this algorithm");
       }
       solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 3);
       break;
     case Algorithm::MAS:
-      if (collision_mode == CollisionMode::CHECK_COLLISIONS)
+      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
       {
         throw std::runtime_error("Collisions are not supported in this algorithm");
       }
@@ -227,8 +233,7 @@ int main(int argc, const char *argv[])
       solver = std::make_unique<coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>>(il.instance(),
                                                                                         *objective.get(),
                                                                                         *heuristics.get(),
-                                                                                        window_size,
-                                                                                        collision_mode);
+                                                                                        window_size);
       break;
     case Algorithm::CMARRT:
       int random_seed = vm["random_seed"].as<int>();
@@ -255,7 +260,6 @@ int main(int argc, const char *argv[])
           *heuristics.get(),
           floydwarshall,
           subsolver,
-          collision_mode,
           vm["prob2goal"].as<int>(),
           vm["step_size"].as<int>(),
           window_size);

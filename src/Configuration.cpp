@@ -11,6 +11,7 @@
  * all copies or substantial portions of the Software.
  */
 #include <string>
+#include <set>
 #include <Configuration.hpp>
 
 bool Configuration::operator==(const Configuration &c) const
@@ -25,6 +26,11 @@ bool Configuration::operator==(const Configuration &c) const
   }
   return true;
 }
+bool Configuration::hasCollisions() const {
+  std::set<Node> support(this->begin(), this->end());
+  return support.size() < this->size();
+}
+
 
 
 // Friends
