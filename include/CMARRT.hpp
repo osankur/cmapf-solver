@@ -38,6 +38,8 @@ namespace cmarrt
     int prob2target; // bias in % to use the target configuration for the random one
     int step_size;
     float neardist = 1;
+    bool debug = true;
+    bool rrtstar = false;
 
     Heuristics<GraphMove, GraphComm> &heuristics_;
 
@@ -291,20 +293,21 @@ namespace cmarrt
       std::shared_ptr<Configuration> c_rand =
           getRandomConfiguration(this->instance().goal());
 
-      if (*c_rand == this->instance().goal())
+      if (*c_rand == this->instance().goal() & debug)
       {
-        //std::cout << ANSI_PURPLE << "Moving towards " << ANSI_BOLD << "GOAL: " << ANSI_RESET << (*c_rand) << "\n";
+        std::cout << ANSI_PURPLE << "Moving towards " << ANSI_BOLD << "GOAL: " << ANSI_RESET << (*c_rand) << "\n";
       }
-      else
+      else if (debug)
       {
-        //std::cout << ANSI_CYAN << "Moving towards " << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_rand) << "\n";
+        std::cout << ANSI_CYAN << "Moving towards " << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_rand) << "\n";
       }
 
       std::shared_ptr<Configuration> c_nearest =
           getNearestConfigurationByL1(*c_rand);
 
-      //std::cout << "Cnearest is " << ANSI_YELLOW << *c_nearest << ANSI_RESET << "\n";
-      //std::cout.flush();
+      if (debug) {
+      std::cout << "Cnearest is " << ANSI_YELLOW << *c_nearest << ANSI_RESET << "\n";}
+      std::cout.flush();
 
       std::vector<std::shared_ptr<Configuration>> pathSegment;
       BoundedSolver<GraphMove, GraphComm> *currentSubsolver = nullptr;
@@ -316,25 +319,26 @@ namespace cmarrt
         break;
       case SubsolverEnum::COORD_SOLVER:
         currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&coord_solver_;
-        if (*c_rand == this->instance().goal())
-        {
-          // If all shortestpaths are close to birdeye distances, then use dfs_solver
-          bool use_dfs = true;
-          for (int agt = 0; agt < instance().nb_agents(); agt++)
-          {
-            if (this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_rand->at(agt)) >
-                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_rand->at(agt)) + 1)
-            {
-              use_dfs = false;
-              break;
-            }
-          }
-          if (use_dfs)
-          {
-            //std::cout << ANSI_BOLD << ANSI_BLUE << "Near target: using dfs_solver.\n" << ANSI_RESET;
-            currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
-          }
-        }
+        // if (*c_rand == this->instance().goal())
+        // {
+        //   // If all shortestpaths are close to birdeye distances, then use dfs_solver
+        //   bool use_dfs = true;
+        //   for (int agt = 0; agt < instance().nb_agents(); agt++)
+        //   {
+        //     if (this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_rand->at(agt)) >
+        //         this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_rand->at(agt)) + 1)
+        //     {
+        //       use_dfs = false;
+        //       break;
+        //     }
+        //   }
+        //   if (use_dfs)
+        //   {
+        //     if (debug) {
+        //     std::cout << ANSI_BOLD << ANSI_BLUE << "Near target: using dfs_solver.\n" << ANSI_RESET;}
+        //     currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
+        //   }
+        // }
         break;
       case SubsolverEnum::DFS_SOLVER:
         currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
@@ -348,22 +352,24 @@ namespace cmarrt
       if (this->subsolver == SubsolverEnum::COORD_SOLVER && pathSegment.size() == 0 ||
           this->subsolver == SubsolverEnum::DECOUPLED_SOLVER && pathSegment.size() < this->step_size / 2)
       {
-        //std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
-        //          << ANSI_RESET;
+        if (debug) {
+        std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
+                  << ANSI_RESET;}
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_rand, this->step_size);
       }
       auto cend = clock();
-      if ((cend - cstart) / (double)CLOCKS_PER_SEC > 0.1)
+      if (((cend - cstart) / (double)CLOCKS_PER_SEC > 0.1) && debug)
       {
-        //std::cout << ANSI_RED << "Subsolver took " << (cend - cstart) / (double)CLOCKS_PER_SEC << " seconds\n"
-        //          << ANSI_RESET;
+        std::cout << ANSI_RED << "Subsolver took " << (cend - cstart) / (double)CLOCKS_PER_SEC << " seconds\n"
+                  << ANSI_RESET;
       }
 
       if (pathSegment.size() == 0)
       {
-        //std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n"
-        //          << ANSI_RESET;
-        //std::cout.flush();
+        if (debug){
+        std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n"
+                  << ANSI_RESET;}
+        std::cout.flush();
         return;
       }
 
@@ -375,33 +381,40 @@ namespace cmarrt
         this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
         this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_nearest];
         this->path_from_parent_[*c_new] = pathSegment;
-        //std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
+        if (debug) {
+        std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";}
       }
-      else
+      else if (debug)
       {
-        //std::cout << ANSI_RED << "Cnew is already in the tree : " << *c_new << ANSI_RESET << "\n";
+        std::cout << ANSI_RED << "Cnew is already in the tree : " << *c_new << ANSI_RESET << "\n";
       }
 
-      auto source = this->instance().start();
-      // RRT* component
-       std::shared_ptr<Configuration> c_min = c_nearest;
-       auto pathSegmentMin = currentSubsolver->computeBoundedPathTowards(*c_min, *c_new, this->step_size);
-       //int costmin = getPath(source, *c_min).size() + pathSegmentMin.size();
-       int costmin = getPath(source, *c_new).size();
-       std::vector<std::shared_ptr<Configuration>> Neighborhood =
+      if (rrtstar){
+        auto source = this->instance().start();
+        // RRT* component
+        std::shared_ptr<Configuration> c_min = c_nearest;
+        auto pathSegmentMin = currentSubsolver->computeBoundedPathTowards(*c_min, *c_new, this->step_size);
+        //int costmin = getExecution(source, *c_min).size() + pathSegmentMin.size();
+        int costmin = getExecution(source, *c_new).size();
+        std::vector<std::shared_ptr<Configuration>> Neighborhood =
            NeighborsAtDistance(*c_new, this->neardist);
 
-      for (auto cnear : Neighborhood) {
-        auto pathSegmentNear = currentSubsolver->computeBoundedPathTowards(*cnear, *c_new, this->step_size);
-        int cost = getPath(source, *cnear).size() + pathSegmentNear.size();
-        if (cost < costmin && pathSegmentNear.size() > 0) {
-          c_min = cnear;
-          costmin = cost;
-          pathSegmentMin = pathSegmentNear;
+        for (auto cnear : Neighborhood) {
+          std::cout << "New cnear\n";
+          //each loop is long 
+          auto pathSegmentNear = coord_solver_.computeBoundedPathTowards(*cnear, *c_new, this->step_size);
+          int cost = getExecution(source, *cnear).size() + pathSegmentNear.size();
+          if (cost < costmin && pathSegmentNear.size() > 0) {
+            c_min = cnear;
+            costmin = cost;
+            pathSegmentMin = pathSegmentNear;
+          }
         }
-      }
 
-      replaceParent(*c_min, *c_new, pathSegmentMin);
+        this->parents_[index_of_vertex_[*c_new]] = std::make_shared<Configuration>(*c_min); 
+        this->index_of_parent_[*c_new] = index_of_vertex_[*c_min];
+        this->path_from_parent_[*c_new] = pathSegment;
+      }
     }
 
     /**
@@ -411,7 +424,7 @@ namespace cmarrt
      * @param second
      * @return std::vector<std::shared_ptr<Configuration>>
      */
-    std::vector<std::shared_ptr<Configuration>> getPath(
+    std::vector<std::shared_ptr<Configuration>> getExecution(
         const Configuration &first, const Configuration &second)
     {
       std::vector<std::shared_ptr<Configuration>> exec;
@@ -467,7 +480,7 @@ namespace cmarrt
           int parent_of_v = this->index_of_parent_[*(this->vertices_[v])];
           if (v != parent_of_v)
           {
-            //std::cout << "RRT edge: " << (*this->vertices_[v]) << " -- " << (*this->vertices_[parent_of_v]) << "\n";
+            std::cout << "RRT edge: " << (*this->vertices_[v]) << " -- " << (*this->vertices_[parent_of_v]) << "\n";
           }
           v = parent_of_v;
         }
@@ -512,13 +525,14 @@ namespace cmarrt
 
     bool StepCompute() override
     {
-      // std::cout << "\nStep \n";
+      if (debug)
+        std::cout << "\nStep \n";
       if (this->treeContains(this->instance().goal()))
       {
-        this->printTree();
+        //this->printTree();
         std::cout << "Done after " << iterations << " iterations\n";
         std::cout.flush();
-        //auto exec = this->getPath(this->instance().start(),this->instance().goal());
+        //auto exec = this->getExecution(this->instance().start(),this->instance().goal());
         auto exec = this->getExecution(this->instance().goal());
         for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
         {
@@ -536,7 +550,7 @@ namespace cmarrt
         //std::cout << "\n#Iterations: " << iterations << "\n";
         iterations++;
         this->extend();
-        if (iterations % 10 == 0)
+        if (iterations % 10 == 0 && debug)
         {
           this->printTree();
         }
