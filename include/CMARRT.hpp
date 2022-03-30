@@ -37,7 +37,6 @@ namespace cmarrt
     int iterations = 0;
     int prob2target; // bias in % to use the target configuration for the random one
     int step_size;
-    float neardist = 1;
     bool debug = true;
     bool rrtstar = false;
 
@@ -237,36 +236,20 @@ namespace cmarrt
 
 
     /**
-     * @brief replace the parent of a vertex by one providing a shorter path
+     * @brief sort the configurations
      *
-     * @param Neighborhood
-     * @param cmin
-     * @param cnew
+     * @param 
      */
-    void replaceParent( // TODO : test this
-        const Configuration &cmin,
-        const Configuration &cnew,
-        std::vector<std::shared_ptr<Configuration>> pathSegment)
+    bool sortConfiguration(
+        const Configuration &first,
+        const Configuration &second)
     {
-      // for (auto c : Neighborhood)
-      // {
-      //   if (not(cmin == *c) &
-      //       Cost(this->instance_.start(), *c) >
-      //           Cost(this->instance_.start(), cnew) + Cost(cnew, *c))
-      //   {
-      //     std::cout << "here\n";
-      //     this->parents_.at(indexOfConfiguration(*c)) =
-      //         std::make_shared<Configuration>(cnew);
-      //     auto parent_index = indexOfConfiguration(cnew);
-      //     assert(parent_index >= 0);
-      //     this->index_of_parent_[*c] = parent_index;
-      //     this->path_from_parent_
-      //   }
-      // }
-      this->parents_[index_of_vertex_[cnew]] = std::make_shared<Configuration>(cmin); 
-      this->index_of_parent_[cnew] = index_of_vertex_[cmin];
-      this->path_from_parent_[cnew] = pathSegment;
+      auto firstpath = getExecution(this->instance().start(), first);
+      auto secondpath = getExecution(this->instance().start(), second);
+      return (firstpath.size() <= secondpath.size());
     }
+
+
 
     std::vector<std::shared_ptr<Configuration>> &getVertices()
     {
@@ -391,23 +374,28 @@ namespace cmarrt
 
       if (rrtstar){
         auto source = this->instance().start();
-        // RRT* component
+        int neardist = this->step_size/2;
         std::shared_ptr<Configuration> c_min = c_nearest;
         auto pathSegmentMin = currentSubsolver->computeBoundedPathTowards(*c_min, *c_new, this->step_size);
-        //int costmin = getExecution(source, *c_min).size() + pathSegmentMin.size();
         int costmin = getExecution(source, *c_new).size();
         std::vector<std::shared_ptr<Configuration>> Neighborhood =
-           NeighborsAtDistance(*c_new, this->neardist);
-
-        for (auto cnear : Neighborhood) {
-          std::cout << "New cnear\n";
-          //each loop is long 
-          auto pathSegmentNear = coord_solver_.computeBoundedPathTowards(*cnear, *c_new, this->step_size);
-          int cost = getExecution(source, *cnear).size() + pathSegmentNear.size();
-          if (cost < costmin && pathSegmentNear.size() > 0) {
-            c_min = cnear;
-            costmin = cost;
-            pathSegmentMin = pathSegmentNear;
+           NeighborsAtDistance(*c_new, neardist);
+        //std::cout << "Neigbourhood size " << Neighborhood.size() << "\n";
+        std::sort(Neighborhood.begin(), Neighborhood.end(), 
+                [this](std::shared_ptr<Configuration> a, std::shared_ptr<Configuration> b) {
+                    return this->sortConfiguration(*a,*b);} );
+        //std::cout << "Neigbourhood size " << Neighborhood.size() << "\n";
+        for (int k = 0; k < 3; k++) {
+          if (k < Neighborhood.size()) {
+            //std::cout << "new cnear\n";
+            auto cnear = Neighborhood.at(k);
+            auto pathSegmentNear = coord_solver_.computeBoundedPathTowards(*cnear, *c_new, this->step_size);
+            int cost = getExecution(source, *cnear).size() + pathSegmentNear.size();
+            if (cost < costmin && pathSegmentNear.size() > 0) {
+              c_min = cnear;
+              costmin = cost;
+              pathSegmentMin = pathSegmentNear;
+            }
           }
         }
 
