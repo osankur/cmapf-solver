@@ -47,6 +47,7 @@ namespace coupled
                        ConfigurationPtrEqual>
         closed_;
     Heuristics<GraphMove, GraphComm> & heuristics_;
+    bool verbose_;
 
     typedef std::map<std::shared_ptr<Configuration>, double> PartialCostMap;
     typedef PriorityQueue<std::shared_ptr<Configuration>> PartialConfQueue;
@@ -90,7 +91,7 @@ namespace coupled
             )
           )
         {
-          if (iteration_count > 1000){
+          if (verbose_ && iteration_count > 1000){
             std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;
           }
           // auto cend = clock();
@@ -178,8 +179,9 @@ namespace coupled
   public:
     DFS(const Instance<GraphMove, GraphComm> &instance,
         const Objective &objective,
-        Heuristics<GraphMove, GraphComm>& heuristics)
-        : Solver<GraphMove, GraphComm>(instance, objective), exec_(), heuristics_(heuristics)
+        Heuristics<GraphMove, GraphComm>& heuristics,
+        bool verbose = true)
+        : Solver<GraphMove, GraphComm>(instance, objective), exec_(), heuristics_(heuristics), verbose_(verbose)
     {
       std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
       for (size_t agt = 0; agt < instance.start().size(); agt++)

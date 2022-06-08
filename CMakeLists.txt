@@ -93,6 +93,7 @@ set_target_properties(
 #add_subdirectory(tests)
 
 add_executable(console_main app/console_main.cpp)
+set_target_properties(console_main PROPERTIES OUTPUT_NAME "cmapf-solver")
 
 target_link_libraries(console_main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
 target_set_warnings(console_main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).

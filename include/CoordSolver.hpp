@@ -419,7 +419,7 @@ namespace coordinated
                 }
                 local_index++;
             }
-            if (cl.size() >= 2)
+            if (cl.size() >= 1)
             {
                 clusters.push_back(cl);
             }

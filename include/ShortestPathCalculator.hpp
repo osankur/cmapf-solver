@@ -42,7 +42,6 @@ public:
 };
 
 
-
 template <class GraphMove, class GraphComm>
 class DijkstraSPCalculator : public ShortestPathCalculator<GraphMove,GraphComm>{
  private:
@@ -187,8 +186,6 @@ public:
       open.pop();
       // Invariant: astar_node.g is the shortest path distance from source to astar_node.node
       dist_[source][astar_node.node] = astar_node.g;
-      //std::cout << "\nCurrent node: " << astar_node.node << ". #open = " << open.size() << "\n";
-      // std::cout << "\nCurrent node: " << astar_node.node << "; dist = " << astar_node.g << " #open = " << open.size() << "\n";
       if (astar_node.node == target){
         break;
       }
