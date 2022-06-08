@@ -3,7 +3,7 @@
 #include <Objective.hpp>
 #include <Solver.hpp>
 #include <Heuristics.hpp>
-#include <FloydWarshall.hpp>
+#include <ShortestPathCalculator.hpp>
 #include <Path.hpp>
 #include <list>
 #include <map>
@@ -37,16 +37,16 @@ namespace decoupled
     private:
         const Instance<GraphMove, GraphComm> &instance_;
         const Objective &objective_;
-        std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> floydwarshall_;
+        std::shared_ptr<DijkstraSPCalculator<GraphMove, GraphComm>> sp_;
 
     public:
         BoundedDecoupledSolver(const Instance<GraphMove, GraphComm> &instance,
                                const Objective &objective,
-                               std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> floydwarshall) : instance_(instance), objective_(objective), floydwarshall_(floydwarshall)
+                               std::shared_ptr<DijkstraSPCalculator<GraphMove, GraphComm>> floydwarshall) : instance_(instance), objective_(objective), sp_(floydwarshall)
         {
         }
         BoundedDecoupledSolver(const Instance<GraphMove, GraphComm> &instance,
-                               const Objective &objective) : instance_(instance), objective_(objective), floydwarshall_(std::make_shared<FloydWarshall<GraphMove, GraphComm>>(instance))
+                               const Objective &objective) : instance_(instance), objective_(objective), sp_(std::make_shared<DijkstraSPCalculator<GraphMove, GraphComm>>(instance))
         {
         }
 
@@ -55,7 +55,7 @@ namespace decoupled
             std::vector<Path> spaths;
             for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
             {
-                spaths.push_back(this->floydwarshall_->getShortestPath(source.at(agt), goal.at(agt)));
+                spaths.push_back(this->sp_->getShortestPath(source.at(agt), goal.at(agt)));
             }
             std::vector<std::shared_ptr<Configuration>> segment;
             for (int i = 0; i < steps; i++)

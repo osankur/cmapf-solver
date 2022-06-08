@@ -1,5 +1,5 @@
 #pragma once
-#include <FloydWarshall.hpp>
+#include <ShortestPathCalculator.hpp>
 #include <Instance.hpp>
 #include <Configuration.hpp>
 #include <memory>
@@ -21,7 +21,7 @@ template <class GraphMove, class GraphComm>
 class ShortestPathHeuristics : public Heuristics<GraphMove, GraphComm>
 {
 private:
-    double getEuclidianDistance(std::pair<int, int> &p1, std::pair<int, int> &p2)
+    double getL2Distance(std::pair<int, int> &p1, std::pair<int, int> &p2)
     {
         return sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
     }
@@ -31,8 +31,8 @@ private:
         return abs(p1.first - p2.first) + abs(p1.second - p2.second);
     }
 public:
-    ShortestPathHeuristics(const Instance<GraphMove, GraphComm> &instance) : instance_(instance), floydwarshall_(std::make_shared<FloydWarshall<GraphMove, GraphComm>>(instance)) {}
-    ShortestPathHeuristics(const Instance<GraphMove, GraphComm> &instance, std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> floydwarshall) : instance_(instance), floydwarshall_(floydwarshall) {}
+    ShortestPathHeuristics(const Instance<GraphMove, GraphComm> &instance) : instance_(instance), sp_(DijkstraSPCalculator<GraphMove, GraphComm>(instance)) {}
+    ShortestPathHeuristics(const Instance<GraphMove, GraphComm> &instance, ShortestPathCalculator<GraphMove, GraphComm> & sp) : instance_(instance), sp_(sp) {}
 
 
     int getBirdEyeHeuristic(const Configuration &c, const Configuration &goal){
@@ -54,12 +54,12 @@ public:
     }
 
     int getShortestPathDistance(const Node & c, const Node & goal) override {
-        return this->floydwarshall_->getShortestPathDistance(c, goal);
+        return this->sp_.getShortestPathDistance(c, goal);
     }
     int getBirdEyeDistance(const Node & c, const Node & goal) override{
         auto cpos = this->instance_.graph().movement().getPosition(c);
         auto gpos = this->instance_.graph().movement().getPosition(goal);
-        return this->getL1Distance(cpos, gpos);
+        return this->getL2Distance(cpos, gpos);
     }
 
     double getHeuristic(const Configuration &c, const Configuration &goal) override
@@ -72,7 +72,7 @@ public:
     }
 
 protected:
-    std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> floydwarshall_;
+    ShortestPathCalculator<GraphMove, GraphComm> & sp_;
     const Instance<GraphMove, GraphComm> &instance_;
 };
 
@@ -90,7 +90,7 @@ public:
     BirdEyeHeuristics(const Instance<GraphMove, GraphComm> &instance) : ShortestPathHeuristics<GraphMove, GraphComm>(instance) {
         init();
     }
-    BirdEyeHeuristics(const Instance<GraphMove, GraphComm> &instance, std::shared_ptr<FloydWarshall<GraphMove, GraphComm>> fw) : ShortestPathHeuristics<GraphMove, GraphComm>(instance, fw) {
+    BirdEyeHeuristics(const Instance<GraphMove, GraphComm> &instance, ShortestPathCalculator<GraphMove, GraphComm> & sp) : ShortestPathHeuristics<GraphMove, GraphComm>(instance, sp) {
         init();
     }
     double getHeuristic(const Configuration &c, const Configuration &goal) override

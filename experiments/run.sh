@@ -20,8 +20,7 @@ rm -f $logfile
 for SEL in `find $DATA$bench*.exp`
 do
     echo ">>>>> $SEL" >> $logfile
-		cmd="time ./console_main -a $algo -e $SEL -G $DATA -w 3"
-		echo $cmd
-		$cmd
+    cmd="time ./console_main -a $algo -e $SEL -G $DATA -w 3"
+    echo $cmd
     $cmd >> $logfile 2>&1
 done

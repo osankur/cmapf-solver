@@ -12,6 +12,8 @@
  */
 #include <Graph.hpp>
 #include <cassert>
+#include <ctime>
+
 size_t ExplicitGraph::node_count() const { return adjacency_->size(); }
 
 size_t ExplicitGraph::edge_count() const {

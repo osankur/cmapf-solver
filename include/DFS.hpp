@@ -15,7 +15,6 @@
 #include <CTNOrderingStrategy.hpp>
 #include <ConflictSelectionStrategy.hpp>
 #include <ConstraintTreeNode.hpp>
-#include <FloydWarshall.hpp>
 #include <Instance.hpp>
 #include <LowLevel.hpp>
 #include <Objective.hpp>

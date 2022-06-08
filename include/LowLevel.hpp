@@ -22,7 +22,7 @@
 #include <memory>
 #include <Common.hpp>
 #include <Constraint.hpp>
-#include <FloydWarshall.hpp>
+#include <ShortestPathCalculator.hpp>
 #include <Instance.hpp>
 #include <Path.hpp>
 #include <Logger.hpp>
@@ -218,7 +218,7 @@ class NegativeAStar : public LowLevel<GraphMove, GraphComm> {
 template <class GraphMove, class GraphComm>
 class PositiveAStar : public LowLevel<GraphMove, GraphComm> {
  private:
-  FloydWarshall<GraphMove, GraphComm> fw_;
+  DijkstraSPCalculator<GraphMove, GraphComm> fw_;
 
  public:
   explicit PositiveAStar(const Instance<GraphMove, GraphComm> &instance)

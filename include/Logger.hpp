@@ -29,7 +29,7 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", SeverityLevel)
 class Logger {
  private:
   boost::log::sources::severity_logger<SeverityLevel> logger_;
-
+  
   Logger() : logger_() {}
 
  public:
@@ -47,7 +47,7 @@ class Logger {
     if (!file.empty()) boost::log::add_file_log(file);
     boost::log::core::get()->set_filter(severity >= level);
   }
-
+  
   static boost::log::sources::severity_logger<SeverityLevel>& get_logger() { return get_singleton().logger_; }
 };
 /*

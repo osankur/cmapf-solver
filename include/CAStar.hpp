@@ -21,7 +21,7 @@
 #include <utility>
 #include <unordered_set>
 #include <CTNOrderingStrategy.hpp>
-#include <FloydWarshall.hpp>
+#include <ShortestPathCalculator.hpp>
 #include <ConflictSelectionStrategy.hpp>
 #include <ConstraintTreeNode.hpp>
 #include <Instance.hpp>
@@ -63,13 +63,13 @@ class CAStar : public Solver<GraphMove, GraphComm> {
    private:
     const Instance<GraphMove, GraphComm>& instance_;
     const Objective& objective_;
-    FloydWarshall<GraphMove, GraphComm>& fw_;
+    ShortestPathCalculator<GraphMove, GraphComm>& sp_;
     const Configuration& start_;
 
    public:
     CANodePtrComparator(const Instance<GraphMove, GraphComm>& instance, const Objective& objective,
-                        FloydWarshall<GraphMove, GraphComm>& fw, const Configuration& start)
-        : instance_(instance), objective_(objective), fw_(fw), start_(start) {}
+                        ShortestPathCalculator<GraphMove, GraphComm>& fw, const Configuration& start)
+        : instance_(instance), objective_(objective), sp_(fw), start_(start) {}
     ~CANodePtrComparator() = default;
     CANodePtrComparator(const CANodePtrComparator& other) = default;
     CANodePtrComparator(CANodePtrComparator&& other) = default;
@@ -82,8 +82,8 @@ class CAStar : public Solver<GraphMove, GraphComm> {
       size_t heuristicFirst = 0;
       size_t heuristicSecond = 0;
       for (Agent agt = 0; static_cast<size_t>(agt) < instance_.nb_agents(); agt++) {
-        if (!first->IsAgentSet(agt)) heuristicFirst += fw_.getShortestPathDistance(start_.at(agt), instance_.goal()[agt]);
-        if (!second->IsAgentSet(agt)) heuristicSecond += fw_.getShortestPathDistance(start_.at(agt), instance_.goal()[agt]);
+        if (!first->IsAgentSet(agt)) heuristicFirst += sp_.getShortestPathDistance(start_.at(agt), instance_.goal()[agt]);
+        if (!second->IsAgentSet(agt)) heuristicSecond += sp_.getShortestPathDistance(start_.at(agt), instance_.goal()[agt]);
       }
       return lengthFirst + heuristicFirst < lengthSecond + heuristicSecond;
     }
@@ -91,7 +91,7 @@ class CAStar : public Solver<GraphMove, GraphComm> {
 
   using priority_queue =
       boost::heap::fibonacci_heap<std::shared_ptr<CANode>, boost::heap::compare<CANodePtrComparator>>;
-  FloydWarshall<GraphMove, GraphComm> fw_;
+  DijkstraSPCalculator<GraphMove, GraphComm> sp_;
   priority_queue open_;
   const int depth_;
   std::vector<Path> exec_;
@@ -137,16 +137,16 @@ class CAStar : public Solver<GraphMove, GraphComm> {
    private:
     const Instance<GraphMove, GraphComm>& instance_;
     const Node& target_;
-    FloydWarshall<GraphMove, GraphComm>& fw_;
+    ShortestPathCalculator<GraphMove, GraphComm>& sp_;
     const int depth_;
 
    public:
     explicit HeapComparator(const Instance<GraphMove, GraphComm>& instance, const Node& target,
-                            FloydWarshall<GraphMove, GraphComm>& fw, int depth)
-        : instance_(instance), target_(target), fw_(fw), depth_(depth) {}
+                            ShortestPathCalculator<GraphMove, GraphComm>& fw, int depth)
+        : instance_(instance), target_(target), sp_(fw), depth_(depth) {}
     bool operator()(const std::shared_ptr<AStarNode>& a, const std::shared_ptr<AStarNode>& b) const {
-      size_t sizeA = a->time + fw_.getShortestPathDistance(a->node, target_);
-      size_t sizeB = b->time + fw_.getShortestPathDistance(b->node, target_);
+      size_t sizeA = a->time + sp_.getShortestPathDistance(a->node, target_);
+      size_t sizeB = b->time + sp_.getShortestPathDistance(b->node, target_);
       return sizeA > sizeB;
       // instance_.graph().movement().get_distance(a->node, target_) >
       // instance_.graph().movement().get_distance(b->node, target_);
@@ -168,7 +168,7 @@ class CAStar : public Solver<GraphMove, GraphComm> {
   }
 
   Path ComputeConnectedPath(const std::shared_ptr<CANode>& canode, Agent agt) {
-    HeapComparator cmp(this->instance_, this->instance_.goal()[agt], fw_, depth_);
+    HeapComparator cmp(this->instance_, this->instance_.goal()[agt], sp_, depth_);
     boost::heap::fibonacci_heap<std::shared_ptr<AStarNode>, boost::heap::compare<HeapComparator>> open(cmp);
     std::unordered_set<std::shared_ptr<AStarNode>, AStarNodePtrHash, AStarNodePtrEqual> closed;
 
@@ -207,7 +207,7 @@ class CAStar : public Solver<GraphMove, GraphComm> {
   void Initialize() {
     open_.clear();
     for (Agent agt = 0; static_cast<size_t>(agt) < this->instance_.nb_agents(); agt++) {
-      Path p = fw_.getShortestPath(current_.at(agt), this->instance_.goal()[agt]);
+      Path p = sp_.getShortestPath(current_.at(agt), this->instance_.goal()[agt]);
       if (depth_ > -1 && p.size() > depth_) {
         p.Resize(depth_ + 1);
       }
@@ -218,12 +218,12 @@ class CAStar : public Solver<GraphMove, GraphComm> {
  public:
   CAStar(const Instance<GraphMove, GraphComm>& instance, const Objective& objective, int depth)
       : Solver<GraphMove, GraphComm>(instance, objective),
-        fw_(instance),
-        open_(CANodePtrComparator(instance, objective, fw_, instance.start())),
+        sp_(instance),
+        open_(CANodePtrComparator(instance, objective, sp_, instance.start())),
         depth_(depth),
         exec_(instance.nb_agents()),
         current_(instance.start()) {
-    fw_.computeAllPairs();
+    // sp_.computeAllPairs();
     Initialize();
   }
 

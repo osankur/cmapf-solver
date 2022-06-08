@@ -13,6 +13,10 @@
 #include <string>
 #include <Path.hpp>
 #include <memory>
+#include <unordered_set>
+#include <Logger.hpp>
+#include <iostream>
+#include <Graph.hpp>
 
 Path::Path() : path_() {}
 
@@ -32,6 +36,22 @@ size_t Path::size() const { return path_.size(); }
 
 const Node& Path::at(size_t time) const { return path_[time]; }
 
+bool Path::isValid(const ExplicitGraph & graph) const {
+  if (size() == 0) return true;
+  Node n = at(0);
+  for (size_t i = 1; i < size(); i++){
+    Node next_n = at(i);
+    const std::unordered_set<Node>& neighbors = graph.get_neighbors(n);
+    if (neighbors.find(next_n) == neighbors.end()){
+      std::cerr << "The following path is not valid\n" << *this << "\n";
+      return false;
+    }
+    n = next_n;
+  }
+  return true;
+}
+
+
 // Friends
 
 std::ostream& operator<<(std::ostream& os, const Path& path) {
@@ -43,3 +63,4 @@ std::ostream& operator<<(std::ostream& os, const Path& path) {
   os << "]";
   return os;
 }
+

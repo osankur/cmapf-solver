@@ -630,6 +630,8 @@ namespace coordinated
          */
         virtual bool StepCompute() override
         {
+            static int _iterations = 0;
+            _iterations++;
             // Solution found?
             if (config_stack_.back() == this->instance_.goal())
             {
@@ -658,18 +660,18 @@ namespace coordinated
             }
             bool success = true;
             Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
+            
+            std::cerr << "Iteration " << _iterations << ": " << next << std::endl;
             /*
-            std::cerr << "[";
             for(int i = 0; i< next.size();i++){
                 auto n = next[i];
-                auto pos = this->instance_.graph().movement().get_position(n);
+                auto pos = this->instance_.graph().movement().getPosition(n);
                 std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
             }
             std::cerr << "]\n";
             */
             if (!success)
             {
-                // Solution not found
                 if (config_stack_.size() == 1)
                 {
                     return true;
@@ -813,7 +815,7 @@ namespace coordinated
             std::cerr << "\n";
             /*
             const std::vector<Agent> args ={0,1,2};
-            FloydWarshall<GraphMove,GraphComm> fw(this->instance_);
+            DijkstraSPCalculator<GraphMove,GraphComm> fw(this->instance_);
             LocalQ<GraphMove,GraphComm> localQ(start, args, fw, this->instance_);
             assert(localQ.isCollisionless(start));
             assert(localQ.isCollisionless(goal));

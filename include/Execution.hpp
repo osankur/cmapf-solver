@@ -36,3 +36,4 @@ class Execution {
   // Friends
   friend std::ostream& operator<<(std::ostream&, const Execution&);
 };
+

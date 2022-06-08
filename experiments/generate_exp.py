@@ -1,19 +1,17 @@
-import sys
-import igraph
 import os
 from igraph import *
 import argparse
-import math
 import random
+import copy
 
-output_folder = "data/"
+output_folder = "/tmp/"
 
-"""
-Generate connected configuration of size nb_agents
-Argument from_base is the vertex of the first agent, which will serve as the basis.
-If it is None, then we pick it randomly
-"""
 def generate_connected_configuration(comm, nb_agents, from_base=None):
+    """
+    Generate connected configuration of size nb_agents
+    Argument from_base is the vertex of the first agent, which will serve as the basis.
+    If it is None, then we pick it randomly
+    """
     n = len(comm.vs)
     if from_base == None:
         prev_node = random.randint(0,n-1)
@@ -34,39 +32,119 @@ def generate_connected_configuration(comm, nb_agents, from_base=None):
 
 
 
-"""
-@pre i>0
-@pre conf defined for 0...i-1
-"""
-def generate_sequentially_connected_configuration_aux(comm, conf, support, i):
-    if (i == len(conf)):
-        return True
-    cluster = list(set(map(lambda x: x.index, comm.vs[conf[i-1]].neighbors())) - support)
-    random.shuffle(cluster)
-    for v in cluster:
-        support.add(v)
-        conf[i] = v
-        if(generate_sequentially_connected_configuration_aux(comm, conf, support, i+1)):
-            return True
-        support.remove(v)
-    return False
 
-"""
-Generate a random configuration where each agent i is connected to i-1
-"""
+
 def generate_sequentially_connected_configuration(comm, nb_agents, from_base=None):
+    """
+    Generate a random configuration where each agent i is connected to i-1
+    """
+    def generate_sequentially_connected_configuration_aux(conf, support, i):
+        """
+        @pre i>0
+        @pre conf defined for 0...i-1
+        returns True on success
+        """
+        if (i == len(conf)):
+            return True
+        cluster = list(set(map(lambda x: x.index, comm.vs[conf[i-1]].neighbors())) - support)
+        random.shuffle(cluster)
+        for v in cluster:
+            support.add(v)
+            conf[i] = v
+            if(generate_sequentially_connected_configuration_aux(conf, support, i+1)):
+                return True
+            support.remove(v)
+        return False
+
     n = len(comm.vs)
-    if from_base == None:
+    if from_base is None:
         node = random.randint(0,n-1)
     else:
         node = from_base
     support = set([node])
     conf = [None] * nb_agents
     conf[0] = node
-    if (generate_sequentially_connected_configuration_aux(comm, conf, support, 1)):
+    if (generate_sequentially_connected_configuration_aux(conf, support, 1)):
         return conf
     else:
         return None
+
+
+def generate_window_connected_configuration(comm, nb_agents, window):
+    """
+    Generate a random configuration where the following sets are connected:
+    0,1,...,window-1
+    window-1,window,...2window-1
+    2window-1,2window,...,3window-1 
+    etc.
+    """
+    def add_agent(conf, cluster, support, i):
+        """
+        @pre i>0
+        @pre conf defined for 0...i-1
+        returns True on success
+        """
+        if (i == len(conf)):
+            return True
+        candidates = set([])
+        for neigh in map(lambda node: set(comm.vs[node].neighbors()), cluster):
+            candidates = candidates | set(map(lambda n: n.index, neigh))
+        candidates = list(candidates - support)
+
+        random.shuffle(candidates)
+        for v in candidates:
+            support.add(v)
+            conf[i] = v
+            if ((i % window) == window - 1):
+                # then we want to be connected to the previous node only
+                new_cluster = [v]
+            else:
+                new_cluster = copy.copy(cluster)
+                new_cluster.append(v)
+            if(add_agent(conf, new_cluster, support, i+1)):
+                return True
+            support.remove(v)
+        return False
+    n = len(comm.vs)
+    node = random.randint(0,n-1)
+    support = set([node]) # set of nodes already in the configuration
+    cluster = set([node]) # set of nodes to which the next node is to be connected
+    conf = [None] * nb_agents
+    conf[0] = node
+    if (add_agent(conf, cluster, support, 1)):
+        return conf
+    else:
+        return None
+
+# def generate_window_connected_configuration(comm, nb_agents, window):
+#     """ generate random configuration such that 
+#     [0,1,...window-1] is connected
+#     [window-1, window, ... 2window-1] is connected
+#     etc.
+#     """
+#     n = len(comm.vs)
+#     node = random.randint(0,n-1)
+#     support = set([node]) # set of nodes already in the partial configuration
+#     cluster = set([node]) # set of all nodes that communicate with the support
+#     conf = [None] * nb_agents
+#     conf[0] = node
+#     for i in range(1,n):
+#         if ((i % window) == window-1):
+#             cluster = set([node])
+#         neighbors = list(set(map(lambda x: x.index, comm.vs[conf[i-1]].neighbors())))
+#         random.shuffle(cluster)
+#         for v in cluster:
+#             support.add(v)
+#             conf[i] = v
+#             if(generate_sequentially_connected_configuration_aux(comm, conf, support, i+1)):
+#                 return True
+#             support.remove(v)
+#         return False    
+#     if (generate_sequentially_connected_configuration_aux(comm, conf, support, 1)):
+#         return conf
+#     else:
+#         return None
+
 
 
 def generate_connected_successor_rec(phy, comm, conf, partial_succ, support, i):
@@ -93,10 +171,10 @@ def generate_connected_successor_rec(phy, comm, conf, partial_succ, support, i):
             return True
         support.remove(v)
     return False
-"""
-Generate a random connected successor of conf where agent i is connected to {0,1,...,i-1}
-"""
 def generate_connected_successor(phy, comm, conf):
+    """
+    Generate a random connected successor of conf where agent i is connected to {0,1,...,i-1}
+    """
     partial_succ = [None] * len(conf)
     if (generate_connected_successor_rec(phy, comm, conf, partial_succ, set([]), 0)):
         return partial_succ
@@ -115,15 +193,21 @@ def check_connected(comm, conf):
         cluster = cluster | set(map(lambda x: x.index, comm.vs[u].neighbors()))
     return True
 
-def generate(phys_filename, comm_filename, nb_agents, filename):
-    phy = Graph.Read_GraphML(phys_filename)
+def generate(phys_filename, comm_filename, nb_agents, window, filename):
+    # phy = Graph.Read_GraphML(phys_filename)
     comm = Graph.Read_GraphML(comm_filename)
-    start = generate_sequentially_connected_configuration(comm, nb_agents, None)
-    goal = generate_sequentially_connected_configuration(comm, nb_agents, start[0])
+    if (window is not None):
+        print("Generating window-connected configurations")
+        start = generate_window_connected_configuration(comm, nb_agents, window)
+        goal = generate_window_connected_configuration(comm, nb_agents, window)
+    else:
+        print("Generating connected configurations")
+        start = generate_connected_configuration(comm, nb_agents)
+        goal = generate_connected_configuration(comm, nb_agents)
     assert(check_connected(comm,start))
     assert(check_connected(comm,goal))
     # We have start[0] == goal[0]. This is the base agent's position
-    with open(output_folder + filename,"w") as f:
+    with open(output_folder + filename,"w", encoding="utf-8") as f:
         print("Writing " + output_folder + filename)
         print("phys_graph " + os.path.basename(phys_filename), file=f)
         print("comm_graph " + os.path.basename(comm_filename), file=f)
@@ -138,6 +222,7 @@ def generate(phys_filename, comm_filename, nb_agents, filename):
 
 
 def main():
+    global output_folder
     parser = argparse.ArgumentParser(description="Exp generator. Given physical and communication graphs this script randomly generates two connected components and writes this in an .exp file. Agent 0 has the same start and goal vertex since it will serve as a fixed base.")
     parser.add_argument("-p", "--physical", type=str, dest="phys",
                         help="Physical graph",required=True)
@@ -149,14 +234,19 @@ def main():
                         help="Number of agents",required=True)
     parser.add_argument("-o",dest="out", type=str,
                         help="Output file name base",required=True)
+    parser.add_argument("-d", dest="outdir", type=str, help="Output directory", required=True)
+    parser.add_argument("-w",dest="windowed", type=bool,
+                        help="Whether the start and goal configurations are to be window connected",required=False)
     args = parser.parse_args()
 
     nb_agents = args.nb_agents
     nb_exps = args.nb_exps
-    
+    windowed = args.windowed
+    output_folder = args.outdir+"/"
+
     random.seed()
     for i in range(nb_exps):
-        filename = args.out + "__" + str(i) + ".exp"
-        generate(args.phys, args.comm, nb_agents, filename)
+        filename = args.out + "_" + str(i) + ".exp"
+        generate(args.phys, args.comm, nb_agents, windowed, filename)
 
 main()

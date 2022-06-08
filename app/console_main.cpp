@@ -33,9 +33,9 @@ using namespace boost::program_options;
 
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
-constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
+constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
 constexpr char DEFAULT_COLLISIONS[] = "IGNORE_COLLISIONS";
-constexpr char DEFAULT_SUBSOLVER[] = "DFS_SOLVER";
+constexpr char DEFAULT_SUBSOLVER[] = "COORD_SOLVER";
 
 int main(int argc, const char *argv[])
 {
@@ -51,6 +51,7 @@ int main(int argc, const char *argv[])
         "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: BIRDEYE or SHORTEST_PATH")(
         "subsolver,ss", value<std::string>()->default_value(DEFAULT_SUBSOLVER), "Which solver to use to generate segment paths in CMARRT: DECOUPLED_SOLVER | DFS_SOLVER | COORD_SOLVER.")(
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
+        "verbose,v", value<bool>()->default_value(true), "Verbose mode.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
 
@@ -111,6 +112,7 @@ int main(int argc, const char *argv[])
     }
     LOG_INFO("Start configuration: " << il.instance().start());
     LOG_INFO("Goal configuration: " << il.instance().goal());
+    
     LOG_INFO("Start and goal configurations are connected.");
     if (collision_mode == CollisionMode::CHECK_COLLISIONS){
       if (il.instance().start().hasCollisions() || il.instance().goal().hasCollisions()){
@@ -158,16 +160,18 @@ int main(int argc, const char *argv[])
     }
 
     LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
-    auto floydwarshall = std::make_shared<FloydWarshall<ExplicitGraph, ExplicitGraph>>(il.instance());
+    // std::shared_ptr<ShortestPathCalculator> sp = std::make_shared<DijkstraSPCalculator<ExplicitGraph, ExplicitGraph>>(il.instance());
+    // DijkstraSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
+    AStarSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
     std::unique_ptr<Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
     auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
     switch (heuristics_mode.value())
     {
     case HeuristicsEnum::BIRDEYE:
-      heuristics = std::make_unique<BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
+      heuristics = std::make_unique<BirdEyeHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), sp);
       break;
     case HeuristicsEnum::SHORTEST_PATH:
-      heuristics = std::make_unique<ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), floydwarshall);
+      heuristics = std::make_unique<ShortestPathHeuristics<ExplicitGraph, ExplicitGraph>>(il.instance(), sp);
       break;
     }
 
@@ -177,7 +181,8 @@ int main(int argc, const char *argv[])
 
     int window_size = vm["window"].as<int>();
     LOG_INFO("Window size:" << window_size);
-
+    bool verbose = vm["verbose"].as<bool>();
+    LOG_INFO("Verbose: " << verbose);
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
 
     std::unique_ptr<Solver<ExplicitGraph, ExplicitGraph>> solver = nullptr;
@@ -247,22 +252,31 @@ int main(int argc, const char *argv[])
       }
       LOG_INFO("Prob2goal:" << vm["prob2goal"].as<int>());
       LOG_INFO("Step size:" << vm["step_size"].as<int>());
-      bool window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size);
-      LOG_INFO("Start is window-connected: " << window_connected);
-      if (subsolver == SubsolverEnum::COORD_SOLVER && !window_connected)
+      bool start_window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size);
+      bool goal_window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().goal(), il.instance(), window_size);
+      if (subsolver == SubsolverEnum::COORD_SOLVER)
       {
-        LOG_WARNING("Start configuration is not window-connected. CoordSolver may not work properly.");
+        if (!start_window_connected){
+          LOG_WARNING("Start configuration *is not* window-connected.");
+        } else {
+          LOG_INFO("Start configuration *is* window-connected");
+        }
+        if (!goal_window_connected){
+          LOG_WARNING("Goal configuration is not window-connected. CoordSolver may not work properly.");
+        } else {
+          LOG_INFO("Goal configuration *is* window-connected");
+        }
       }
 
       solver = std::make_unique<cmarrt::CMARRT<ExplicitGraph, ExplicitGraph>>(
           il.instance(),
           *objective.get(),
           *heuristics.get(),
-          floydwarshall,
           subsolver,
           vm["prob2goal"].as<int>(),
           vm["step_size"].as<int>(),
-          window_size);
+          window_size,
+          verbose);
       break;
     }
 

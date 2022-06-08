@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <Common.hpp>
+#include <Graph.hpp>
 
 class Path {
  private:
@@ -26,7 +27,7 @@ class Path {
   void Resize(size_t);
   void PushBack(Node);
   const Node& GetAtTimeOrLast(size_t) const;
-
+  bool isValid(const ExplicitGraph & graph) const;
   // Operators
   Node& operator[](size_t);
   const Node& operator[](size_t) const;
