@@ -416,6 +416,7 @@ namespace cmarrt
         if (_verbose) {
           std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
                     << ANSI_RESET;
+          this->printTree();
         }
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
       }
@@ -449,10 +450,14 @@ namespace cmarrt
         if (_verbose) {
           std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
         }
-      }
-      else if (_verbose)
+      } else if (_verbose)
       {
         std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << "\n";
+        std::cout << "\tPath segment has size " << pathSegment.size() << ": \n";
+        for (auto c : pathSegment){
+          std::cout << "\t" << *c;
+          std::cout << "\n";
+        }
       }
 
       if (_rrtstar){
@@ -616,7 +621,9 @@ namespace cmarrt
       }
       else
       {
-        std::cout << "\n#Iterations: " << _iterations << "\n";
+        if (_verbose){
+          std::cout << "\n#Iterations: " << _iterations << "\n";
+        }
         _iterations++;
         this->extend();
         if (_iterations % 10 == 0 && _verbose)

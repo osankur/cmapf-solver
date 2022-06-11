@@ -19,7 +19,7 @@ if [[ $algo = "" ]]; then
 fi
 col=$2 # IGNORE_COLLISIONS or CHECK_COLLISIONS
 
-# success_rate_log="logs/success_rate_${algo}_${colshort}.csv"
+# success_rate_log="logs/success_rate_${algo}_${col}.csv"
 # rm -f ${success_rate_log}
 for bench_prefix in ${benchmarks[*]}; do
 		cmd="./run.sh $algo $bench_prefix $col"

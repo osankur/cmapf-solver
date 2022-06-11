@@ -108,7 +108,6 @@ class DijkstraSPCalculator : public ShortestPathCalculator<GraphMove,GraphComm>{
       if (mem.at(current) == current) throw "Unconnected Graph!";
       current = mem.at(current);
     }
-    size++;
     return size;
   }
 };
@@ -221,7 +220,7 @@ public:
     if (dist_[source].count(target) > 0){
       return dist_[source][target];
     } else {
-      size_t d = getShortestPath(source, target).size();
+      size_t d = getShortestPath(source, target).size()-1;
       dist_[source][target] = d;
       return d;
     }

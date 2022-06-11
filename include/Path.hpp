@@ -15,6 +15,7 @@
 #include <vector>
 #include <Common.hpp>
 #include <Graph.hpp>
+#include <Configuration.hpp>
 
 class Path {
  private:
@@ -23,7 +24,6 @@ class Path {
  public:
   Path();
   Path(const Path&);
-  
   void Resize(size_t);
   void PushBack(Node);
   const Node& GetAtTimeOrLast(size_t) const;

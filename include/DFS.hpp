@@ -77,7 +77,9 @@ namespace coupled
       while (!open_local.empty())
       {
         iteration_count++;
-        auto a = open_local.pop();
+        size_t a_cost;
+        size_t a_g;
+        auto a = open_local.pop(a_g, a_cost);
         // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
         // std::cout << *a;
         // std::cout << "\n";
@@ -94,6 +96,9 @@ namespace coupled
           if (verbose_ && iteration_count > 1000){
             std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;
           }
+          std::cout << "Best Conf: " << *a;
+          std::cout << "\n\twith cost: " << a_cost << "\n";
+          std::cout.flush();
           // auto cend = clock();
           // std::cout << "\topen.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
           // std::cout << "\tElapsed time: " << (cend -cstart) / (float) CLOCKS_PER_SEC << "\n";

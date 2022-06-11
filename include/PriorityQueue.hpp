@@ -118,12 +118,33 @@ public:
         return open.empty();
     }
 
-    T pop()
+    T pop(void)
     {
         auto it = open.begin();
         auto ptr = *it;
 
         T node = ptr->getNode();
+        
+        open.erase(it);
+        openMap.erase(node);
+
+        delete ptr;
+
+        assert(open.size() == openMap.size());
+
+        return node;
+    }
+
+    T pop(size_t & g, size_t & cost)
+    {
+        auto it = open.begin();
+        auto ptr = *it;
+
+        T node = ptr->getNode();
+        ptr->getCost();
+        
+        g = ptr->getDistance();
+        cost = ptr->getCost();
 
         open.erase(it);
         openMap.erase(node);
@@ -134,6 +155,7 @@ public:
 
         return node;
     }
+
 
     void clear()
     {
