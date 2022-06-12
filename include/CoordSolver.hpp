@@ -652,7 +652,7 @@ namespace coordinated
     public:
         /**
          * @brief
-         * @pre The following sets of agaents are connected in the start configuration:
+         * @pre The following sets of agents are connected in the start configuration:
          * [0 1 .. window_size - 1], [window_size-1 window_size-2 ... 2(window_size-1)], [2(window_size-1) ... 3(window_size-1)], etc.
          */
 

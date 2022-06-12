@@ -46,7 +46,7 @@ namespace cmarrt
     // Debug verbose mode
     bool _verbose = true;
     // Whether RRT* is activated
-    bool _rrtstar = false;
+    bool _cmarrtstar = false;
     // Whether start and goal configurations are window-connected
     bool _window_connected = false;
 
@@ -460,7 +460,7 @@ namespace cmarrt
         }
       }
 
-      if (_rrtstar){
+      if (_cmarrtstar){
         auto source = this->instance().start();
         int neardist = this->_step_size/2;
         std::shared_ptr<Configuration> c_min = c_nearest;
@@ -573,11 +573,13 @@ namespace cmarrt
            int _prob2goal,
            int step_size,
            int window_size,
+           bool cmarrtstar,
            bool verbose=false)
         : Solver<GraphMove, GraphComm>(instance, objective),
           heuristics_(heuristics),
           _prob2goal(_prob2goal),
           _step_size(step_size),
+          _cmarrtstar(cmarrtstar),
           _verbose(verbose),
           subsolver(subsolver),
           dfs_solver_(instance, objective, heuristics),

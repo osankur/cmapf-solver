@@ -20,10 +20,7 @@
 #include <magic_enum.hpp>
 #include <boost/program_options.hpp>
 #include <iostream>
-#include <CBS.hpp>
-#include <CCBS.hpp>
 #include <CAStar.hpp>
-#include <MAS.hpp>
 #include <DFS.hpp>
 #include <CoordSolver.hpp>
 #include <CMARRT.hpp>
@@ -189,44 +186,6 @@ int main(int argc, const char *argv[])
 
     switch (algo.value())
     {
-    case Algorithm::CBS:
-    {
-      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
-      {
-        throw std::runtime_error("Collisions are not supported in this algorithm");
-      }
-      decoupled::conflict_selection::FirstConflictStrategy con;
-      solver = std::make_unique<
-          decoupled::high_level::CBS<ExplicitGraph, ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
-          il.instance(), *objective.get(), con);
-      break;
-    }
-    case Algorithm::CCBS:
-    {
-      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
-      {
-        throw std::runtime_error("Collisions are not supported in this algorithm");
-      }
-      decoupled::conflict_selection::FirstConflictStrategy con;
-      solver = std::make_unique<
-          decoupled::high_level::CCBS<ExplicitGraph, decoupled::ctn_ordering::LeastConflictStrategy>>(
-          il.instance(), *objective.get(), con);
-      break;
-    }
-    case Algorithm::CA:
-      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
-      {
-        throw std::runtime_error("Collisions are not supported in this algorithm");
-      }
-      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), 3);
-      break;
-    case Algorithm::MAS:
-      if (il.instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS)
-      {
-        throw std::runtime_error("Collisions are not supported in this algorithm");
-      }
-      solver = std::make_unique<decoupled::MAS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get());
-      break;
     case Algorithm::DFS:
       solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get());
       break;
@@ -241,6 +200,7 @@ int main(int argc, const char *argv[])
                                                                                         window_size);
       break;
     case Algorithm::CMARRT:
+    case Algorithm::CMARRTSTAR:
       int random_seed = vm["random_seed"].as<int>();
       if (random_seed < 0)
       {
@@ -250,6 +210,7 @@ int main(int argc, const char *argv[])
       {
         srand(random_seed);
       }
+      bool cmarrtstar = algo.value() == Algorithm::CMARRTSTAR;
       LOG_INFO("Prob2goal:" << vm["prob2goal"].as<int>());
       LOG_INFO("Step size:" << vm["step_size"].as<int>());
       bool start_window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size);
@@ -276,6 +237,7 @@ int main(int argc, const char *argv[])
           vm["prob2goal"].as<int>(),
           vm["step_size"].as<int>(),
           window_size,
+          cmarrtstar,
           verbose);
       break;
     }

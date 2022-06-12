@@ -26,7 +26,8 @@ enum class Algorithm : int
   MAS,
   DFS,
   COORD,
-  CMARRT
+  CMARRT,
+  CMARRTSTAR
 };
 enum class ObjectiveEnum : int
 {
