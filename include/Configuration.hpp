@@ -15,8 +15,7 @@
 #include <ostream>
 #include <vector>
 #include <memory>
-#include <Common.hpp>
-
+#include <CMAPF.hpp>
 
 class Configuration : public std::vector<Node>
 {
@@ -26,9 +25,9 @@ public:
     this->resize(size);
   }
 
-  void PushBack(Node n){
-    this->push_back(n);
-  }
+  // void PushBack(Node n){
+  //   this->push_back(n);
+  // }
   bool operator==(const Configuration &) const;
   bool hasCollisions() const;
   // Friends

@@ -14,6 +14,7 @@
 #include <memory>
 #include <Configuration.hpp>
 #include <TopologicalGraph.hpp>
+#include <Options.hpp>
 
 template <class GraphMove, class GraphComm>
 class Instance {

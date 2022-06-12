@@ -20,8 +20,8 @@
 #include <unordered_set>
 #include <vector>
 #include <memory>
-#include <Common.hpp>
-#include <Constraint.hpp>
+#include <CMAPF.hpp>
+
 #include <Instance.hpp>
 #include <Path.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
@@ -88,11 +88,11 @@ class DijkstraSPCalculator : public ShortestPathCalculator<GraphMove,GraphComm>{
     Path p;
     Node current = source;
     while (current != target) {
-      p.PushBack(current);
+      p.push_back(current);
       if (mem.at(current) == current || mem.at(current) == std::numeric_limits<Node>::max()) throw "Unconnected Graph!";
       current = mem.at(current);
     }
-    p.PushBack(current);
+    p.push_back(current);
     return p;
   }
 
@@ -206,7 +206,7 @@ public:
         current = parent[current];
       }      
       for (auto node : path_list){
-        p.PushBack(node);
+        p.push_back(node);
       }
     }
     return p;

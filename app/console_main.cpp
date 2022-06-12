@@ -14,13 +14,13 @@
 #pragma warning(disable : 4459)
 #endif
 
+#include <CMAPF.hpp>
 #include <Logger.hpp>
 #include <Objective.hpp>
 #include <InstanceLoader.hpp>
 #include <magic_enum.hpp>
 #include <boost/program_options.hpp>
 #include <iostream>
-#include <CAStar.hpp>
 #include <DFS.hpp>
 #include <CoordSolver.hpp>
 #include <CMARRT.hpp>
@@ -125,6 +125,10 @@ int main(int argc, const char *argv[])
       if (!obj.has_value())
       {
         LOG_FATAL("The objective " << vm["objective"].as<std::string>() << " is unkown !");
+        return 1;
+      }
+      if (obj == ObjectiveEnum::MAX){
+        LOG_FATAL("Max objective is not supported");
         return 1;
       }
     }

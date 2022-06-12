@@ -12,37 +12,50 @@
  */
 #include <Execution.hpp>
 
-void Execution::PushBack(std::shared_ptr<const Path> p) { exec_.push_back(p); }
-
-Configuration Execution::get_configuration(uint64_t time) const {
+Configuration Execution::getConfiguration(uint64_t time) const {
   Configuration c;
-  for (Agent a = 0; a < static_cast<Agent>(exec_.size()); a++) {
-    c.PushBack(exec_[a]->GetAtTimeOrLast(time));
+  for (Agent a = 0; a < static_cast<Agent>(this->size()); a++) {
+    c.push_back(this->at(a)->getAtTimeOrLast(time));
   }
   return c;
 }
 
-void Execution::set_path(Agent a, std::shared_ptr<const Path> p) {
-  if (exec_.size() <= static_cast<size_t>(a)) exec_.resize(a + 1);
-  exec_[a] = p;
+void Execution::setPath(Agent a, std::shared_ptr<const Path> p) {
+  if (this->size() <= static_cast<size_t>(a)) this->resize(a + 1);
+  (*this)[a] = p;
 }
 
-const std::shared_ptr<const Path> Execution::get_path(Agent a) const { return exec_[a]; }
 
-size_t Execution::size() const { return exec_.size(); }
+void Execution::setPaths(const std::vector<std::shared_ptr<Configuration>> & confseq){
+  this->clear();
+  if (confseq.size() == 0) return;
+  size_t nb_agents = confseq[0]->size();
+  for (size_t agt = 0; agt < nb_agents; agt++)
+  {
+    std::shared_ptr<Path> p_agt = std::make_shared<Path>();
+    for (auto conf : confseq){
+      p_agt->push_back(conf->at(agt));
+    }
+    this->setPath(agt, p_agt);
+  }
+}
 
-size_t Execution::max_path() const {
+const std::shared_ptr<const Path> Execution::getPath(Agent a) const { return this->at(a); }
+
+
+
+size_t Execution::maxPathLength() const {
   size_t max = 0;
-  for (auto& path : exec_)
+  for (auto& path : *this)
     if (max < path->size()) max = path->size();
   return max;
 }
 
 std::ostream& operator<<(std::ostream& os, const Execution& e) {
   os << "{";
-  for (auto it = e.exec_.cbegin(); it != e.exec_.cend(); ++it) {
+  for (auto it = e.cbegin(); it != e.cend(); ++it) {
     os << **it;
-    if (std::distance(it, e.exec_.cend()) > 1) os << ", ";
+    if (std::distance(it, e.cend()) > 1) os << ", ";
   }
   os << "}";
   return os;

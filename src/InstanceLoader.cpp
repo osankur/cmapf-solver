@@ -126,7 +126,7 @@ void XMLInstanceLoader::Load() {
   while (endI != std::string::npos) {
     std::string s = startConf.substr(startI, endI - startI);
     // std::cerr << "Token: <" << s << ">\n";
-    if (s != "start") instance_.start().PushBack(std::stoi(s));
+    if (s != "start") instance_.start().push_back(std::stoi(s));
     startI = endI + 1;
     endI = startConf.find(" ", startI);
   }
@@ -140,7 +140,7 @@ void XMLInstanceLoader::Load() {
   // Creating the goal configuration
   while (endI != std::string::npos) {
     std::string s = goalConf.substr(startI, endI - startI);
-    if (s != "goal") instance_.goal().PushBack(std::stoi(s));
+    if (s != "goal") instance_.goal().push_back(std::stoi(s));
     startI = endI + 1;
     endI = goalConf.find(" ", startI);
   }

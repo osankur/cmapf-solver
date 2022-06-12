@@ -12,11 +12,7 @@
  */
 #pragma once
 
-#include <CTNOrderingStrategy.hpp>
-#include <ConflictSelectionStrategy.hpp>
-#include <ConstraintTreeNode.hpp>
 #include <Instance.hpp>
-#include <LowLevel.hpp>
 #include <Objective.hpp>
 #include <Solver.hpp>
 #include <PriorityQueue.hpp>
@@ -118,8 +114,8 @@ namespace coupled
             // std::cout << "Setting agent " << next_agt << " to node " << neighbor << "\n";
             std::shared_ptr<Configuration> next = std::make_shared<Configuration>();
             for (Agent agt = 0; agt < next_agt; agt++)
-              next->PushBack(a->at(agt));
-            next->PushBack(neighbor);
+              next->push_back(a->at(agt));
+            next->push_back(neighbor);
             double g = g_local[a];
             if (neighbor != pi->at(next_agt))
             {
@@ -129,7 +125,7 @@ namespace coupled
 
             Configuration completed_next(*next);
             for(Agent agt = next->size(); agt < pi->size(); agt++){
-              completed_next.PushBack(pi->at(agt));
+              completed_next.push_back(pi->at(agt));
             }
             open_local.insert(next, g, this->heuristics_.getHeuristic(completed_next, goal));
             // std::cout << "\tAdded next with " << next->size() << " agents, total cost: " << g+ this->heuristics_.getHeuristic(*next) << "\n";
@@ -154,15 +150,16 @@ namespace coupled
         return true;
       if ((*exec_.back()) == goal)
       {
-        for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
-        {
-          std::shared_ptr<Path> p_agt = std::make_shared<Path>();
-          for (size_t t = 0; t < exec_.size(); t++)
-          {
-            p_agt->PushBack(exec_[t]->at(agt));
-          }
-          this->execution_.set_path(agt, p_agt);
-        }
+        this->execution_.setPaths((exec_));
+        // for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
+        // {
+        //   std::shared_ptr<Path> p_agt = std::make_shared<Path>();
+        //   for (size_t t = 0; t < exec_.size(); t++)
+        //   {
+        //     p_agt->push_back(exec_[t]->at(agt));
+        //   }
+        //   this->execution_.set_path(agt, p_agt);
+        // }
         return true;
       }
 
@@ -190,7 +187,7 @@ namespace coupled
     {
       std::shared_ptr<Configuration> start = std::make_shared<Configuration>();
       for (size_t agt = 0; agt < instance.start().size(); agt++)
-        start->PushBack(instance.start()[agt]);
+        start->push_back(instance.start()[agt]);
       exec_.push_back(start);
       closed_.insert(start);
     }
@@ -201,10 +198,16 @@ namespace coupled
      * @return true if the work is finished (we then found a solution)
      * @return false if the work is not finished
      */
-    bool StepCompute() override
+    bool StepCompute()
     {
       StepCompute(this->instance_.goal());
     }
+
+    const Execution compute() override {
+      while (!StepCompute());
+      return this->execution_;
+    }
+
 
     /**
      * @brief compute an execution that goes

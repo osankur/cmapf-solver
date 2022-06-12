@@ -28,13 +28,7 @@ class Solver {
       : instance_(instance), objective_(objective), execution_() {}
   virtual ~Solver() {}
 
-  virtual bool StepCompute() = 0;
-
-  virtual const Execution compute() {
-    while (!StepCompute()) {
-    }
-    return execution_;
-  }
+  virtual const Execution compute() = 0;
 
   const Instance<GraphMove, GraphComm>& instance() const { return instance_; }
   const Objective& objective() const { return objective_; }

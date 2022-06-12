@@ -14,9 +14,6 @@
 #include <stdint.h>
 #include <cmath>
 
-using Agent = int64_t;
-using Node = uint64_t;
-
 enum class SubsolverEnum : int { DECOUPLED_SOLVER, DFS_SOLVER, COORD_SOLVER };
 enum class Algorithm : int
 {

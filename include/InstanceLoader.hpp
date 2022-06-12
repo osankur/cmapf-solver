@@ -17,7 +17,8 @@
 #include <string>
 
 #include <InstanceCreator.hpp>
-#include <Common.hpp>
+#include <CMAPF.hpp>
+#include <Options.hpp>
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
 

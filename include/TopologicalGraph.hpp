@@ -12,7 +12,7 @@
  */
 #pragma once
 
-#include <Common.hpp>
+#include <CMAPF.hpp>
 #include <Graph.hpp>
 
 template <class GraphMove, class GraphComm>

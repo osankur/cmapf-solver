@@ -17,21 +17,16 @@
 #include <Configuration.hpp>
 #include <Path.hpp>
 
-class Execution {
- private:
-  std::vector<std::shared_ptr<const Path>> exec_;
-
+class Execution : public std::vector<std::shared_ptr<const Path>> {
  public:
-  void PushBack(std::shared_ptr<const Path>);
+  Configuration getConfiguration(uint64_t) const;
 
-  Configuration get_configuration(uint64_t) const;
-
-  void set_path(Agent, std::shared_ptr<const Path>);
-  const std::shared_ptr<const Path> get_path(Agent) const;
+  void setPath(Agent, std::shared_ptr<const Path>);
+  void setPaths(const std::vector<std::shared_ptr<Configuration>> & );
+  const std::shared_ptr<const Path> getPath(Agent) const;
 
   // Properties
-  size_t size() const;
-  size_t max_path() const;
+  size_t maxPathLength() const;
 
   // Friends
   friend std::ostream& operator<<(std::ostream&, const Execution&);

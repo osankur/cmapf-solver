@@ -1,16 +1,35 @@
+/**
+ * @file CoordSolver.hpp
+ * 
+ * @author Ocan Sankur <ocan.sankur@cnrs.fr>
+ * @brief Greedy CMAPF algorithm with coordinated action selection mechanism, assuming window-connectivity of the configurations.
+ * @date 2022-06-12
+ * 
+ * @copyright Copyright (c) 2022 Ocan Sankur
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
 #pragma once
 
 // #define COORD_DEBUG
 
 #define INFINITY std::numeric_limits<int>::max()
 
+#include <CMAPF.hpp>
 #include <Execution.hpp>
 #include <Instance.hpp>
 #include <Objective.hpp>
 #include <Configuration.hpp>
 #include <Solver.hpp>
 #include <Logger.hpp>
-#include <Common.hpp>
 #include <Heuristics.hpp>
 #include <set>
 #include <unordered_set>
@@ -193,7 +212,8 @@ namespace coordinated
 
                 std::cout << "\tQId_" << agent_ << "("; // \tsource " << this->getSourceConfiguration();
                 Configuration nextc(this->getSourceConfiguration().size());
-                for(auto n : next_partial_conf){
+                for (auto n : next_partial_conf)
+                {
                     // std::cout << "(Agent " << n.first << " @ " << n.second << "), ";
                     nextc[n.first] = n.second;
                 }
@@ -201,7 +221,7 @@ namespace coordinated
                 // std::cout << "\n\tgoal " << this->goal_conf_;
                 // std::cout << "\n\ti.e. distance bwt " << next_partial_conf.find(agent_)->second << " and " << this->goal_conf_[agent_] << " (+1)";
                 std::cout << ") = " << d << "\n";
-#endif                
+#endif
                 // if (d1 != d2){
                 //     std::cout << "FW = " << d1 << " but heuristics = " << d2 << "\n";
                 //     std::cout << "source: " << next_partial_conf.find(agent_)->second;
@@ -247,7 +267,7 @@ namespace coordinated
         /** Enumerate all possible successor configurations for the agents arguments(),
          *  and associate to each such configuration a sorted vector of successors for
          *  agent_to_eliminate along with its heuristitic value. This is stored in data_.
-         * 
+         *
          * @pre neighbors is a vector neighbors of all nodes (parallel to args_) except for that of agent_to_eliminate
          * @pre next_partial_conf is an empty vector
          * @pre index is 0
@@ -279,7 +299,8 @@ namespace coordinated
                 std::cout << "Start configuration: " << this->getSourceConfiguration();
                 std::cout << "\nagent to eliminate: " << agent_to_eliminate_ << "\n";
                 std::cout << "For next_partial_conf: < ";
-                for(auto n : next_partial_conf_m){
+                for (auto n : next_partial_conf_m)
+                {
                     std::cout << "Agent " << n.first << " @ " << n.second << ", ";
                 }
                 std::cout << ">\n";
@@ -294,7 +315,7 @@ namespace coordinated
                     for (auto qf : qfuncs_)
                     {
                         size_t qf_value = qf->getValue(next_partial_conf_m);
-                        // std::cout << "\t\t qf_value: " << qf_value << "\n";  
+                        // std::cout << "\t\t qf_value: " << qf_value << "\n";
                         if (qf_value == INFINITY)
                         {
                             sum = INFINITY;
@@ -309,7 +330,6 @@ namespace coordinated
                     }
                 }
                 std::sort(image.begin(), image.end());
-                
 
                 // for(auto i : image){
                 //     std::cout << "(node=" << i.second << ", x=" <<
@@ -318,7 +338,7 @@ namespace coordinated
                 //     << ", dist=" << i.first << ") ";
                 // }
                 // std::cout << "\n";
-                
+
                 data_[next_partial_conf] = image;
             }
         }
@@ -555,7 +575,7 @@ namespace coordinated
                 else
                 {
                     closed_.insert(c);
-#ifdef COORD_DEBUG                    
+#ifdef COORD_DEBUG
                     std::cout << "Selected successor with weight: " << acc_weight << "\n";
                     std::cout << "\t" << c;
                     std::cout << "\n";
@@ -693,80 +713,76 @@ namespace coordinated
         }
 
         /**
-         * @brief Make one-step of computation using get_next_best
-         * @return true if the goal was reached
-         * @return false otherwise
+         * @brief Make greedy computation using get_next_best until goal is reached
+         * @return the obtained execution
          */
-        virtual bool StepCompute() override
+        virtual const Execution compute() override
         {
-            static int _iterations = 0;
-            _iterations++;
-            // Solution found?
-            if (config_stack_.back() == this->instance_.goal())
+            int _iterations = 0;
+            bool goal_reached = false;
+            closed_.clear();
+            while (!goal_reached)
             {
-                for (int i = 0; i < this->instance_.nb_agents(); i++)
+                _iterations++;
+                // Solution found?
+                if (config_stack_.back() == this->instance_.goal())
                 {
-                    std::shared_ptr<Path> path = std::make_shared<Path>();
-                    for (auto c : config_stack_)
+                    for (int i = 0; i < this->instance_.nb_agents(); i++)
                     {
-                        path->PushBack(c[i]);
+                        std::shared_ptr<Path> path = std::make_shared<Path>();
+                        for (auto c : config_stack_)
+                        {
+                            path->push_back(c[i]);
+                        }
+                        this->execution_.push_back(path);
                     }
-                    this->execution_.PushBack(path);
-                }
-                // print
-                /*
-                for(auto c : config_stack_){
-                    std::cerr << "[";
-                    for(int i = 0; i< c.size();i++){
-                        auto n = c[i];
-                        auto pos = this->instance_.graph().movement().get_position(n);
-                        std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
+                    // print
+                    /*
+                    for(auto c : config_stack_){
+                        std::cerr << "[";
+                        for(int i = 0; i< c.size();i++){
+                            auto n = c[i];
+                            auto pos = this->instance_.graph().movement().get_position(n);
+                            std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
+                        }
+                        std::cerr << "]\n";
                     }
-                    std::cerr << "]\n";
+                    */
+                    goal_reached = true;
+                    break;
                 }
-                */
-                return true;
-            }
-            bool success = true;
-            Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
+                bool success = true;
+                Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
 
-            /*
-            std::cerr << "Iteration " << _iterations << ": " << next << std::endl;
-            for(int i = 0; i< next.size();i++){
-                auto n = next[i];
-                auto pos = this->instance_.graph().movement().getPosition(n);
-                std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
-            }
-            std::cerr << "]\n";
-            */
-            if (!success)
-            {
-                if (config_stack_.size() == 1)
+                /*
+                std::cerr << "Iteration " << _iterations << ": " << next << std::endl;
+                for(int i = 0; i< next.size();i++){
+                    auto n = next[i];
+                    auto pos = this->instance_.graph().movement().getPosition(n);
+                    std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
+                }
+                std::cerr << "]\n";
+                */
+                if (!success)
                 {
-                    return true;
+                    if (config_stack_.size() == 1)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        // No successor found for config_stack_.back(). Backtracking.
+                        config_stack_.pop_back();
+                    }
                 }
                 else
                 {
-                    // No successor found for config_stack_.back(). Backtracking.
-                    config_stack_.pop_back();
-                    return false;
+                    config_stack_.push_back(next);
                 }
-            }
-            else
-            {
-                config_stack_.push_back(next);
-                return false;
-            }
-        }
-
-        virtual const Execution compute() override
-        {
-            closed_.clear();
-            while (!StepCompute())
-            {
             }
             return this->execution_;
         }
+
         /**
          * @brief
          * @pre The following sets of agaents are connected in the source configuration:

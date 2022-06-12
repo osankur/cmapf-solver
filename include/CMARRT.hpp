@@ -1,12 +1,27 @@
+/**
+ * @file CMARRT.hpp
+ * @author Isseïnie Calvic, Ocan Sankur
+ * @brief 
+ * @version 0.1
+ * @date 2022-06-12
+ * 
+ * @copyright Copyright (c) 2022 Isseïnie Calvic, Ocan Sankur
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
 #pragma once
 
-#include <CTNOrderingStrategy.hpp>
-#include <ConflictSelectionStrategy.hpp>
-#include <ConstraintTreeNode.hpp>
 #include <DFS.hpp>
 #include <ShortestPathCalculator.hpp>
 #include <Instance.hpp>
-#include <LowLevel.hpp>
 #include <Objective.hpp>
 #include <Solver.hpp>
 #include <Heuristics.hpp>
@@ -126,7 +141,7 @@ namespace cmarrt
         auto configuration = std::make_shared<Configuration>();
         for (int agt = 0; agt < this->instance().nb_agents(); agt++)
         {
-          configuration->PushBack(config.at(agt));
+          configuration->push_back(config.at(agt));
         }
         return configuration;
     };
@@ -516,18 +531,6 @@ namespace cmarrt
       return exec;
     }
 
-    
-    /**
-     * @brief Compute full execution from start configuration to given goal configuration
-     * @pre goal belongs to the tree
-     * @param goal
-     * @return std::vector<std::shared_ptr<Configuration>>
-     */
-    std::vector<std::shared_ptr<Configuration>> getExecution(
-        const Configuration &goal)
-    {
-      return getExecution(instance().start(), goal);
-    }
 
     void printTree()
     {
@@ -594,14 +597,14 @@ namespace cmarrt
         coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(instance.goal(), instance, window_size);
     }
 
-    bool StepCompute() override
+    bool step_compute()
     {
       if (this->treeContains(this->instance().goal()))
       {
-        //this->printTree();
         std::cout << "Done after " << _iterations << " iterations\n";
         std::cout.flush();
-        auto exec = this->getExecution(this->instance().goal());
+        auto exec = this->getExecution(this->instance().start(), this->instance().goal());
+
         // Check if the configurations are connected
         for (size_t i = 0; i < exec.size(); i++){
           assert(instance().graph().communication().isConfigurationConnected(*exec[i]));
@@ -609,15 +612,10 @@ namespace cmarrt
             assert(!exec[i]->hasCollisions());
           }
         }
-        for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
-        {
-          std::shared_ptr<Path> p_agt = std::make_shared<Path>();
-          for (size_t t = 0; t < exec.size(); t++)
-          {
-            p_agt->PushBack(exec.at(t)->at(agt));
-          }
-          assert(p_agt->isValid(instance().graph().movement()));
-          this->execution_.set_path(agt, p_agt);
+        this->execution_.setPaths(exec);
+
+        for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++){
+          assert(this->execution_.getPath(agt)->isValid(instance().graph().movement()));
         }
         return true;
       }
@@ -635,6 +633,14 @@ namespace cmarrt
         return false;
       }
     }
+
+    virtual const Execution compute() override
+    {
+      while(!step_compute());
+      return this->execution_;
+    }
+
   };
+
 
 } // namespace cmarrt

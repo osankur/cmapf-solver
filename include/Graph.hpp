@@ -15,11 +15,11 @@
 #include <vector>
 #include <tuple>
 #include <utility>
-#include <Common.hpp>
 #include <unordered_set>
 #include <Configuration.hpp>
 #include <stack>
 #include <iostream>
+#include <CMAPF.hpp>
 
 class Graph {
  public:
