@@ -510,7 +510,7 @@ namespace cmarrt
       while (index_of_vertex_.find(*c) != index_of_vertex_.find(first))
       {
         std::vector<std::shared_ptr<Configuration>> segment = this->path_from_parent_[*c];
-        exec.insert(exec.begin(), segment.begin(), (segment.end() - 1));
+        exec.insert(exec.begin(), segment.begin(), (segment.end()));
         c = this->vertices_[this->index_of_parent_[*c]];
       }
       return exec;
