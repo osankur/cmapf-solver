@@ -19,7 +19,7 @@
  */
 #pragma once
 
-// #define COORD_DEBUG
+//#define COORD_DEBUG
 
 #define INFINITY std::numeric_limits<int>::max()
 
@@ -32,6 +32,7 @@
 #include <Logger.hpp>
 #include <Heuristics.hpp>
 #include <set>
+#include <queue>
 #include <unordered_set>
 
 namespace coordinated
@@ -256,8 +257,9 @@ namespace coordinated
     private:
         const Agent agent_to_eliminate_;
 
-        // Map successor configuration for arguments() to a sorted vector of (Q-value, successor node of agent_to_eliminate_)
-        std::map<std::vector<Node>, std::vector<std::pair<size_t, Node>>> data_;
+        // Map successor configuration for arguments() to a sorted vector of ((heuristic total cost 'g+h', minus g), successor node of agent_to_eliminate_)
+        // Here g is the number of agents that have changed positions between source and successor. We want to minimize cost, and among these minimals, maximize g
+        std::map<std::vector<Node>, std::vector<std::pair<std::pair<size_t,int>, Node>>> data_;
 
         std::vector<Agent> args_;
 
@@ -291,7 +293,7 @@ namespace coordinated
             {
                 // At this point, next_partial_conf contains a successor node for all agents in arguments(). (This does not include agent_to_eliminate_).
                 // We are going to sort the values of the sum of qfuncs_ by quantifying over the successors for agent_to_eliminate_
-                std::vector<std::pair<size_t, Node>> image;
+                std::vector<std::pair<std::pair<size_t,int>, Node>> image;
                 std::unordered_set<Node> pivot_neighbors(this->instance_.graph().movement().get_neighbors(this->source_conf_[agent_to_eliminate_]));
                 pivot_neighbors.insert(this->source_conf_[agent_to_eliminate_]); // add the self-loop
 
@@ -308,14 +310,13 @@ namespace coordinated
                 for (auto next_node : pivot_neighbors)
                 {
                     next_partial_conf_m[agent_to_eliminate_] = next_node;
-                    size_t sum = 0;
 #ifdef COORD_DEBUG
                     std::cout << "\tagent_to_eliminate: " << next_node << "\n";
 #endif
+                    size_t sum = 0;
                     for (auto qf : qfuncs_)
                     {
                         size_t qf_value = qf->getValue(next_partial_conf_m);
-                        // std::cout << "\t\t qf_value: " << qf_value << "\n";
                         if (qf_value == INFINITY)
                         {
                             sum = INFINITY;
@@ -323,11 +324,25 @@ namespace coordinated
                         }
                         sum += qf_value;
                     }
-                    next_partial_conf_m.erase(agent_to_eliminate_);
+                    size_t g = 0;
+                    for (size_t i = 0; i < args_.size(); i++){
+                        if (next_partial_conf[args_[i]] != this->getSourceConfiguration()[args_[i]]){
+                            g++;
+                        }
+                    }
+                    if (next_node != this->getSourceConfiguration()[agent_to_eliminate_]){
+                        g++;
+                    }
+#ifdef COORD_DEBUG
+                    std::cout << "\t\tcost = " << sum << "\n";
+                    std::cout << "\t\tg = " << g << "\n";
+#endif
+
                     if (sum != INFINITY)
                     {
-                        image.push_back(std::make_pair(sum, next_node));
+                        image.push_back(std::make_pair(std::make_pair(sum,-g), next_node));
                     }
+                    next_partial_conf_m.erase(agent_to_eliminate_);
                 }
                 std::sort(image.begin(), image.end());
 
@@ -374,6 +389,19 @@ namespace coordinated
             std::vector<Node> next_partial_conf;
             std::map<Agent, Node> next_partial_conf_m;
             fill_data_rec(neighbors, next_partial_conf, next_partial_conf_m, 0);
+#ifdef COORD_DEBUG
+            for (auto p : data_){
+                std::cout << "Data(<";
+                for (Node n : p.first){
+                    std::cout << n << " ";
+                }
+                std::cout << ">) ->\n";
+                for (auto q : p.second){
+                    std::cout << "\t Node: " << q.second << " with cost: " << q.first.first << "\n";
+                } 
+                
+            }
+#endif
         }
 
     public:
@@ -392,14 +420,16 @@ namespace coordinated
 
         size_t getValue(const std::map<Agent, Node> &next_partial_conf)
         {
-            const std::vector<std::pair<size_t, Node>> &values = getValueVector(next_partial_conf);
+            const std::vector<std::pair<std::pair<size_t,int>, Node>> &values = getValueVector(next_partial_conf);
             if (values.size() == 0)
             {
                 return INFINITY;
             }
             else
             {
-                return values[0].first;
+                // values[0].first.first is the cost
+                // values[0].first.second is the -g value
+                return values[0].first.first;
             }
         }
 
@@ -407,7 +437,7 @@ namespace coordinated
          * @pre next_partial_conf_m contains a key agent for each agent in arguments(), and next_partial_conf_m[agent] is
          * a movement-neighbor of the node of in getSourceConfiguration()[agent]
          */
-        const std::vector<std::pair<size_t, Node>> &getValueVector(const std::map<Agent, Node> &next_partial_conf_m)
+        const std::vector<std::pair<std::pair<size_t,int>, Node>> &getValueVector(const std::map<Agent, Node> &next_partial_conf_m)
         {
             std::vector<Node> next_partial_conf;
             for (Agent agent : arguments())
@@ -429,25 +459,25 @@ namespace coordinated
             return qfuncs_;
         }
 
-        void print()
-        {
-            for (const auto p : data_)
-            {
-                const std::vector<Node> &key = p.first;
-                const auto &val = p.second;
-                std::cerr << "CONF ";
-                for (auto n : key)
-                {
-                    std::cerr << n << " ";
-                }
-                std::cerr << ": ";
-                for (auto n : p.second)
-                {
-                    std::cerr << "(node=" << n.second << ", dist=" << n.first << ") ";
-                }
-                std::cerr << "\n";
-            }
-        }
+        // void print()
+        // {
+        //     for (const auto p : data_)
+        //     {
+        //         const std::vector<Node> &key = p.first;
+        //         const auto &val = p.second;
+        //         std::cerr << "CONF ";
+        //         for (auto n : key)
+        //         {
+        //             std::cerr << n << " ";
+        //         }
+        //         std::cerr << ": ";
+        //         for (auto n : p.second)
+        //         {
+        //             std::cerr << "(node=" << n.second << ", dist=" << n.first << ") ";
+        //         }
+        //         std::cerr << "\n";
+        //     }
+        // }
     };
 
     template <class GraphMove, class GraphComm>
@@ -513,6 +543,9 @@ namespace coordinated
          */
         void reduce_qfuncs(Agent agent_to_eliminate)
         {
+#ifdef COORD_DEBUG
+                std::cout << "Eliminating agent " << agent_to_eliminate << "\n";
+#endif
             // qfuncs to eliminate
             std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> qfuncs_elim;
             // qfuncs that remain
@@ -546,16 +579,134 @@ namespace coordinated
             qfuncs_rem.push_back(qf_comp);
             qfuncs_ = qfuncs_rem;
         }
+
+
+        class CoordNode {
+            public:
+            /**
+             * @brief Construct a new Coord Node object
+             * 
+             * @param partial_conf 
+             * @param g number of steps 
+             * @param dist 
+             */
+            CoordNode(std::map<Agent, Node> &partial_conf, size_t g, size_t dist) : partial_conf(partial_conf), dist(dist), g(g){
+            }
+            size_t size() const {
+                return partial_conf.size();
+            }
+            size_t getCost() const{
+                return g + dist;
+            }
+            size_t getDistance() const{
+                return dist;
+            }
+            size_t getG() const{
+                return g;
+            }
+            std::map<Agent, Node> partial_conf;
+            size_t dist;
+            size_t g;
+        };
+        struct CoordNodeCmp
+        {
+            bool operator()(const CoordNode & a, const CoordNode & b) const
+            {
+                return (a.getCost() > b.getCost() ||
+                        a.getCost() == b.getCost() && a.getG() < b.getG() ||
+                        a.getCost() == b.getCost() && a.getG() == b.getG() && &a < &b);
+            }
+        };
+        bool get_next_best_rec2(std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
+                               std::map<Agent, Node> &partial_conf)
+        {
+            size_t nb_agents = this->instance().nb_agents();
+            std::map<Agent, Node> init_partial_conf;
+            CoordNodeCmp cmp;
+            std::priority_queue<CoordNode, std::vector<CoordNode>, CoordNodeCmp> open(cmp);
+            CoordNode init_node(init_partial_conf,0,0);
+            open.push(init_node);
+            while(!open.empty()){
+                CoordNode cnode = open.top();
+                open.pop();
+
+                // std::cout << "\nPopped: <";
+                // for (auto p : cnode.partial_conf)
+                // {
+                //     std::cout << "Agent " << p.first << " @ " << p.second << ", ";
+                // }
+                // std::cout << "> with dist: " << cnode.getDistance() << " and g: " << cnode.getG() << "\n";
+                // std::cout << open.size() << " elements remain\n";
+
+                if (cnode.size() == nb_agents){      
+                    Configuration c;
+                    for (Agent i = 0; i < this->instance_.nb_agents(); i++)
+                    {
+                        c.push_back(cnode.partial_conf[i]);
+                    }
+                    if (   closed_.find(c) != closed_.end()
+                        || this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && c.hasCollisions()
+                        || !this->instance().graph().communication().isConfigurationConnected(c))
+                    {
+                        continue;
+                    } else {
+                        closed_.insert(c);
+    #ifdef COORD_DEBUG
+                        std::cout << ANSI_YELLOW << "Selected successor: " << c;
+                        std::cout << "\n" << ANSI_RESET;
+    #endif  
+                        partial_conf = cnode.partial_conf;
+                        return true;
+                    }                                  
+                }
+                size_t index = cnode.partial_conf.size();
+                Agent agent = linearized[index]->agent_to_eliminate();
+                auto successors = linearized[index]->getValueVector(cnode.partial_conf);
+                if (successors.size() == 0)
+                {
+                    continue;
+                }
+                std::unordered_set<Node> node_support;
+                for( auto p : cnode.partial_conf){
+                    node_support.insert(p.second);
+                }
+                for (auto p : successors)
+                {
+                    // If a node was selected by another agent, we skip it
+                    if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && node_support.contains(p.second))
+                    {
+                        continue;
+                    }
+                    // Otherwise, select it
+                    size_t new_g = cnode.getG()+1;
+                    // if (p.second != this->getSourceConfiguration()[agent]){
+                    //     new_g++;
+                    // }
+                    CoordNode new_node(cnode.partial_conf, new_g, p.first.first);
+                    new_node.partial_conf[agent] = p.second;
+                    open.push(new_node);
+
+                    // std::cout << "Adding new node: ";
+                    // for (auto p : new_node.partial_conf)
+                    // {
+                    //     std::cout << "Agent " << p.first << " @ " << p.second << ", ";
+                    // }
+                    // std::cout << "> with dist: " << new_node.getDistance() << " and g: " << new_node.getG() << "\n";
+
+                }
+            }
+        }
+
+
         /**
          * @brief for each index in {0,..., linearized.size()}, assign a successor node to agent linearized[index].agent_to-eliminate()
          * in the increasing order of its weights. Partial_conf maps agents to the assigned successor node at the current iteration,
-         * node support is the set of successor nodes used until that point, and acc_weight is the total weight of the current successor partial configuration.
+         * node support is the set of successor nodes used until that point.
          */
         bool get_next_best_rec(std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
                                std::map<Agent, Node> &partial_conf,
                                std::set<Node> &node_support,
-                               int index,
-                               int acc_weight)
+                               int index)
         //                               const std::unordered_set<std::shared_ptr<Configuration> & excluded)
         {
             if (index >= linearized.size())
@@ -576,9 +727,8 @@ namespace coordinated
                 {
                     closed_.insert(c);
 #ifdef COORD_DEBUG
-                    std::cout << "Selected successor with weight: " << acc_weight << "\n";
-                    std::cout << "\t" << c;
-                    std::cout << "\n";
+                    std::cout << ANSI_YELLOW << "Selected successor: " << c;
+                    std::cout << "\n" << ANSI_RESET;
 #endif
                     return true;
                 }
@@ -602,7 +752,7 @@ namespace coordinated
                     // Otherwise, select it
                     partial_conf[agent] = p.second;
                     node_support.insert(p.second);
-                    if (get_next_best_rec(linearized, partial_conf, node_support, index + 1, acc_weight + p.first))
+                    if (get_next_best_rec(linearized, partial_conf, node_support, index + 1))
                     {
                         return true;
                     }
@@ -613,6 +763,9 @@ namespace coordinated
         }
         Configuration get_next_best(const Configuration &source, const Configuration &goal, bool &success)
         {
+            #ifdef COORD_DEBUG
+            std::cout << ANSI_BLUE << "\nget_next_best\n" << ANSI_RESET;
+            #endif
             initialize_qfuncs(source, goal);
             for (int i = 0; i < this->instance_.nb_agents(); i++)
             {
@@ -652,12 +805,14 @@ namespace coordinated
                 }
             }
 
-            /// std::cerr << "Linearized.size() == " << linearized.size() << "\n";
+            // An agent is eliminated at each compound q-function, so there must be exactly nb_agents such objects
+            assert(linearized.size() == this->instance().nb_agents());
 
-            // Choose the successor
+            // Choose the best successor
             std::map<Agent, Node> partial_conf;
             std::set<Node> node_support;
-            success = get_next_best_rec(linearized, partial_conf, node_support, 0, 0);
+            // success = get_next_best_rec(linearized, partial_conf, node_support, 0);
+            success = get_next_best_rec2(linearized, partial_conf);
             Configuration successor(source.size());
             if (success)
             {
@@ -793,8 +948,8 @@ namespace coordinated
                                                                               int steps)
         {
             bool success;
-            // closed_.clear();
-            // closed_.insert(source);
+            closed_.clear();
+            closed_.insert(source);
             std::vector<std::shared_ptr<Configuration>> pathSegment{std::make_shared<Configuration>(source)};
             for (int i = 0; i < steps; i++)
             {

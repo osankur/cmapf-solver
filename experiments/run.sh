@@ -13,10 +13,12 @@ rm -f $logfile
 echo "$GFOLDER$bench_prefix"
 for SEL in `find $GFOLDER$bench_prefix*.exp`
 do
-    for rseed in 0 1 2 3 4 5 6 7 8 9
+    for i in 0 1 2 3 4 5 6 7 8 9
     do
-        echo "\n>>>>> $SEL" >> $logfile
-        cmd="time cmapf-solver -a $algo -e $SEL -G $GFOLDER --collisions $col -p 20 --heuristics SHORTEST_PATH --verbose false --rs $rseed"
+        echo '
+        ' >> $logfile
+        echo ">>>>> $SEL" >> $logfile
+        cmd="time cmapf-solver -a $algo -e $SEL -G $GFOLDER --collisions $col -p 20 --heuristics SHORTEST_PATH --verbose false --rs $RANDOM"
         echo $cmd >> $logfile
         echo $cmd
         $cmd >> $logfile 2>&1

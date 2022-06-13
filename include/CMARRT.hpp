@@ -432,6 +432,8 @@ namespace cmarrt
           std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
                     << ANSI_RESET;
           this->printTree();
+                  exit(0);
+
         }
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
       }
@@ -439,8 +441,8 @@ namespace cmarrt
       if (_verbose){
         if (((cend - cstart) / (double)CLOCKS_PER_SEC > 0.1) && _verbose)
         {
-          std::cout << ANSI_RED << "Subsolver took " << (cend - cstart) / (double)CLOCKS_PER_SEC << " seconds\n"
-                    << ANSI_RESET;
+          std::cout << "Subsolver took " << ANSI_RED << (cend - cstart) / (double)CLOCKS_PER_SEC << ANSI_RESET << " seconds\n"
+                    ;
         } else {
           std::cout << "Subsolver took " << ANSI_BLUE << (cend - cstart) / (double)CLOCKS_PER_SEC << ANSI_RESET << " seconds\n";
         }
@@ -473,6 +475,7 @@ namespace cmarrt
           std::cout << "\t" << *c;
           std::cout << "\n";
         }
+        exit(0);
       }
 
       if (_cmarrtstar){

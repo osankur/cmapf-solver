@@ -92,9 +92,11 @@ namespace coupled
           if (verbose_ && iteration_count > 1000){
             std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;
           }
-          std::cout << "Best Conf: " << *a;
-          std::cout << "\n\twith cost: " << a_cost << "\n";
-          std::cout.flush();
+          if (verbose_){
+            std::cout << "Best Conf: " << *a;
+            std::cout << "\ncost: " << a_cost << ", g=" << a_g << "\n";
+            std::cout.flush();
+          }
           // auto cend = clock();
           // std::cout << "\topen.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
           // std::cout << "\tElapsed time: " << (cend -cstart) / (float) CLOCKS_PER_SEC << "\n";
@@ -220,6 +222,9 @@ namespace coupled
     {
       exec_.clear();
       exec_.push_back(std::make_shared<Configuration>(source));
+      closed_.clear();
+      closed_.insert(std::make_shared<Configuration>(source));
+
       for (int i = 0; i < steps; i++)
       {
         if(StepCompute(goal)) break;
