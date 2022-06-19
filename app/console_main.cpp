@@ -253,6 +253,14 @@ int main(int argc, const char *argv[])
     LOG_TRACE("Solver terminated!");
     LOG_INFO("Execution cost:" << objective->cost(execution));
     LOG_INFO("Execution:" << execution);
+    // std::cerr.flush();
+    // std::cerr << "Now will print the execution\n";
+    // std::cerr.flush();
+    // execution.print(std::cerr);
+    // std::cerr.flush();
+    // std::cerr << "We did print the execution\n";
+    // std::cerr.flush();
+    // std::cerr << execution;
   }
   catch (const error &ex)
   {

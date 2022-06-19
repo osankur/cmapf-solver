@@ -13,7 +13,7 @@ public:
     virtual double getHeuristic(const Node &n, const Node &goal) = 0;
     virtual int getBirdEyeHeuristic(const Configuration &c, const Configuration &goal) = 0;
     virtual int getShortestPathHeuristic(const Configuration &c, const Configuration &goal) = 0;
-    virtual int getShortestPathDistance(const Node & c, const Node & goal) = 0;
+    virtual int getShortestPathDistance(const Node & c, const Node & goal, bool fullSingleSource=false) = 0;
     virtual int getBirdEyeDistance(const Node & c, const Node & goal) = 0;
 };
 
@@ -53,8 +53,8 @@ public:
         return d;
     }
 
-    int getShortestPathDistance(const Node & c, const Node & goal) override {
-        return this->sp_.getShortestPathDistance(c, goal);
+    int getShortestPathDistance(const Node & c, const Node & goal, bool fullSingleSource=false) override {
+        return this->sp_.getShortestPathDistance(c, goal, fullSingleSource);
     }
     int getBirdEyeDistance(const Node & c, const Node & goal) override{
         auto cpos = this->instance_.graph().movement().getPosition(c);

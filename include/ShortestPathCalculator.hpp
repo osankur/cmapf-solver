@@ -38,7 +38,7 @@ public:
   explicit ShortestPathCalculator(const Instance<GraphMove, GraphComm> &instance) : instance_(instance) {}
   virtual ~ShortestPathCalculator() {}
   virtual Path  getShortestPath(const Node &source, const Node &target) = 0;
-  virtual size_t getShortestPathDistance(const Node &source, const Node &target) = 0;
+  virtual size_t getShortestPathDistance(const Node &source, const Node &target, bool fullSingleSource = false) = 0;
 };
 
 
@@ -96,7 +96,7 @@ class DijkstraSPCalculator : public ShortestPathCalculator<GraphMove,GraphComm>{
     return p;
   }
 
-  size_t getShortestPathDistance(const Node &source, const Node &target) override {
+  size_t getShortestPathDistance(const Node &source, const Node &target,  bool fullSingleSource = false) override {
     auto memIt = mem_paths_.find(target);
     if (memIt == mem_paths_.end()) computeShortestPaths(target);
     const std::vector<Node> &mem = mem_paths_.at(target);
@@ -211,9 +211,9 @@ public:
     }
     return p;
   }
-  size_t getShortestPathDistance(const Node &source, const Node &target) override {
+  size_t getShortestPathDistance(const Node &source, const Node &target, bool fullSingleSource = false) override {
     // Use Dijkstra for nodes belonging to goal
-    if (target_nodes_.find(target) != target_nodes_.end()){
+    if (target_nodes_.find(target) != target_nodes_.end() || fullSingleSource){
       return dijkstra_.getShortestPathDistance(source, target);
     }
     // Use AStar otherwise

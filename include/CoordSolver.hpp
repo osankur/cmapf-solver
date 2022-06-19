@@ -909,6 +909,22 @@ namespace coordinated
                 bool success = true;
                 Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
 
+                // std::cout << "<";
+                // for(auto n : next){
+                //     std::cout << n << ", ";
+                // }
+                // std::cout << ">\n";
+                // if (_iterations % 20 == 0){
+                //     Execution ex;
+                //     std::vector<std::shared_ptr<Configuration>> paths;
+
+                //     for (auto c : config_stack_){
+                //         paths.push_back(std::make_shared<Configuration>(c));
+                //     }
+                //     ex.setPaths(paths);
+                //     std::cout << ex;
+                //     std::cout << "\n";
+                // }
                 /*
                 std::cerr << "Iteration " << _iterations << ": " << next << std::endl;
                 for(int i = 0; i< next.size();i++){

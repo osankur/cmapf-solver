@@ -223,7 +223,7 @@ namespace coupled
       exec_.clear();
       exec_.push_back(std::make_shared<Configuration>(source));
       closed_.clear();
-      closed_.insert(std::make_shared<Configuration>(source));
+      // closed_.insert(std::make_shared<Configuration>(source));
 
       for (int i = 0; i < steps; i++)
       {

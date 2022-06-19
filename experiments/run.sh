@@ -3,7 +3,6 @@
 algo=$1
 bench_prefix=$2
 col=$3 # CHECK_COLLISIONS or IGNORE_COLLISIONS
-echo $3
 MEM_LIMIT=4000000
 TIME_LIMIT=300
 ulimit -t ${TIME_LIMIT} -v ${MEM_LIMIT} -m ${MEM_LIMIT}
@@ -13,7 +12,7 @@ rm -f $logfile
 echo "$GFOLDER$bench_prefix"
 for SEL in `find $GFOLDER$bench_prefix*.exp`
 do
-    for i in 0 1 2 3 4 5 6 7 8 9
+    for i in {0..9}
     do
         echo '
         ' >> $logfile

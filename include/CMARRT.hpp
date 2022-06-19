@@ -76,6 +76,14 @@ namespace cmarrt
     // given configuration c in the tree, path_from_parent_[c] is the path from the parent to itself
     std::map<Configuration, std::vector<std::shared_ptr<Configuration>>> path_from_parent_;
 
+    // Set to true when segments computed towards goal end in configurations that are already in the tree
+    bool towards_goal_becoming_redundant_ = false;
+    // When towards_goal_becoming_redundant, we start picking a random configuration in the tree rather than the nearest.
+    // This is the count of how many times we have been doing this.
+    int towards_goal_randomize_count_ = 0;
+    // After towards_goal_randomize_period many times we have randomize the nearby configuration for goal, we set towards_goal_becoming_redundant_ to false.
+    const int towards_goal_randomize_period = 10;
+
     coupled::DFS<GraphMove, GraphComm> dfs_solver_;
     // decoupled::BoundedDecoupledSolver<GraphMove, GraphComm> decoupled_solver_;
     coordinated::CoordSolver<GraphMove, GraphComm> coord_solver_;
@@ -232,21 +240,65 @@ namespace cmarrt
       int mindist = -1;
       std::shared_ptr<Configuration> c_nearest = nullptr;
 
-      for (auto v : this->getVertices())
-      {
-        int dist = 0;
-        for (int agt = 0; agt < this->instance().nb_agents(); agt++)
+      bool toGoal = c == this->instance().goal();
+      std::vector<std::pair<int, std::shared_ptr<Configuration>>> distanceAndVertices;
+
+      // if we are targeting goal, and if segment computations have become redundant, then pick a random one among nearest configurations,
+      // rather than the nearest one
+      if (toGoal && this->towards_goal_becoming_redundant_ ){
+        for (auto v : this->getVertices())
         {
-          // auto cpos = this->instance().graph().movement().getPosition(c.at(agt));
-          // auto vpos = this->instance().graph().movement().getPosition((*v).at(agt));
-          // dist += (abs(vpos.first - cpos.first) +
-          //          abs(vpos.second - cpos.second));
-          dist += this->heuristics_.getShortestPathDistance(c.at(agt), (*v).at(agt));
+          // If the birdeye distance is more than mindist, then discard v: it cannot be the nearest
+          int birdeye = 0;
+          for (int agt = 0; agt < this->instance().nb_agents(); agt++)
+          {
+            birdeye += this->heuristics_.getBirdEyeDistance((*v).at(agt),c.at(agt));
+          }
+          distanceAndVertices.push_back(std::make_pair(birdeye, v));
         }
-        if (dist < mindist || mindist == -1)
+        std::sort(distanceAndVertices.begin(), distanceAndVertices.end());
+        // Collect the <= 0.25 * this->vertices_.size() nearest configurations
+        std::vector<std::shared_ptr<Configuration>> nearestVertices;
+        int nmax = (int)(this->vertices_.size() * 0.25);
+        int n = distanceAndVertices.size();
+        if ( n >  nmax ) n = nmax;
+        for(int i = 0; i < n; i++){
+          // std::cout << "Collecting at distance " << distanceAndVertices[i].first << "\n";
+          nearestVertices.push_back(distanceAndVertices[i].second);
+        }
+        // Pick a random one among these nearest configurations
+        int irand = rand() % n;
+        // std::cout << "Picked no " << irand << "\n";
+        c_nearest = nearestVertices[irand];
+
+        this->towards_goal_randomize_count_++;
+        if (this->towards_goal_randomize_count_ >= this->towards_goal_randomize_period){
+          this->towards_goal_randomize_count_ = 0;
+          this->towards_goal_becoming_redundant_ = false;
+        }
+      } else {
+        for (auto v : this->getVertices())
         {
-          mindist = dist;
-          c_nearest = v;
+          // If the birdeye distance is more than mindist, then discard v: it cannot be the nearest
+          int birdeye = 0;
+          for (int agt = 0; agt < this->instance().nb_agents(); agt++)
+          {
+            birdeye += this->heuristics_.getBirdEyeDistance((*v).at(agt),c.at(agt));
+          }
+          if (mindist >= 0 && birdeye >= mindist){
+            continue;
+          }
+          // Otherwise compute the su mof shortest-paths distance
+          int spdist = 0;
+          for (int agt = 0; agt < this->instance().nb_agents(); agt++)
+          {
+            spdist += this->heuristics_.getShortestPathDistance((*v).at(agt),c.at(agt), true);
+          }
+          if (spdist < mindist || mindist == -1)
+          {
+            mindist = spdist;
+            c_nearest = v;
+          }
         }
       }
       assert(c_nearest);
@@ -346,6 +398,9 @@ namespace cmarrt
      */
     void extend()
     {
+      clock_t cstart;
+      clock_t cend;
+
       // Random configuration serving as random direction
       std::shared_ptr<Configuration> c_rand =
           getRandomConfiguration(this->instance().goal());
@@ -368,23 +423,27 @@ namespace cmarrt
         {
           std::cout << ANSI_CYAN << "Moving towards " << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
         }
+        std::cout.flush();
       }
 
+      cstart = clock();
       std::shared_ptr<Configuration> c_nearest = getNearestConfigurationBySPDistances(*c_target);
-
+      cend = clock();
       if (_verbose) {
         std::cout << "\tNearest node in the tree: " << ANSI_YELLOW << *c_nearest << ANSI_RESET << "\n";
+        std::cout << "\tComputed in " << ANSI_RED << (cend - cstart) / (double) CLOCKS_PER_SEC << "s\n" << ANSI_RESET;
         std::cout.flush();
       }
       
       // If c_target == goal, then randomly (1/3) flip the direction to c_rand
       // In this case, we still go from c_nearest (which is neareast to goal), but go in a random direction
-      if (*c_target == this->instance().goal() && rand()%3 == 0){
-        c_target = c_rand;
-        if (_verbose){
-          std::cout << "<->" << ANSI_BLUE << "\tRandom direction from nearest to goal " << ANSI_RESET << "\n";
-        }
-      }
+      // if (*c_target == this->instance().goal() && rand()%3 == 0){
+      //   c_target = c_rand;
+      //   if (_verbose){
+      //     std::cout << "<->" << ANSI_BLUE << "\tRandom direction from nearest to goal " << *c_rand;
+      //     std::cout << ANSI_RESET << "\n";
+      //   }
+      // }
       std::vector<std::shared_ptr<Configuration>> pathSegment;
       BoundedSolver<GraphMove, GraphComm> *currentSubsolver = nullptr;
 
@@ -421,7 +480,7 @@ namespace cmarrt
         break;
       }
       assert(currentSubsolver);
-      auto cstart = clock();
+      cstart = clock();
       pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
 
       // In case of failure, try again with dfs_solver
@@ -432,14 +491,13 @@ namespace cmarrt
           std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
                     << ANSI_RESET;
           this->printTree();
-                  exit(0);
 
         }
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
       }
-      auto cend = clock();
+      cend = clock();
       if (_verbose){
-        if (((cend - cstart) / (double)CLOCKS_PER_SEC > 0.1) && _verbose)
+        if (((cend - cstart) / (double)CLOCKS_PER_SEC > 0.1) || _verbose)
         {
           std::cout << "Subsolver took " << ANSI_RED << (cend - cstart) / (double)CLOCKS_PER_SEC << ANSI_RESET << " seconds\n"
                     ;
@@ -450,9 +508,10 @@ namespace cmarrt
       if (pathSegment.size() == 0)
       {
         if (_verbose){
-        std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n"
-                  << ANSI_RESET;}
-        std::cout.flush();
+          std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n"
+                    << ANSI_RESET;
+          std::cout.flush();
+        }
         return;
       }
 
@@ -467,15 +526,18 @@ namespace cmarrt
         if (_verbose) {
           std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
         }
-      } else if (_verbose)
-      {
-        std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << "\n";
-        std::cout << "\tPath segment has size " << pathSegment.size() << ": \n";
-        for (auto c : pathSegment){
-          std::cout << "\t" << *c;
-          std::cout << "\n";
+      } else {
+        this->towards_goal_becoming_redundant_ = true;
+        if (_verbose)
+        {
+          std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << "\n";
+          // std::cout << "\tPath segment has size " << pathSegment.size() << ": \n";
+          // for (auto c : pathSegment){
+          //   std::cout << "\t" << *c;
+          //   std::cout << "\n";
+          // }
+          // std::cout.flush();
         }
-        exit(0);
       }
 
       if (_cmarrtstar){
@@ -588,7 +650,7 @@ namespace cmarrt
           _cmarrtstar(cmarrtstar),
           _verbose(verbose),
           subsolver(subsolver),
-          dfs_solver_(instance, objective, heuristics),
+          dfs_solver_(instance, objective, heuristics, false),
           coord_solver_(instance, objective, heuristics, window_size)
     {
       auto start = std::make_shared<Configuration>(instance.start());

@@ -53,10 +53,14 @@ size_t Execution::maxPathLength() const {
 
 std::ostream& operator<<(std::ostream& os, const Execution& e) {
   os << "{";
-  for (auto it = e.cbegin(); it != e.cend(); ++it) {
-    os << **it;
-    if (std::distance(it, e.cend()) > 1) os << ", ";
+  for (auto c : e){
+    os << *c;
+    os << ", ";
   }
+  // for (auto it = e.cbegin(); it != e.cend(); ++it) {
+  //   os << **it;
+  //   if (std::distance(it, e.cend()) > 1) os << ", ";
+  // }
   os << "}";
   return os;
 }
