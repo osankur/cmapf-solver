@@ -617,7 +617,7 @@ namespace coordinated
                         a.getCost() == b.getCost() && a.getG() == b.getG() && &a < &b);
             }
         };
-        bool get_next_best_rec2(std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
+        bool get_next_best_rec(std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
                                std::map<Agent, Node> &partial_conf)
         {
             size_t nb_agents = this->instance().nb_agents();
@@ -698,69 +698,6 @@ namespace coordinated
         }
 
 
-        /**
-         * @brief for each index in {0,..., linearized.size()}, assign a successor node to agent linearized[index].agent_to-eliminate()
-         * in the increasing order of its weights. Partial_conf maps agents to the assigned successor node at the current iteration,
-         * node support is the set of successor nodes used until that point.
-         */
-        bool get_next_best_rec(std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
-                               std::map<Agent, Node> &partial_conf,
-                               std::set<Node> &node_support,
-                               int index)
-        //                               const std::unordered_set<std::shared_ptr<Configuration> & excluded)
-        {
-            if (index >= linearized.size())
-            {
-                Configuration c;
-                for (Agent i = 0; i < this->instance_.nb_agents(); i++)
-                {
-                    c.push_back(partial_conf[i]);
-                }
-                if (closed_.find(c) != closed_.end())
-                {
-                    // std::cerr << "-- Configuration already seen:\n";
-                    // std::cerr << c;
-                    // std::cerr << "\n";
-                    return false;
-                }
-                else
-                {
-                    closed_.insert(c);
-#ifdef COORD_DEBUG
-                    std::cout << ANSI_YELLOW << "Selected successor: " << c;
-                    std::cout << "\n" << ANSI_RESET;
-#endif
-                    return true;
-                }
-            }
-            else
-            {
-                Agent agent = linearized[index]->agent_to_eliminate();
-                auto successors = linearized[index]->getValueVector(partial_conf);
-                if (successors.size() == 0)
-                {
-                    // std::cerr << "-- No successors\n";
-                    return false;
-                }
-                for (auto p : successors)
-                {
-                    // If a node was selected by another agent, we skip it
-                    if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && node_support.contains(p.second))
-                    {
-                        continue;
-                    }
-                    // Otherwise, select it
-                    partial_conf[agent] = p.second;
-                    node_support.insert(p.second);
-                    if (get_next_best_rec(linearized, partial_conf, node_support, index + 1))
-                    {
-                        return true;
-                    }
-                    node_support.erase(p.second);
-                }
-                return false;
-            }
-        }
         Configuration get_next_best(const Configuration &source, const Configuration &goal, bool &success)
         {
             #ifdef COORD_DEBUG
@@ -811,8 +748,7 @@ namespace coordinated
             // Choose the best successor
             std::map<Agent, Node> partial_conf;
             std::set<Node> node_support;
-            // success = get_next_best_rec(linearized, partial_conf, node_support, 0);
-            success = get_next_best_rec2(linearized, partial_conf);
+            success = get_next_best_rec(linearized, partial_conf);
             Configuration successor(source.size());
             if (success)
             {

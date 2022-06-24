@@ -259,7 +259,7 @@ namespace cmarrt
         std::sort(distanceAndVertices.begin(), distanceAndVertices.end());
         // Collect the <= 0.25 * this->vertices_.size() nearest configurations
         std::vector<std::shared_ptr<Configuration>> nearestVertices;
-        int nmax = (int)(this->vertices_.size() * 0.25);
+        int nmax = (int)((12+this->vertices_.size()) * 0.25); // so that this is at least 3
         int n = distanceAndVertices.size();
         if ( n >  nmax ) n = nmax;
         for(int i = 0; i < n; i++){

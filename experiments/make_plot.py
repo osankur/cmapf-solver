@@ -5,23 +5,20 @@ import os
 import argparse
 
 
-folder="logs/"
-
 prefix = "obstacle_field_range5_window2_agents"
 alg = "CMARRT"
 col = "IGNORE_COLLISIONS"
-logfolder = "logs"
+logfolder = "logs/"
 plottype = "success"
 results={}
 
 # hardcoded value: number of experiments per csv file``
-max_lines = 100
+# max_lines = 60
 
 def plot_success():
     pat = re.compile(f"({prefix})([0-9]*)__(.*?)_(.*).csv")
-
     files = []
-    for absfile in glob.glob(folder + prefix + "*.csv"):
+    for absfile in glob.glob(logfolder + "/" + prefix + "*.csv"):
         file = os.path.basename(absfile)
         m = pat.match(file)
         assert(m)
@@ -30,24 +27,30 @@ def plot_success():
             files.append((int(nb_agents), absfile))
     files.sort()
     if plottype == "success":
-        print(f"Experiment ; nb_agents ; success_rate")
+        print("Experiment ; nb_agents ; success_rate")
         for absfile in files:
             average_length = 0
             average_time = 0
+            # print("Opening ", absfile[1])
             with open(absfile[1], mode='r') as csv_file:
                 lines = list(csv_file.readlines())
-                success = len(lines)
+                nb_lines = len(lines)
+                #print("nb_lines: ", nb_lines)
+                # success = len(lines)
+                success = 0
                 for line in lines:
                     parts = line.split(" ; ")
-                    average_length += int(parts[1])
-                    average_time += float(parts[3])
+                    if int(parts[2]) == 1:
+                        success += 1
+                        average_length += int(parts[1])
+                        average_time += float(parts[3])
                 if success > 0:
                     average_length /= float(success)
                     average_time /= float(success)
             # print(f"{exp} ; {absfile[0]} ; {success / float(max_lines)}; {average_length / int(nb_agents)} ; {average_time}")
-            print(f"{exp} ; {absfile[0]} ; {success / float(max_lines)}")#; {average_length / int(nb_agents)} ; {average_time}")
+            print(f"{exp} ; {absfile[0]} ; {success / float(nb_lines)}")#; {average_length / int(nb_agents)} ; {average_time}")
     elif plottype == "performance":
-        print(f"Experiment ; nb_agents ; exp_no ; avg_cost ; avg_time ")
+        print("Experiment ; nb_agents ; exp_no ; avg_cost ; avg_time ")
         # nb_agents x exp_no -> nb of rows
         nbexps = {} 
         # nb_agents x exp_no -> sum of costs

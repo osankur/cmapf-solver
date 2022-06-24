@@ -19,7 +19,8 @@ def parse(filename):
                 if cost > 0:
                     print(bench,";",cost,"; 1 ;",time)
                 else:
-                    pass # if printed cost is 0, this means the benchmark failed
+                    print(bench,";",cost,"; 0 ;",time)
+                    # pass # if printed cost is 0, this means the benchmark failed
             m = re.search('Execution cost:([0-9]+)', line)
             if m:
                 cost = int(m.group(1))

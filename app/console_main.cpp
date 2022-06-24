@@ -50,7 +50,8 @@ int main(int argc, const char *argv[])
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
         "verbose,v", value<bool>()->default_value(true), "Verbose mode.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
-        "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.");
+        "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.")(
+        "exec", value<bool>()->default_value(false), "Show execution.");
 
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -252,7 +253,9 @@ int main(int argc, const char *argv[])
 
     LOG_TRACE("Solver terminated!");
     LOG_INFO("Execution cost:" << objective->cost(execution));
-    LOG_INFO("Execution:" << execution);
+    LOG_INFO("Execution found");
+    if ( vm["exec"].as<bool>() )
+      LOG_INFO(execution);
     // std::cerr.flush();
     // std::cerr << "Now will print the execution\n";
     // std::cerr.flush();
