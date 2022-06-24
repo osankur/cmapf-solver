@@ -54,12 +54,14 @@ public:
     }
 
     int getShortestPathDistance(const Node & c, const Node & goal, bool fullSingleSource=false) override {
-        return this->sp_.getShortestPathDistance(c, goal, fullSingleSource);
+        int d = this->sp_.getShortestPathDistance(c, goal, fullSingleSource);
+        //std::cerr << "*** SP(" << c << ", " << goal << ") = " << d << "\n";
+        return d;
     }
     int getBirdEyeDistance(const Node & c, const Node & goal) override{
         auto cpos = this->instance_.graph().movement().getPosition(c);
         auto gpos = this->instance_.graph().movement().getPosition(goal);
-        return this->getL2Distance(cpos, gpos);
+        return this->getL1Distance(cpos, gpos);
     }
 
     double getHeuristic(const Configuration &c, const Configuration &goal) override

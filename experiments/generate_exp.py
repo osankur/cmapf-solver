@@ -74,8 +74,8 @@ def generate_window_connected_configuration(comm, nb_agents, window):
     """
     Generate a random configuration where the following sets are connected:
     0,1,...,window-1
-    window-1,window,...2window-1
-    2window-1,2window,...,3window-1 
+    window-1,window,...2(window-1)
+    2(window-1),2window,...,3(window-1)
     etc.
     """
     def add_agent(conf, cluster, support, i):
@@ -95,7 +95,7 @@ def generate_window_connected_configuration(comm, nb_agents, window):
         for v in candidates:
             support.add(v)
             conf[i] = v
-            if ((i % window) == window - 1):
+            if ( (i % (window-1)) == 0 ):
                 # then we want to be connected to the previous node only
                 new_cluster = [v]
             else:
@@ -193,13 +193,18 @@ def check_connected(comm, conf):
         cluster = cluster | set(map(lambda x: x.index, comm.vs[u].neighbors()))
     return True
 
-def generate(phys_filename, comm_filename, nb_agents, window, filename):
+def generate(phys_filename, comm_filename, nb_agents, window_mode, window_size, filename):
     # phy = Graph.Read_GraphML(phys_filename)
     comm = Graph.Read_GraphML(comm_filename)
-    if (window is not None):
-        print("Generating window-connected configurations")
-        start = generate_window_connected_configuration(comm, nb_agents, window)
-        goal = generate_window_connected_configuration(comm, nb_agents, window)
+    if (window_mode == 2):
+        print(f"Generating {window_size}-window-connected configurations")
+        start = generate_window_connected_configuration(comm, nb_agents, window_size)
+        goal = generate_window_connected_configuration(comm, nb_agents, window_size)
+    if (window_mode == 1):
+        print(f"Generating {window_size}-window-connected start, and arbitrary connected goal configurations")
+        start = generate_window_connected_configuration(comm, nb_agents, window_size)
+        goal = generate_connected_configuration(comm, nb_agents)
+        # goal = generate_window_connected_configuration(comm, nb_agents, window_size)
     else:
         print("Generating connected configurations")
         start = generate_connected_configuration(comm, nb_agents)
@@ -235,18 +240,21 @@ def main():
     parser.add_argument("-o",dest="out", type=str,
                         help="Output file name base",required=True)
     parser.add_argument("-d", dest="outdir", type=str, help="Output directory", required=True)
-    parser.add_argument("-w",dest="windowed", type=bool,
-                        help="Whether the start and goal configurations are to be window connected",required=False)
+    parser.add_argument("-wm",dest="window_mode", type=int,
+                        help="Whether the start and goal configurations are to be window connected. 0: none is window connected, 1: only start is window-connected, 2: both are window connected",required=False)
+    parser.add_argument("-ws",dest="window_size", type=int, default=2,
+                        help="window size for window-connected configurations.",required=False)
     args = parser.parse_args()
 
     nb_agents = args.nb_agents
     nb_exps = args.nb_exps
-    windowed = args.windowed
+    window_mode = args.window_mode
+    window_size = args.window_size
     output_folder = args.outdir+"/"
 
     random.seed()
     for i in range(nb_exps):
         filename = args.out + "_" + str(i) + ".exp"
-        generate(args.phys, args.comm, nb_agents, windowed, filename)
+        generate(args.phys, args.comm, nb_agents, window_mode, window_size, filename)
 
 main()

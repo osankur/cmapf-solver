@@ -9,7 +9,7 @@
 
 # This is the set of prefix base names to be run
 benchmarks=()
-for i in {31..40}; do
+for i in {2..10}; do
 	benchmarks=("${benchmarks[@]}" "obstacle_field_range5_window2_agents${i}_")
 	#benchmarks=("${benchmarks[@]}" "pyramid_range5_window2_agents${i}_")
 done

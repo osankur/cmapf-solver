@@ -79,6 +79,9 @@ namespace coupled
         // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
         // std::cout << *a;
         // std::cout << "\n";
+        if (closed_.find(a) != closed_.end() && a->size() == this->instance_.nb_agents()){
+          std::cout << "self\n";
+        }
         if (a->size() == this->instance_.nb_agents() && 
             this->instance_.graph().communication().isConfigurationConnected(*a) && 
             (closed_.find(a) == closed_.end()) && 
@@ -115,8 +118,9 @@ namespace coupled
           {
             // std::cout << "Setting agent " << next_agt << " to node " << neighbor << "\n";
             std::shared_ptr<Configuration> next = std::make_shared<Configuration>();
-            for (Agent agt = 0; agt < next_agt; agt++)
+            for (Agent agt = 0; agt < next_agt; agt++){
               next->push_back(a->at(agt));
+            }
             next->push_back(neighbor);
             double g = g_local[a];
             if (neighbor != pi->at(next_agt))

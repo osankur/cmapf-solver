@@ -7,10 +7,11 @@ MEM_LIMIT=4000000
 TIME_LIMIT=300
 ulimit -t ${TIME_LIMIT} -v ${MEM_LIMIT} -m ${MEM_LIMIT}
 GFOLDER="cmarrt-data/"
-logfile=logs/${bench_prefix}_${algo}_$3
-# rm -f $logfile
-echo "$GFOLDER$bench_prefix"
-for SEL in `find $GFOLDER$bench_prefix*.exp`
+EFOLDER="cmarrt-data-wm1/"
+logfile=logs-wm1/${bench_prefix}_${algo}_$3
+rm -f $logfile
+echo "$EFOLDER$bench_prefix"
+for SEL in `find $EFOLDER$bench_prefix*.exp`
 do
     for i in {0..2}
     do

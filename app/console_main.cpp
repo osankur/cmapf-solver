@@ -223,12 +223,14 @@ int main(int argc, const char *argv[])
       if (subsolver == SubsolverEnum::COORD_SOLVER)
       {
         if (!start_window_connected){
-          LOG_WARNING("Start configuration *is not* window-connected.");
+          LOG_FATAL("Start configuration *is not* window-connected.");
+          std::cout << ANSI_RED<<"Start configuration *is not* window-connected."<<ANSI_RESET;
+          exit(-1);
         } else {
           LOG_INFO("Start configuration *is* window-connected");
         }
         if (!goal_window_connected){
-          LOG_WARNING("Goal configuration is not window-connected. CoordSolver may not work properly.");
+          LOG_WARNING("Goal configuration is not window-connected.");
         } else {
           LOG_INFO("Goal configuration *is* window-connected");
         }

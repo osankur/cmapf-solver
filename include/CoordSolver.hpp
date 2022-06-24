@@ -19,7 +19,7 @@
  */
 #pragma once
 
-//#define COORD_DEBUG
+// #define COORD_DEBUG
 
 #define INFINITY std::numeric_limits<int>::max()
 
@@ -203,7 +203,7 @@ namespace coordinated
                 //  auto d1 = this->heuristics_.getFloyd()->getShortestPathDistance(next_partial_conf.find(agent_)->second,
                 //       this->instance_.goal()[agent_]);
 
-                size_t d = 1;
+                size_t d = 0;
 
                 // h: heuristic values from successors to goal
                 d += (size_t)this->heuristics_.getHeuristic(next_partial_conf.find(agent_)->second, this->goal_conf_[agent_]);
@@ -293,13 +293,19 @@ namespace coordinated
             {
                 // At this point, next_partial_conf contains a successor node for all agents in arguments(). (This does not include agent_to_eliminate_).
                 // We are going to sort the values of the sum of qfuncs_ by quantifying over the successors for agent_to_eliminate_
+                // FIXME remove the the g component 
                 std::vector<std::pair<std::pair<size_t,int>, Node>> image;
                 std::unordered_set<Node> pivot_neighbors(this->instance_.graph().movement().get_neighbors(this->source_conf_[agent_to_eliminate_]));
                 pivot_neighbors.insert(this->source_conf_[agent_to_eliminate_]); // add the self-loop
 
 #ifdef COORD_DEBUG
                 std::cout << "Start configuration: " << this->getSourceConfiguration();
-                std::cout << "\nagent to eliminate: " << agent_to_eliminate_ << "\n";
+                std::cout << "\nAgent to eliminate: " << agent_to_eliminate_ << "\n";
+                std::cout << "Arguments: [!" << agent_to_eliminate_ << "! ";
+                for (auto agt : this->arguments()){
+                    std::cout << agt << " ";
+                }
+                std::cout << "]\n";
                 std::cout << "For next_partial_conf: < ";
                 for (auto n : next_partial_conf_m)
                 {
@@ -311,7 +317,7 @@ namespace coordinated
                 {
                     next_partial_conf_m[agent_to_eliminate_] = next_node;
 #ifdef COORD_DEBUG
-                    std::cout << "\tagent_to_eliminate: " << next_node << "\n";
+                    std::cout << "\tagent_to_eliminate at node: " << next_node << "\n";
 #endif
                     size_t sum = 0;
                     for (auto qf : qfuncs_)
@@ -324,23 +330,24 @@ namespace coordinated
                         }
                         sum += qf_value;
                     }
-                    size_t g = 0;
-                    for (size_t i = 0; i < args_.size(); i++){
-                        if (next_partial_conf[args_[i]] != this->getSourceConfiguration()[args_[i]]){
-                            g++;
-                        }
-                    }
-                    if (next_node != this->getSourceConfiguration()[agent_to_eliminate_]){
-                        g++;
-                    }
-#ifdef COORD_DEBUG
-                    std::cout << "\t\tcost = " << sum << "\n";
-                    std::cout << "\t\tg = " << g << "\n";
-#endif
 
+                    // size_t g = 0;
+                    // for (size_t i = 0; i < args_.size(); i++){
+                    //     if (next_partial_conf[args_[i]] != this->getSourceConfiguration()[args_[i]]){
+                    //         g++;
+                    //     }
+                    // }
+                    // if (next_node != this->getSourceConfiguration()[agent_to_eliminate_]){
+                    //     g++;
+                    // }
+#ifdef COORD_DEBUG
+                    std::cout << "\t\tdist = " << sum << "\n";
+//                     std::cout << "\t\tg = " << g << "\n";
+#endif
+                    // sum += g;
                     if (sum != INFINITY)
                     {
-                        image.push_back(std::make_pair(std::make_pair(sum,-g), next_node));
+                        image.push_back(std::make_pair(std::make_pair(sum,0), next_node));
                     }
                     next_partial_conf_m.erase(agent_to_eliminate_);
                 }
@@ -392,12 +399,12 @@ namespace coordinated
 #ifdef COORD_DEBUG
             for (auto p : data_){
                 std::cout << "Data(<";
-                for (Node n : p.first){
-                    std::cout << n << " ";
+                for (int i = 0 ; i < this->arguments().size(); i++){
+                    std::cout << "Agent " << this->arguments()[i] << " @ " << p.first[i] << " ";
                 }
                 std::cout << ">) ->\n";
                 for (auto q : p.second){
-                    std::cout << "\t Node: " << q.second << " with cost: " << q.first.first << "\n";
+                    std::cout << "\t Node: " << q.second << " with dist: " << q.first.first << " and g = " << q.first.second << "\n";
                 } 
                 
             }
@@ -590,13 +597,13 @@ namespace coordinated
              * @param g number of steps 
              * @param dist 
              */
-            CoordNode(std::map<Agent, Node> &partial_conf, size_t g, size_t dist) : partial_conf(partial_conf), dist(dist), g(g){
+            CoordNode(std::map<Agent, Node> &partial_conf, size_t dist, size_t g) : partial_conf(partial_conf), dist(dist), g(g){
             }
             size_t size() const {
                 return partial_conf.size();
             }
             size_t getCost() const{
-                return g + dist;
+                return dist+g;
             }
             size_t getDistance() const{
                 return dist;
@@ -617,7 +624,8 @@ namespace coordinated
                         a.getCost() == b.getCost() && a.getG() == b.getG() && &a < &b);
             }
         };
-        bool get_next_best_rec(std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
+        bool get_next_best_rec(const Configuration &source,
+                               std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
                                std::map<Agent, Node> &partial_conf)
         {
             size_t nb_agents = this->instance().nb_agents();
@@ -629,15 +637,15 @@ namespace coordinated
             while(!open.empty()){
                 CoordNode cnode = open.top();
                 open.pop();
-
-                // std::cout << "\nPopped: <";
-                // for (auto p : cnode.partial_conf)
-                // {
-                //     std::cout << "Agent " << p.first << " @ " << p.second << ", ";
-                // }
-                // std::cout << "> with dist: " << cnode.getDistance() << " and g: " << cnode.getG() << "\n";
-                // std::cout << open.size() << " elements remain\n";
-
+#ifdef COORD_DEBUG
+                std::cout << "\nPopped: <";
+                for (auto p : cnode.partial_conf)
+                {
+                    std::cout << "Agent " << p.first << " @ " << p.second << ", ";
+                }
+                std::cout << "> with cost: " << cnode.getCost() << " and g: " << cnode.getG() << "\n";
+                std::cout << open.size() << " elements remain\n";
+#endif
                 if (cnode.size() == nb_agents){      
                     Configuration c;
                     for (Agent i = 0; i < this->instance_.nb_agents(); i++)
@@ -653,7 +661,9 @@ namespace coordinated
                         closed_.insert(c);
     #ifdef COORD_DEBUG
                         std::cout << ANSI_YELLOW << "Selected successor: " << c;
-                        std::cout << "\n" << ANSI_RESET;
+                        std::cout << " with g = " << cnode.g << ", cost = " << cnode.getCost() << "\n" << ANSI_RESET;
+                        // std::cout << ANSI_YELLOW << "Selected successor: " << c;
+                        // std::cout << "\n" << ANSI_RESET;
     #endif  
                         partial_conf = cnode.partial_conf;
                         return true;
@@ -672,18 +682,21 @@ namespace coordinated
                 }
                 for (auto p : successors)
                 {
+                    Node suc_node = p.second;
                     // If a node was selected by another agent, we skip it
-                    if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && node_support.contains(p.second))
+                    if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && node_support.contains(suc_node))
                     {
                         continue;
                     }
                     // Otherwise, select it
-                    size_t new_g = cnode.getG()+1;
-                    // if (p.second != this->getSourceConfiguration()[agent]){
-                    //     new_g++;
-                    // }
-                    CoordNode new_node(cnode.partial_conf, new_g, p.first.first);
-                    new_node.partial_conf[agent] = p.second;
+                    size_t new_g = cnode.getG();
+                    size_t suc_dist = p.first.first;
+                    if (suc_node != source[agent]){
+                        new_g++;
+                    }
+                    CoordNode new_node(cnode.partial_conf, suc_dist, new_g);
+                    // std::cout <<"\tg=" << new_node.getG() <<" and cost=" << new_node.getCost() <<"\n";
+                    new_node.partial_conf[agent] = suc_node;
                     open.push(new_node);
 
                     // std::cout << "Adding new node: ";
@@ -748,7 +761,7 @@ namespace coordinated
             // Choose the best successor
             std::map<Agent, Node> partial_conf;
             std::set<Node> node_support;
-            success = get_next_best_rec(linearized, partial_conf);
+            success = get_next_best_rec(source, linearized, partial_conf);
             Configuration successor(source.size());
             if (success)
             {
@@ -788,10 +801,16 @@ namespace coordinated
             for (size_t i = 0; i < instance.nb_agents(); i++)
             {
                 localView.push_back(c.at(i));
-                if (local_index == window_size - 1)
+                if ( (i % (window_size-1)) == 0)
                 {
+                    // std::cout << "Checking block: ";
+                    // for (auto n : localView){
+                    //     std::cout << n << " ";
+                    // }
+                    // std::cout << "\n";
                     if (!instance.graph().communication().isConfigurationConnected(localView))
                     {
+                        // std::cout << "Agent " << i << " is not connected to its block: ";
                         return false;
                     }
                     localView.clear();

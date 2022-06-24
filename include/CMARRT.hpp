@@ -270,6 +270,9 @@ namespace cmarrt
         int irand = rand() % n;
         // std::cout << "Picked no " << irand << "\n";
         c_nearest = nearestVertices[irand];
+        if (this->_verbose){
+          std::cout << "* Picked randomly cnear: " << irand << " among " << n << "\n";
+        }
 
         this->towards_goal_randomize_count_++;
         if (this->towards_goal_randomize_count_ >= this->towards_goal_randomize_period){
@@ -396,7 +399,7 @@ namespace cmarrt
      * and connect the last configuration of this path to the tree.
      * 
      */
-    void extend()
+    void expand()
     {
       clock_t cstart;
       clock_t cend;
@@ -458,10 +461,18 @@ namespace cmarrt
         if (!this->_window_connected && *c_target == this->instance().goal())
         {
           bool use_dfs = true;
+          size_t sp_dist = 0;
+          size_t be_dist = 0;
+          for (int agt = 0; agt < instance().nb_agents(); agt++)
+          {
+            sp_dist += this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_target->at(agt));
+            be_dist += this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_target->at(agt));
+          }
+          if (this->_verbose) std::cout << "*** SP: " << sp_dist <<" vs BE: " << be_dist << "\n";
           for (int agt = 0; agt < instance().nb_agents(); agt++)
           {
             if (this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_target->at(agt)) >
-                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_target->at(agt)) + 1)
+                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_target->at(agt)) + 3)
             {
               use_dfs = false;
               break;
@@ -484,13 +495,13 @@ namespace cmarrt
       pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
 
       // In case of failure, try again with dfs_solver
-      if (this->subsolver == SubsolverEnum::COORD_SOLVER && pathSegment.size() == 0 ||
-          this->subsolver == SubsolverEnum::DECOUPLED_SOLVER && pathSegment.size() < this->_step_size / 2)
+      if (this->subsolver == SubsolverEnum::COORD_SOLVER && pathSegment.size() == 0)
       {
         if (_verbose) {
           std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
                     << ANSI_RESET;
           this->printTree();
+          exit(-1);
 
         }
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
@@ -527,7 +538,8 @@ namespace cmarrt
           std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
         }
       } else {
-        this->towards_goal_becoming_redundant_ = true;
+        if (!this->towards_goal_becoming_redundant_)
+          this->towards_goal_becoming_redundant_ = true;
         if (_verbose)
         {
           std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << "\n";
@@ -690,7 +702,7 @@ namespace cmarrt
           std::cout << "\n#Iterations: " << _iterations << "\n";
         }
         _iterations++;
-        this->extend();
+        this->expand();
         if (_iterations % 10 == 0 && _verbose)
         {
           this->printTree();
