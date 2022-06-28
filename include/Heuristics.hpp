@@ -61,6 +61,7 @@ public:
     int getBirdEyeDistance(const Node & c, const Node & goal) override{
         auto cpos = this->instance_.graph().movement().getPosition(c);
         auto gpos = this->instance_.graph().movement().getPosition(goal);
+        auto d = this->getL1Distance(cpos, gpos);
         return this->getL1Distance(cpos, gpos);
     }
 

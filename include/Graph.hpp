@@ -42,7 +42,7 @@ class ExplicitGraph : public Graph {
   void AddNode(Node);
   void AddEdge(Node, Node);
   void AddPosition(Node, int x, int y);
-  std::pair<float, float> getBarycenter(const Configuration &);
+  std::pair<float, float> getBarycenter(const Configuration &) const;
 
   size_t node_count() const override;
   size_t edge_count() const;

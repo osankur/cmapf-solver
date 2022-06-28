@@ -65,6 +65,9 @@ namespace cmarrt
     // Whether start and goal configurations are window-connected
     bool _window_connected = false;
 
+    int max_dfs_iterations_ = 50000;
+    int max_coord_iterations_ = 50000;
+
     Heuristics<GraphMove, GraphComm> &heuristics_;
 
     SubsolverEnum subsolver;
@@ -75,6 +78,9 @@ namespace cmarrt
     std::map<Configuration, int> index_of_parent_;
     // given configuration c in the tree, path_from_parent_[c] is the path from the parent to itself
     std::map<Configuration, std::vector<std::shared_ptr<Configuration>>> path_from_parent_;
+
+    // Min of the sum of SP distances of the vertices in the tree
+    int _min_distance;
 
     // Set to true when segments computed towards goal end in configurations that are already in the tree
     bool towards_goal_becoming_redundant_ = false;
@@ -311,7 +317,6 @@ namespace cmarrt
 
     /**
      * @brief Return vector of neighbors of a given configuration at a given distance
-     * (comparing L1 distances between barycenters).
      *
      * Complexity is linear in the size of the tree.
      *
@@ -379,21 +384,17 @@ namespace cmarrt
       return index_of_vertex_.find(config) != index_of_vertex_.end();
     }
 
-    bool isPathSegmentValid(std::vector<std::shared_ptr<Configuration>> pathSegment){
-      return true;
-      /*
-      for (size_t i = 1; i < pathSegment.size(); i++){
-        Node next_n = at(i);
-        const std::unordered_set<Node>& neighbors = graph.get_neighbors(n);
-        if (neighbors.find(next_n) == neighbors.end()){
-          std::cerr << "The following path is not valid\n" << *this << "\n";
-          return false;
+    void addConfiguration(std::shared_ptr<Configuration> c_new, std::shared_ptr<Configuration> c_parent, std::vector<std::shared_ptr<Configuration>> pathSegment){
+        this->vertices_.push_back(c_new);
+        this->parents_.push_back(c_parent);
+        this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
+        this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_parent];
+        this->path_from_parent_[*c_new] = pathSegment;
+        if (_verbose) {
+          std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
         }
-        n = next_n;
-      }
-      return true;
-      */
     }
+
     /**
      * @brief Extend the tree by a new node: select a random target configuration, compute a bounded path towards,
      * and connect the last configuration of this path to the tree.
@@ -434,19 +435,10 @@ namespace cmarrt
       cend = clock();
       if (_verbose) {
         std::cout << "\tNearest node in the tree: " << ANSI_YELLOW << *c_nearest << ANSI_RESET << "\n";
-        std::cout << "\tComputed in " << ANSI_RED << (cend - cstart) / (double) CLOCKS_PER_SEC << "s\n" << ANSI_RESET;
+        // std::cout << "\tComputed in " << ANSI_RED << (cend - cstart) / (double) CLOCKS_PER_SEC << "s\n" << ANSI_RESET;
         std::cout.flush();
       }
       
-      // If c_target == goal, then randomly (1/3) flip the direction to c_rand
-      // In this case, we still go from c_nearest (which is neareast to goal), but go in a random direction
-      // if (*c_target == this->instance().goal() && rand()%3 == 0){
-      //   c_target = c_rand;
-      //   if (_verbose){
-      //     std::cout << "<->" << ANSI_BLUE << "\tRandom direction from nearest to goal " << *c_rand;
-      //     std::cout << ANSI_RESET << "\n";
-      //   }
-      // }
       std::vector<std::shared_ptr<Configuration>> pathSegment;
       BoundedSolver<GraphMove, GraphComm> *currentSubsolver = nullptr;
 
@@ -454,37 +446,6 @@ namespace cmarrt
       {
       case SubsolverEnum::COORD_SOLVER:
         currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&coord_solver_;
-        // If instance is not window connected, and if we are targeting goal,
-        //    and if we are almost straight-line to goal
-        //    (if all shortest paths are close to birdeye distance), then use dfs_solver
-        
-        if (!this->_window_connected && *c_target == this->instance().goal())
-        {
-          bool use_dfs = true;
-          size_t sp_dist = 0;
-          size_t be_dist = 0;
-          for (int agt = 0; agt < instance().nb_agents(); agt++)
-          {
-            sp_dist += this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_target->at(agt));
-            be_dist += this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_target->at(agt));
-          }
-          if (this->_verbose) std::cout << "*** SP: " << sp_dist <<" vs BE: " << be_dist << "\n";
-          for (int agt = 0; agt < instance().nb_agents(); agt++)
-          {
-            if (this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_target->at(agt)) >
-                this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_target->at(agt)) + 3)
-            {
-              use_dfs = false;
-              break;
-            }
-          }
-          if (use_dfs)
-          {
-            if (_verbose) {
-              std::cout << ANSI_BOLD << ANSI_BLUE << "We are near goal: using dfs_solver.\n" << ANSI_RESET;}
-              currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
-            }
-        }
         break;
       case SubsolverEnum::DFS_SOLVER:
         currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
@@ -492,19 +453,131 @@ namespace cmarrt
       }
       assert(currentSubsolver);
       cstart = clock();
-      pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
 
-      // In case of failure, try again with dfs_solver
-      if (this->subsolver == SubsolverEnum::COORD_SOLVER && pathSegment.size() == 0)
+
+
+      // If we are moving towards a random configuration; then limit the nb of iterations
+      int max_its = -1;
+      if (*c_target != this->instance().goal()){
+        max_its = this->max_coord_iterations_;
+      }
+      pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size, max_its);
+
+
+      // Now decide if we want to run DFS instead
+      bool use_dfs = false;
+      if (this->subsolver == SubsolverEnum::COORD_SOLVER && !this->_window_connected && *c_target == this->instance().goal())
       {
-        if (_verbose) {
-          std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
-                    << ANSI_RESET;
-          this->printTree();
-          exit(-1);
+        use_dfs = true;
+        size_t cnear_sp_dist = 0;
+        size_t cnear_be_dist = 0;
+        size_t min_dist = INFINITY;
+        size_t max_dist = 0;
+        int xmax = 0;
+        int xmin = INFINITY;
+        int ymax = 0;
+        int ymin = INFINITY;
 
+        // We will use dfs except in the following cases:
+        // If one of the agents is far from its target, do not use DFS
+        for (int agt = 0; agt < instance().nb_agents(); agt++)
+        {
+          size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(c_nearest->at(agt), c_target->at(agt));
+          cnear_sp_dist += agt_sp_dist;
+          if (agt_sp_dist < min_dist ){
+            min_dist = agt_sp_dist;
+          }
+          if (agt_sp_dist > max_dist){
+            max_dist = agt_sp_dist;
+          }
+          cnear_be_dist += this->heuristics_.getBirdEyeDistance(c_nearest->at(agt), c_target->at(agt));
+          std::pair<int,int> pos = this->instance().graph().movement().getPosition(c_nearest->at(agt));
+          if (pos.first < xmin){
+            xmin = pos.first;
+          }
+          if (pos.first > xmax){
+            xmax = pos.first;
+          }
+          if (pos.second > ymax){
+            ymax = pos.second;
+          }
+          if (pos.second < ymin){
+            ymin = pos.second;
+          }
         }
+        // If COORD solver got us closer to goal (than cnear), then no need to switch to DFS solver
+        // if (cnear_sp_dist >= cnear_be_dist * 1.2 || min_dist > 8 ){
+        // std::pair<float, float> cnear_barycenter = this->instance().graph().movement().getBarycenter(*c_nearest);
+        // std::pair<float, float> cgoal_barycenter = this->instance().graph().movement().getBarycenter(*c_target);
+        // float xdiff = abs(cnear_barycenter.first - cgoal_barycenter.first);
+        // float ydiff = abs(cnear_barycenter.second - cgoal_barycenter.second);
+
+        if (cnear_sp_dist >= cnear_be_dist * 1.2 
+            || min_dist > 5 
+            // || xdiff > 10 || ydiff > 10 
+            || (xmax -xmin)> this->instance().nb_agents() 
+            || (ymax-ymin) > this->instance().nb_agents())
+        {
+          if (this->_verbose) {
+            std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
+            std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
+            // std::cout << "* Dist between barycenters (cnear and goal): xdiff=" << xdiff << " ydiff=" << ydiff << "\n";
+            std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
+          }
+          use_dfs = false;
+        } else if (this->_verbose){
+          std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
+            std::cout << "* Min/Max Distance of agents to their goals: Min=" << min_dist << ", max=" << max_dist << "\n";
+            // std::cout << "* Dist between barycenters (cnear and goal): xdiff=" << xdiff << " ydiff=" << ydiff << "\n";
+            std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin)  << ANSI_RESET << " y=" << ANSI_RED << (ymax-ymin)  << ANSI_RESET << "\n";
+        }
+
+        // If instance is not window connected, and if we are targeting goal,
+        //    and if we are almost straight-line to goal
+        //    (if all shortest paths are close to birdeye distance)
+        //    and if coord_solver did not get us closer to goal
+        //    then use dfs_solver      
+        if (pathSegment.size() > 0)
+        {
+          auto coord_cnew = pathSegment.back();
+          size_t coordcnew_sp_dist = 0;
+          for (int agt = 0; agt < instance().nb_agents(); agt++)
+          {
+            coordcnew_sp_dist += this->heuristics_.getShortestPathDistance(coord_cnew->at(agt), c_target->at(agt));
+          }
+
+          // If COORD solver got us closer to goal (than cnear), then no need to switch to DFS solver
+          if (coordcnew_sp_dist < this->_min_distance ){
+            if (this->_verbose) {
+              std::cout << "* Not switching to DFS: Coord is improving...\n";
+              std::cout << "* SP(coordcnew) = " 
+                << ANSI_BLUE << coordcnew_sp_dist << ANSI_RESET << " < min_distance = " << this->_min_distance << "\n";
+              std::cout.flush();
+            }
+            this->_min_distance = coordcnew_sp_dist;
+            use_dfs = false;
+          }
+        } else {
+          if (_verbose) {
+            std::cout << ANSI_RED << "Subsolver failed. Falling back to dfs_solver.\n"
+                      << ANSI_RESET;
+          }
+          use_dfs = true;
+        }
+      }
+      if (use_dfs){
+        if (pathSegment.size() >0){
+          auto c_new = pathSegment.back();
+          if (not(this->treeContains(*c_new)))
+          {
+            addConfiguration(c_new, c_nearest, pathSegment);          
+          }
+          // c_nearest = pathSegment.back();
+        }
+        std::cout << ANSI_BOLD << ANSI_BLUE << "Switching to dfs_solver.\n" << ANSI_RESET;
+        std::cout.flush();
         pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
+        std::cout << "Done: " << pathSegment.size() << "\n";
       }
       cend = clock();
       if (_verbose){
@@ -519,30 +592,59 @@ namespace cmarrt
       if (pathSegment.size() == 0)
       {
         if (_verbose){
-          std::cout << ANSI_RED << "computeBoundedPathTowards failed; ignoring this step.\n"
+          std::cout << ANSI_RED << "computeBoundedPathTowards failed.\n"
                     << ANSI_RESET;
           std::cout.flush();
+          // If we were moving towards goal and have failed, then try moving towards crand
+          if (*c_target == this->instance().goal()){
+            std::cout << "- Running solver again to move towards ";
+            std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
+            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_dfs_iterations_);
+          }
         }
-        return;
+        if (pathSegment.size() == 0)
+          return;
       }
 
       std::shared_ptr<Configuration> c_new = pathSegment.back();
       if (not(this->treeContains(*c_new)))
       {
-        this->vertices_.push_back(c_new);
-        this->parents_.push_back(c_nearest);
-        this->index_of_vertex_[*c_new] = this->vertices_.size() - 1;
-        this->index_of_parent_[*c_new] = this->index_of_vertex_[*c_nearest];
-        this->path_from_parent_[*c_new] = pathSegment;
-        if (_verbose) {
-          std::cout << "Adding Cnew: " << ANSI_YELLOW << *c_new << ANSI_RESET << "\n";
-        }
+        addConfiguration(c_new, c_nearest, pathSegment);
       } else {
         if (!this->towards_goal_becoming_redundant_)
           this->towards_goal_becoming_redundant_ = true;
         if (_verbose)
         {
-          std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << "\n";
+          std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << " (use_dfs: " << use_dfs << ")\n";
+          if (*c_target == this->instance().goal()){
+            std::cout << "- Running solver again to move towards ";
+            std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
+            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_dfs_iterations_);
+            if (pathSegment.size() > 0){
+              c_new = pathSegment.back();
+              if (not(this->treeContains(*c_new)))
+              {
+                addConfiguration(c_new, c_nearest, pathSegment);
+              }
+            }
+          }
+
+          // if (!use_dfs){
+          //   std::cout << "- Running DFS subsolver with bound... ";
+          //   std::cout.flush();
+          //   pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size, this->max_dfs_iterations_);
+          //   if (pathSegment.size() ==0){
+          //     std::cout << "- Failed.\n";
+          //   } else {
+          //     std::cout << "- Done: " << pathSegment.size() << "\n";
+          //     c_new = pathSegment.back();
+          //     if (not(this->treeContains(*c_new)))
+          //     {
+          //       addConfiguration(c_new, c_nearest, pathSegment);
+          //     }
+          //   }
+          // }
+
           // std::cout << "\tPath segment has size " << pathSegment.size() << ": \n";
           // for (auto c : pathSegment){
           //   std::cout << "\t" << *c;
@@ -672,6 +774,7 @@ namespace cmarrt
         coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(instance.start(), instance, window_size)
         && 
         coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(instance.goal(), instance, window_size);
+      this->_min_distance = INFINITY;
     }
 
     bool step_compute()

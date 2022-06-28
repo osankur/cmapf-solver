@@ -164,6 +164,14 @@ int main(int argc, const char *argv[])
     LOG_INFO("Heuristics:" << vm["heuristics"].as<std::string>());
     // std::shared_ptr<ShortestPathCalculator> sp = std::make_shared<DijkstraSPCalculator<ExplicitGraph, ExplicitGraph>>(il.instance());
     // DijkstraSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
+    // Path p = sp.getShortestPath(75, 125);
+    // std::cout << "<";
+    // for(auto node : p){
+    //   std::cout << node << ", ";
+    // }
+    // std::cout << ">\n";
+    // exit(0);
+
     AStarSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
     std::unique_ptr<Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
     auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());

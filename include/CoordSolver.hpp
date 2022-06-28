@@ -19,7 +19,7 @@
  */
 #pragma once
 
-// #define COORD_DEBUG
+ //#define COORD_DEBUG
 
 #define INFINITY std::numeric_limits<int>::max()
 
@@ -491,12 +491,16 @@ namespace coordinated
     class CoordSolver : public Solver<GraphMove, GraphComm>, public BoundedSolver<GraphMove, GraphComm>
     {
     private:
+        int max_iterations = -1;
+        int nb_iterations = 0;
         std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> qfuncs_;
         unsigned int window_size_;
         Heuristics<GraphMove, GraphComm> &heuristics_;
 
         std::vector<Configuration> config_stack_;
         std::set<Configuration> closed_;
+
+        std::map<std::pair<Configuration,Configuration>, std::vector<std::shared_ptr<Configuration>>> bounded_queries_;
 
         void initialize_qfuncs(const Configuration &source_conf, const Configuration &goal_conf)
         {
@@ -635,6 +639,14 @@ namespace coordinated
             CoordNode init_node(init_partial_conf,0,0);
             open.push(init_node);
             while(!open.empty()){
+
+                this->nb_iterations++;
+                if (this->max_iterations > 0 && this->nb_iterations > this->max_iterations){
+                    return false;
+                }
+                // if (nb_iterations % 100 == 0)
+                // std::cout << "\tnb_iterations:" << nb_iterations << "\n";
+
                 CoordNode cnode = open.top();
                 open.pop();
 #ifdef COORD_DEBUG
@@ -666,6 +678,7 @@ namespace coordinated
                         // std::cout << "\n" << ANSI_RESET;
     #endif  
                         partial_conf = cnode.partial_conf;
+                        if (nb_iterations > 10000) std::cout << "Coord made " << nb_iterations << " iterations.\n";
                         return true;
                     }                                  
                 }
@@ -708,6 +721,7 @@ namespace coordinated
 
                 }
             }
+            return false;
         }
 
 
@@ -717,6 +731,7 @@ namespace coordinated
             std::cout << ANSI_BLUE << "\nget_next_best\n" << ANSI_RESET;
             #endif
             initialize_qfuncs(source, goal);
+            // std::cout << "Reducing...\n";
             for (int i = 0; i < this->instance_.nb_agents(); i++)
             {
                 // for (auto qf : qfuncs_)
@@ -731,6 +746,7 @@ namespace coordinated
                 // std::cerr << "\n";
                 reduce_qfuncs(i);
             }
+
             assert(qfuncs_.size() == 1);
             assert(qfuncs_[0]->arguments().size() == 0);
             assert((dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(qfuncs_[0].get()) != nullptr));
@@ -828,12 +844,12 @@ namespace coordinated
          */
         virtual const Execution compute() override
         {
-            int _iterations = 0;
+            // int _iterations = 0;
             bool goal_reached = false;
             closed_.clear();
             while (!goal_reached)
             {
-                _iterations++;
+                //_iterations++;
                 // Solution found?
                 if (config_stack_.back() == this->instance_.goal())
                 {
@@ -916,10 +932,15 @@ namespace coordinated
          * Do not use configurations in excluded
          */
         std::vector<std::shared_ptr<Configuration>> computeBoundedPathTowards(const Configuration &source, const Configuration &goal,
-                                                                              int steps)
+                                                                              int steps, int max_iterations=-1)
         {
             bool success;
-            closed_.clear();
+            this->max_iterations = max_iterations;
+            this->nb_iterations = 0;
+            if (this->bounded_queries_.count(std::make_pair(source,goal)) > 0){
+                return this->bounded_queries_[std::make_pair(source,goal)];
+            }
+            //closed_.clear();
             closed_.insert(source);
             std::vector<std::shared_ptr<Configuration>> pathSegment{std::make_shared<Configuration>(source)};
             for (int i = 0; i < steps; i++)
@@ -936,6 +957,7 @@ namespace coordinated
             {
                 pathSegment.clear();
             }
+            this->bounded_queries_[std::make_pair(source,goal)] = pathSegment;
             return pathSegment;
         }
 

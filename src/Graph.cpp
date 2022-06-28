@@ -83,7 +83,7 @@ bool ExplicitGraph::isConfigurationConnected(const Configuration& config) const 
     return agent_count == nb_agents;
   }
 
-std::pair<float, float> ExplicitGraph::getBarycenter(const Configuration &config)
+std::pair<float, float> ExplicitGraph::getBarycenter(const Configuration &config) const
 {
   int nb_agents = config.size();
   assert(nb_agents != 0);

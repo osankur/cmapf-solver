@@ -44,6 +44,8 @@ namespace coupled
         closed_;
     Heuristics<GraphMove, GraphComm> & heuristics_;
     bool verbose_;
+    int max_iterations_;
+    int iteration_count_;
 
     typedef std::map<std::shared_ptr<Configuration>, double> PartialCostMap;
     typedef PriorityQueue<std::shared_ptr<Configuration>> PartialConfQueue;
@@ -64,24 +66,26 @@ namespace coupled
       PartialCostMap g_local;
       PartialConfQueue open_local;
 
-      int iteration_count = 0;
-
 
       auto pi0 = std::make_shared<Configuration>();
       g_local[pi0] = 0;
       open_local.insert(pi0, 0, heuristics_.getHeuristic(*pi, goal));
       while (!open_local.empty())
       {
-        iteration_count++;
+        this->iteration_count_++;
         size_t a_cost;
         size_t a_g;
         auto a = open_local.pop(a_g, a_cost);
-        // std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
+        if (this->iteration_count_ % 1000 == 0){
+          // std::cout << "Iteration: " << this->iteration_count_ << "\n";
+        }
+        //std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
         // std::cout << *a;
         // std::cout << "\n";
-        if (closed_.find(a) != closed_.end() && a->size() == this->instance_.nb_agents()){
-          std::cout << "self\n";
+        if (this->max_iterations_ > 0 && this->iteration_count_ > this->max_iterations_){
+          break;
         }
+        
         if (a->size() == this->instance_.nb_agents() && 
             this->instance_.graph().communication().isConfigurationConnected(*a) && 
             (closed_.find(a) == closed_.end()) && 
@@ -92,8 +96,8 @@ namespace coupled
             )
           )
         {
-          if (verbose_ && iteration_count > 1000){
-            std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << iteration_count << " iterations\n" << ANSI_RESET;
+          if (verbose_ && this->iteration_count_ > 1000){
+            std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << this->iteration_count_ << " iterations\n" << ANSI_RESET;
           }
           if (verbose_){
             std::cout << "Best Conf: " << *a;
@@ -222,16 +226,21 @@ namespace coupled
      *
      * @return last configuration of the computed execution.
      */
-    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps) override
+    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps, int max_iterations=-1) override
     {
       exec_.clear();
       exec_.push_back(std::make_shared<Configuration>(source));
       closed_.clear();
+      this->max_iterations_ = max_iterations;
+      this->iteration_count_ = 0;
       // closed_.insert(std::make_shared<Configuration>(source));
 
       for (int i = 0; i < steps; i++)
       {
-        if(StepCompute(goal)) break;
+        if (StepCompute(goal)) break;
+        if (this->max_iterations_ > 0 && this->iteration_count_ > this->max_iterations_)
+          break;
+
       }
       return exec_;
     }

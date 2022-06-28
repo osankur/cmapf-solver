@@ -6,14 +6,14 @@ col=$3 # CHECK_COLLISIONS or IGNORE_COLLISIONS
 MEM_LIMIT=4000000
 TIME_LIMIT=300
 ulimit -t ${TIME_LIMIT} -v ${MEM_LIMIT} -m ${MEM_LIMIT}
-GFOLDER="cmarrt-data/"
+GFOLDER="graphs/"
 EFOLDER="cmarrt-data-wm1/"
 logfile=logs-wm1/${bench_prefix}_${algo}_$3
 rm -f $logfile
 echo "$EFOLDER$bench_prefix"
 for SEL in `find $EFOLDER$bench_prefix*.exp`
 do
-    for i in {0..2}
+    for i in {0..1}
     do
         echo '
         ' >> $logfile

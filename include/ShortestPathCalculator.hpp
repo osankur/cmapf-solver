@@ -65,7 +65,9 @@ class DijkstraSPCalculator : public ShortestPathCalculator<GraphMove,GraphComm>{
       open.pop_front();
       colored[head] = NodeColor::kBlack;
 
+      // std::cout << "Neighbors of " << head << "\n";
       for (Node neighbor : this->instance_.graph().movement().get_neighbors(head)) {
+        // std::cout << "\t<" << head << "," << neighbor << ">\n";
         if (colored[neighbor] == NodeColor::kBlack) continue;
         if (getShortestPathDistance(head, target) + 1 < getShortestPathDistance(neighbor, target)) mem[neighbor] = head;
         if (colored[neighbor] == NodeColor::kWhite) {
