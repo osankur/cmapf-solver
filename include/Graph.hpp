@@ -50,6 +50,7 @@ class ExplicitGraph : public Graph {
   size_t getDistance(Node, Node) const override;
   std::pair<int,int> getPosition(Node) const;
   bool isConfigurationConnected(const Configuration & c) const;
+  std::pair<int,int> getStretch(const Configuration & c) const;
 };
 
 class RadiusGraph : public Graph {

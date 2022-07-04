@@ -49,7 +49,33 @@ namespace coupled
 
     typedef std::map<std::shared_ptr<Configuration>, double> PartialCostMap;
     typedef PriorityQueue<std::shared_ptr<Configuration>> PartialConfQueue;
-
+      static bool isConfigurationWindowConnected(const Configuration &c, const Instance<GraphMove, GraphComm> &instance, int window_size)
+      {
+          Configuration localView;
+          int local_index = 0;
+          for (size_t i = 0; i < instance.nb_agents(); i++)
+          {
+              localView.push_back(c.at(i));
+              if ( (i % (window_size-1)) == 0)
+              {
+                  // std::cout << "Checking block: ";
+                  // for (auto n : localView){
+                  //     std::cout << n << " ";
+                  // }
+                  // std::cout << "\n";
+                  if (!instance.graph().communication().isConfigurationConnected(localView))
+                  {
+                      // std::cout << "Agent " << i << " is not connected to its block: ";
+                      return false;
+                  }
+                  localView.clear();
+                  localView.push_back(c.at(i));
+                  local_index = 0;
+              }
+              local_index++;
+          }
+          return true;
+      }
     /**
      * @brief This is an alternative implementation of FindBestChild using Tateo's priority queue.
      *
@@ -78,10 +104,10 @@ namespace coupled
         if (this->iteration_count_ % 1000 == 0){
           // std::cout << "Iteration: " << this->iteration_count_ << "\n";
         }
-        std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
-        std::cout << *a;
-        std::cout << "g = " << a_g << " cost = " << a_cost << "\n";
-        std::cout << "\n";
+        //std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
+        // std::cout << *a;
+        // std::cout << "\twith g = " << a_g << " cost = " << a_cost << "\n";
+        // std::cout << "\n";
         if (this->max_iterations_ > 0 && this->iteration_count_ > this->max_iterations_){
           break;
         }
@@ -94,6 +120,7 @@ namespace coupled
                 this->instance().getCollisionMode() == CollisionMode::IGNORE_COLLISIONS
                 || std::set<Node>(a->begin(), a->end()).size() == this->instance().nb_agents()
             )
+            // && isConfigurationWindowConnected(*a, this->instance_, 2)
           )
         {
           if (verbose_ && this->iteration_count_ > 1000){
@@ -101,6 +128,7 @@ namespace coupled
           }
           if (verbose_){
             std::cout << *a;
+            std::cout << "\n";
             std::cout << "\ncost: " << a_cost << ", g=" << a_g << "\n";
             std::cout.flush();
           }
@@ -147,6 +175,61 @@ namespace coupled
       }
       return nullptr;
     }
+        bool doWeSwitchToDFS(Configuration & currentConfiguration){
+            bool use_dfs = true;
+            size_t cnear_sp_dist = 0;
+            size_t cnear_be_dist = 0;
+            size_t min_dist = INFINITY;
+            size_t max_dist = 0;
+            int xmax = 0;
+            int xmin = INFINITY;
+            int ymax = 0;
+            int ymin = INFINITY;
+            for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
+            {
+                size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
+                cnear_sp_dist += agt_sp_dist;
+                if (agt_sp_dist < min_dist ){
+                    min_dist = agt_sp_dist;
+                }
+                if (agt_sp_dist > max_dist){
+                    max_dist = agt_sp_dist;
+                }
+                cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
+                std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
+                if (pos.first < xmin){
+                    xmin = pos.first;
+                }
+                if (pos.first > xmax){
+                    xmax = pos.first;
+                }
+                if (pos.second > ymax){
+                    ymax = pos.second;
+                }
+                if (pos.second < ymin){
+                    ymin = pos.second;
+                }
+            }
+
+            size_t stretch_threshold = this->instance().nb_agents() / 1.5;
+            if (stretch_threshold < 5) 
+                stretch_threshold = 5;
+            if (cnear_sp_dist >= cnear_be_dist * 1.2 
+                || min_dist > 5 
+                || (xmax -xmin)> stretch_threshold 
+                || (ymax-ymin) > stretch_threshold)
+            {
+                // std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
+                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
+                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
+                use_dfs = false;
+            } else {
+                // std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
+                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << min_dist << ", max=" << max_dist << "\n";
+                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin)  << ANSI_RESET << " y=" << ANSI_RED << (ymax-ymin)  << ANSI_RESET << "\n";
+            }
+            return use_dfs;
+        }
 
     /**
      * @brief execute one step of computation of DFS from [Tateo et al.] towards given custom goal
@@ -184,6 +267,7 @@ namespace coupled
         closed_.insert(config);
         exec_.push_back(config);
       }
+      return doWeSwitchToDFS(*config);
       return false;
     }
 
@@ -215,6 +299,8 @@ namespace coupled
 
     const Execution compute() override {
       this->iteration_count_ = 0;
+      int count = 0;
+      // while (!StepCompute() && count++ < 10);
       while (!StepCompute());
       return this->execution_;
     }

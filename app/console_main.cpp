@@ -30,7 +30,7 @@ using namespace boost::program_options;
 
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
-constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
+constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
 constexpr char DEFAULT_COLLISIONS[] = "IGNORE_COLLISIONS";
 constexpr char DEFAULT_SUBSOLVER[] = "COORD_SOLVER";
 
@@ -201,7 +201,7 @@ int main(int argc, const char *argv[])
     switch (algo.value())
     {
     case Algorithm::DFS:
-      solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get());
+      solver = std::make_unique<coupled::DFS<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), verbose);
       break;
     case Algorithm::COORD:
       if (!coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size))

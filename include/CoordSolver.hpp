@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#define COORD_DEBUG
+//#define COORD_DEBUG
 
 #define INFINITY std::numeric_limits<int>::max()
 
@@ -133,7 +133,6 @@ namespace coordinated
             : LocalQ<GraphMove, GraphComm>(instance, heuristics, source_conf, goal_conf), agent_(agent), args_(args)
         {
         }
-
         /**
          * @brief Return if next_partial_conf is disconnected or has collisions, return INFINITY; otherwise return the heuristic for agent this->agent_.
          *
@@ -282,7 +281,6 @@ namespace coordinated
             {
                 // At this point, next_partial_conf contains a successor node for all agents in arguments(). (This does not include agent_to_eliminate_).
                 // We are going to sort the values of the sum of qfuncs_ by quantifying over the successors for agent_to_eliminate_
-                // FIXME remove the the g component 
                 std::vector<std::pair<std::pair<size_t,int>, Node>> image;
                 std::unordered_set<Node> pivot_neighbors(this->instance_.graph().movement().get_neighbors(this->source_conf_[agent_to_eliminate_]));
                 pivot_neighbors.insert(this->source_conf_[agent_to_eliminate_]); // add the self-loop
@@ -306,12 +304,26 @@ namespace coordinated
                 {
                     next_partial_conf_m[agent_to_eliminate_] = next_node;
 #ifdef COORD_DEBUG
-                    std::cout << "\tagent_to_eliminate at node: " << next_node << "\n";
+                    std::cout << "\tagent_to_eliminate is at node: " << next_node << "\n";
 #endif
                     size_t sum = 0;
+                    size_t g = 0;
                     for (auto qf : qfuncs_)
                     {
-                        size_t qf_value = qf->getValue(next_partial_conf_m);
+                        size_t qf_value = 0;
+                        LocalQCompound<GraphMove, GraphComm> * qfcomp = dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(qf.get());
+                        if (qfcomp != nullptr){
+                            auto p = qfcomp->getValueVector(next_partial_conf_m);
+                            if (p.size() == 0){
+                                qf_value = INFINITY;
+                            } else {
+                                qf_value = p[0].first.first;
+                                g += -p[0].first.second;
+                            }
+                        } else {
+                            qf_value = qf->getValue(next_partial_conf_m);
+                        }
+
                         if (qf_value == INFINITY)
                         {
                             sum = INFINITY;
@@ -326,17 +338,18 @@ namespace coordinated
                     //         g++;
                     //     }
                     // }
-                    // if (next_node != this->getSourceConfiguration()[agent_to_eliminate_]){
-                    //     g++;
-                    // }
+                    size_t added_g = 0;
+                    if (next_node != this->getSourceConfiguration()[agent_to_eliminate_]){
+                        added_g = 1;
+                    }
+                    g += added_g;
 #ifdef COORD_DEBUG
-                    std::cout << "\t\tdist = " << sum << "\n";
-//                     std::cout << "\t\tg = " << g << "\n";
+                    std::cout << "\t\tcost = " << sum + added_g << "\n";
+                    std::cout << "\t\t(in which g = " << g << ")\n";
 #endif
-                    // sum += g;
                     if (sum != INFINITY)
                     {
-                        image.push_back(std::make_pair(std::make_pair(sum,0), next_node));
+                        image.push_back(std::make_pair(std::make_pair(sum+added_g,-g), next_node));
                     }
                     next_partial_conf_m.erase(agent_to_eliminate_);
                 }
@@ -393,7 +406,7 @@ namespace coordinated
                 }
                 std::cout << ">) ->\n";
                 for (auto q : p.second){
-                    std::cout << "\t Node: " << q.second << " with dist: " << q.first.first << " and g = " << q.first.second << "\n";
+                    std::cout << "\t Node: " << q.second << " with dist: " << q.first.first << " and g = " << -q.first.second << "\n";
                 } 
                 
             }
@@ -463,6 +476,7 @@ namespace coordinated
         size_t current_sp_distance = INFINITY;
         int max_iterations = -1;
         int nb_iterations = 0;
+        bool verbose_ = false;
         std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> qfuncs_;
         unsigned int window_size_;
         Heuristics<GraphMove, GraphComm> &heuristics_;
@@ -588,7 +602,7 @@ namespace coordinated
                 return partial_conf.size();
             }
             size_t getCost() const{
-                return dist+g;
+                return dist;
             }
             size_t getDistance() const{
                 return dist;
@@ -626,13 +640,13 @@ namespace coordinated
 
             CoordNode init_node(init_partial_conf,init_dist,0);
             open.push(init_node);
-            std::cout << "Starting search...\n";
+            //std::cout << "Starting search...\n";
             std::cout.flush();
             while(!open.empty()){
 
                 this->nb_iterations++;
                 if (this->nb_iterations % 100 == 0){
-                    std::cout << "#" << this->nb_iterations << "\n";
+                    //std::cout << "#" << this->nb_iterations << "\n";
                     std::cout.flush();
                 }
                 if (this->max_iterations > 0 && this->nb_iterations > this->max_iterations){
@@ -669,9 +683,12 @@ namespace coordinated
                         // std::cout << ANSI_YELLOW << "Selected successor: " << c;
                         // std::cout << "\n" << ANSI_RESET;
     #endif  
-                        std::cout << ANSI_YELLOW << "Selected successor: " << c;
-                        std::cout << " with g = " << cnode.g << ", cost = " << cnode.getCost() << "\n" << ANSI_RESET;
-                        std::cout << "Coord made " << nb_iterations << " iterations.\n";
+                        if (this->verbose_){
+                            std::cout << ANSI_YELLOW << c;
+                            std::cout <<'\n';
+                            std::cout << " with g = " << cnode.g << ", cost = " << cnode.getCost() << "\n" << ANSI_RESET;
+                        }
+                        // std::cout << "\tCoord made " << nb_iterations << " iterations.\n";
                         // if (nb_iterations > 10000) std::cout << "Coord made " << nb_iterations << " iterations.\n";
                         partial_conf = cnode.partial_conf;
                         return true;
@@ -697,22 +714,39 @@ namespace coordinated
                     {
                         continue;
                     }
-                    // Otherwise, select it
-                    size_t new_g = cnode.getG();
-                    // This is the value of f_i
+
                     size_t suc_dist_f = p.first.first; 
-                    if (suc_node != source[agent]){
-                        new_g++;
+                    size_t fixed_g = 0; // g-value for agents whose successor have been fixed at this point
+                    for (auto suc : cnode.partial_conf){
+
+                        if (suc.first == agent) {
+                            // This one is already counted in the value of f[index]
+                            continue;
+                        }
+                        if ( this->instance_.start()[suc.first] != suc.second){
+                            fixed_g++;
+                        }
                     }
+                    int new_g = - p.first.second;
+                    // if (suc_node != this->instance_.start()[agent]){
+                    //     new_g++;
+                    // }
+
                     size_t suc_dist_F = 0;
                     for (auto qf : F[index]){
                         suc_dist_F += qf->getValue(cnode.partial_conf);
                     }
-                    CoordNode new_node(cnode.partial_conf, suc_dist_f + suc_dist_F, new_g);
+                    CoordNode new_node(cnode.partial_conf, suc_dist_f + suc_dist_F + fixed_g, new_g+fixed_g);
                     new_node.partial_conf[agent] = suc_node;
-                    open.push(new_node);
-                    // FIXME
-                    // std::cout << "\tPushing node (index: " << index << ") with agent " << agent << " -> " << suc_node << ", cost: " << new_node.getCost() << "\n";
+                
+                    open.push(new_node);                    
+                    #ifdef COORD_DEBUG
+                    std::cout << "\tPushing node (index: " << index << ") with agent " << agent << " -> " << suc_node << "\n";
+                    std::cout << "\t" << "suc_dist_f: " << suc_dist_f << ", suc_distF: " << suc_dist_F << "\n";
+                    std::cout << "\tcost: " << new_node.getCost() << " g: " << new_g+fixed_g << "\n";
+                    std::cout << "\tfixed_g = " << fixed_g << "\n";
+                    #endif
+
 
                     // size_t new_g = cnode.getG();
                     // size_t suc_dist = p.first.first;
@@ -832,10 +866,10 @@ namespace coordinated
             size_t cnear_be_dist = 0;
             size_t min_dist = INFINITY;
             size_t max_dist = 0;
-            int xmax = 0;
-            int xmin = INFINITY;
-            int ymax = 0;
-            int ymin = INFINITY;
+            // int xmax = 0;
+            // int xmin = INFINITY;
+            // int ymax = 0;
+            // int ymin = INFINITY;
             for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
             {
                 size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
@@ -847,36 +881,43 @@ namespace coordinated
                     max_dist = agt_sp_dist;
                 }
                 cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
-                std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
-                if (pos.first < xmin){
-                    xmin = pos.first;
-                }
-                if (pos.first > xmax){
-                    xmax = pos.first;
-                }
-                if (pos.second > ymax){
-                    ymax = pos.second;
-                }
-                if (pos.second < ymin){
-                    ymin = pos.second;
-                }
+                // std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
+                // if (pos.first < xmin){
+                //     xmin = pos.first;
+                // }
+                // if (pos.first > xmax){
+                //     xmax = pos.first;
+                // }
+                // if (pos.second > ymax){
+                //     ymax = pos.second;
+                // }
+                // if (pos.second < ymin){
+                //     ymin = pos.second;
+                // }
             }
             if (cnear_sp_dist < this->current_sp_distance){
                 this->current_sp_distance = cnear_sp_dist;
                 use_dfs = false;
                 // std::cout << "* Coord is improving: " << ANSI_BLUE << this->current_sp_distance << ANSI_RESET << "\n";
             }
+            std::pair<int,int> goalStretch_p = this->instance_.graph().movement().getStretch(this->instance_.goal());
+            int goalStretch = std::max(goalStretch_p.first, goalStretch_p.second);
+            std::pair<int,int> currentStretch_p = this->instance_.graph().movement().getStretch(currentConfiguration);
+            int currentStretch = std::max(currentStretch_p.first, currentStretch_p.second);
             size_t stretch_threshold = this->instance().nb_agents() / 1.5;
-            if (stretch_threshold < 5) 
-                stretch_threshold = 5;
+            if (stretch_threshold < goalStretch) 
+                stretch_threshold = goalStretch+1;
             if (cnear_sp_dist >= cnear_be_dist * 1.2 
                 || min_dist > 5 
-                || (xmax -xmin)> stretch_threshold 
-                || (ymax-ymin) > stretch_threshold)
+                || currentStretch >= stretch_threshold
+            )
             {
-                // std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
-                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
-                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
+                if (this->verbose_){
+                    std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
+                    std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
+                    std::cout << "* Stretch: " << currentStretch << "\n";
+                    std::cout << "\t stretch thr: " << stretch_threshold << "\n";
+                }
                 use_dfs = false;
             } else {
                 // std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
@@ -895,10 +936,12 @@ namespace coordinated
         CoordSolver(const Instance<GraphMove, GraphComm> &instance,
                     const Objective &objective,
                     Heuristics<GraphMove, GraphComm> &heuristics,
-                    unsigned int window_size)
+                    unsigned int window_size,
+                    bool verbose = false)
             : Solver<GraphMove, GraphComm>(instance, objective),
               window_size_(window_size), heuristics_(heuristics),
-              dfs_solver_(instance, objective, heuristics, false)
+              dfs_solver_(instance, objective, heuristics, false),
+              verbose_(verbose)
         {
             config_stack_.push_back(instance.start());
             if (window_size < 2)
@@ -941,11 +984,13 @@ namespace coordinated
          */
         virtual const Execution compute() override
         {
+            int count = 0;
             // int _iterations = 0;
             bool goal_reached = false;
             closed_.clear();
+            closed_.insert(this->instance_.start());
             current_sp_distance = INFINITY;
-            while (!goal_reached)
+            while (!goal_reached )
             {
                 //_iterations++;
                 // Solution found?
@@ -1003,12 +1048,12 @@ namespace coordinated
                 bool success = true;
                 Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
 
-                std::cout << ANSI_YELLOW << next << ANSI_RESET << "\n";
+                // std::cout << ANSI_YELLOW << next << ANSI_RESET << "\n";
                 // std::cout << "d(" << 981 << ", " << 982 << ") = " << this->heuristics_.getHeuristic(981, 982) <<"\n";
                 // std::cout << "d(" << 982 << ", " << 1658 << ") = " << this->heuristics_.getHeuristic(982, 1658) <<"\n";
                 // std::cout << "d(" << 981 << ", " << 1658 << ") = " << this->heuristics_.getHeuristic(981, 1658) <<"\n";
 
-                exit(0);
+                // exit(0);
                 // std::cout << "<";
                 // for(auto n : next){
                 //     std::cout << n << ", ";

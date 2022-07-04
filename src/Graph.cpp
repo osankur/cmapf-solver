@@ -82,7 +82,29 @@ bool ExplicitGraph::isConfigurationConnected(const Configuration& config) const 
     }
     return agent_count == nb_agents;
   }
-
+std::pair<int,int> ExplicitGraph::getStretch(const Configuration & config) const {
+  int xmax = 0;
+  int xmin = INFINITY;
+  int ymax = 0;
+  int ymin = INFINITY;
+  for (auto node : config)
+  {
+      std::pair<int,int> pos = this->getPosition(node);
+      if (pos.first < xmin){
+          xmin = pos.first;
+      }
+      if (pos.first > xmax){
+          xmax = pos.first;
+      }
+      if (pos.second > ymax){
+          ymax = pos.second;
+      }
+      if (pos.second < ymin){
+          ymin = pos.second;
+      }
+  }
+  return std::make_pair(xmax-xmin, ymax-ymin);
+}
 std::pair<float, float> ExplicitGraph::getBarycenter(const Configuration &config) const
 {
   int nb_agents = config.size();
