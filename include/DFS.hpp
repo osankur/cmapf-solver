@@ -66,7 +66,6 @@ namespace coupled
       PartialCostMap g_local;
       PartialConfQueue open_local;
 
-
       auto pi0 = std::make_shared<Configuration>();
       g_local[pi0] = 0;
       open_local.insert(pi0, 0, heuristics_.getHeuristic(*pi, goal));
@@ -79,9 +78,10 @@ namespace coupled
         if (this->iteration_count_ % 1000 == 0){
           // std::cout << "Iteration: " << this->iteration_count_ << "\n";
         }
-        //std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
-        // std::cout << *a;
-        // std::cout << "\n";
+        std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
+        std::cout << *a;
+        std::cout << "g = " << a_g << " cost = " << a_cost << "\n";
+        std::cout << "\n";
         if (this->max_iterations_ > 0 && this->iteration_count_ > this->max_iterations_){
           break;
         }
@@ -100,7 +100,7 @@ namespace coupled
             std::cout << ANSI_RED << "\tFindBestConfiguration ended after " << this->iteration_count_ << " iterations\n" << ANSI_RESET;
           }
           if (verbose_){
-            std::cout << "Best Conf: " << *a;
+            std::cout << *a;
             std::cout << "\ncost: " << a_cost << ", g=" << a_g << "\n";
             std::cout.flush();
           }
@@ -172,7 +172,7 @@ namespace coupled
         // }
         return true;
       }
-
+      this->iteration_count_ = 0;
       std::shared_ptr<Configuration> config = FindBestConfiguration(exec_.back(), goal);
 
       if (config == nullptr)
@@ -214,6 +214,7 @@ namespace coupled
     }
 
     const Execution compute() override {
+      this->iteration_count_ = 0;
       while (!StepCompute());
       return this->execution_;
     }

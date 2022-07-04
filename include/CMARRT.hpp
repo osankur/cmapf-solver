@@ -129,10 +129,15 @@ namespace cmarrt
     std::shared_ptr<Configuration> getRandomConfiguration(
         const Configuration &goal)
     {
+        // auto configuration = std::make_shared<Configuration>();
+        // for (int agt = 0; agt < this->instance().nb_agents(); agt++)
+        // {
+        //   configuration->push_back(first);
+        // }
+        // return configuration;
         // Pick a node of Gc for the 1st agent
         size_t nb_nodes = this->instance().graph().communication().node_count();
         Node first = (uint64_t)rand() % (nb_nodes - 1);
-
         std::vector<Node> config = {first};
         std::unordered_set<Node> neighbors;
         // Pick in the Gc neighbors the position for the 2nd, etc
@@ -466,6 +471,7 @@ namespace cmarrt
 
       // Now decide if we want to run DFS instead
       bool use_dfs = false;
+      int use_dfs_max_iterations = -1;
       if (this->subsolver == SubsolverEnum::COORD_SOLVER && !this->_window_connected && *c_target == this->instance().goal())
       {
         use_dfs = true;
@@ -511,12 +517,14 @@ namespace cmarrt
         // std::pair<float, float> cgoal_barycenter = this->instance().graph().movement().getBarycenter(*c_target);
         // float xdiff = abs(cnear_barycenter.first - cgoal_barycenter.first);
         // float ydiff = abs(cnear_barycenter.second - cgoal_barycenter.second);
-
+        size_t stretch_threshold = this->instance().nb_agents() / 1.5;
+        if (stretch_threshold < 5) 
+          stretch_threshold = 5;
         if (cnear_sp_dist >= cnear_be_dist * 1.2 
             || min_dist > 5 
             // || xdiff > 10 || ydiff > 10 
-            || (xmax -xmin)> this->instance().nb_agents() 
-            || (ymax-ymin) > this->instance().nb_agents())
+            || (xmax -xmin)> stretch_threshold 
+            || (ymax-ymin) > stretch_threshold)
         {
           if (this->_verbose) {
             std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
@@ -563,6 +571,7 @@ namespace cmarrt
                       << ANSI_RESET;
           }
           use_dfs = true;
+          use_dfs_max_iterations = this->max_dfs_iterations_;
         }
       }
       if (use_dfs){
@@ -572,11 +581,10 @@ namespace cmarrt
           {
             addConfiguration(c_new, c_nearest, pathSegment);          
           }
-          // c_nearest = pathSegment.back();
         }
         std::cout << ANSI_BOLD << ANSI_BLUE << "Switching to dfs_solver.\n" << ANSI_RESET;
         std::cout.flush();
-        pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size);
+        pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size,use_dfs_max_iterations);
         std::cout << "Done: " << pathSegment.size() << "\n";
       }
       cend = clock();
@@ -599,7 +607,7 @@ namespace cmarrt
           if (*c_target == this->instance().goal()){
             std::cout << "- Running solver again to move towards ";
             std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
-            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_dfs_iterations_);
+            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_coord_iterations_);
           }
         }
         if (pathSegment.size() == 0)
@@ -619,7 +627,7 @@ namespace cmarrt
           if (*c_target == this->instance().goal()){
             std::cout << "- Running solver again to move towards ";
             std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
-            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_dfs_iterations_);
+            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_coord_iterations_);
             if (pathSegment.size() > 0){
               c_new = pathSegment.back();
               if (not(this->treeContains(*c_new)))

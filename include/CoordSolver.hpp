@@ -19,11 +19,12 @@
  */
 #pragma once
 
- //#define COORD_DEBUG
+#define COORD_DEBUG
 
 #define INFINITY std::numeric_limits<int>::max()
 
 #include <CMAPF.hpp>
+#include <DFS.hpp>
 #include <Execution.hpp>
 #include <Instance.hpp>
 #include <Objective.hpp>
@@ -34,7 +35,8 @@
 #include <set>
 #include <queue>
 #include <unordered_set>
-
+#include <algorithm>
+#include <list>
 namespace coordinated
 {
 
@@ -72,39 +74,6 @@ namespace coordinated
                 check.insert(node);
             }
             return true;
-        }
-
-        bool isConnected(const std::vector<Node> &next_conf)
-        {
-            std::set<Node> to_check;
-            for (int i = 0; i < next_conf.size(); i++)
-                to_check.insert(next_conf[i]);
-            std::list<Node> open;
-            open.push_back(next_conf[0]);
-            while (!open.empty())
-            {
-                Node node = open.back();
-                open.pop_back();
-                to_check.erase(node);
-                // LOG_INFO("Popped " + std::to_string(node) + ". Remaining " + std::to_string(to_check.size()) + " in open");
-                auto neighbors = instance_.graph().communication().get_neighbors(node);
-                // LOG_INFO("Neighborhood is: ");
-                // for(auto node : neighbors){
-                //     std::cout << node << ", ";
-                // }
-                // std::cout << "\n";
-                for (auto m : to_check)
-                {
-                    if (neighbors.contains(m))
-                    {
-                        open.push_back(m);
-                        // LOG_INFO("Adding " + std::to_string(m));
-                    }
-                }
-            }
-            if (to_check.empty())
-                return true;
-            return false;
         }
 
     public:
@@ -180,16 +149,36 @@ namespace coordinated
             //      std::cerr << node << " ";
             //  }
             //  std::cerr << "\n";
+            // std::cerr << "qf has arguments: ";
+            // for (auto agent : this->arguments())
+            // {
+            //     std::cerr << agent << " ";
+            // }
+            // std::cerr << "\n";
+            // std::cerr << "next_conf defined for: ";
+            // for (auto p : next_partial_conf){
+            //     std::cerr << p.first << " ";
+            // }
+            // std::cerr << "\n";
+
             Configuration our_nodes;
             for (auto agent : this->arguments())
             {
+                // if(next_partial_conf.find(agent) == next_partial_conf.end()){
+                //     std::cerr << "Agent " << agent << " must be defined for evaluating qf.\n";
+                //     exit(-1);
+                // }
                 our_nodes.push_back(next_partial_conf.find(agent)->second);
             }
             // LOG_DEBUG("Are they connected: " + std::to_string(this->isConnected(our_nodes)));
-            if (!this->isConnected(our_nodes))
-            {
+            if (!this->instance_.graph().communication().isConfigurationConnected(our_nodes)){
                 return INFINITY;
             }
+            // assert(this->isConnected(our_nodes) == this->instance_.graph().communication().isConfigurationConnected(our_nodes));
+            // if (!this->isConnected(our_nodes))
+            // {
+            //     return INFINITY;
+            // }
             // else if (this->instance_.getCollisionMode() == CollisionMode::CHECK_COLLISIONS && !this->isCollisionless(our_nodes))
             else if (this->instance_.getCollisionMode() == CollisionMode::CHECK_COLLISIONS && our_nodes.hasCollisions())
             {
@@ -465,37 +454,20 @@ namespace coordinated
         {
             return qfuncs_;
         }
-
-        // void print()
-        // {
-        //     for (const auto p : data_)
-        //     {
-        //         const std::vector<Node> &key = p.first;
-        //         const auto &val = p.second;
-        //         std::cerr << "CONF ";
-        //         for (auto n : key)
-        //         {
-        //             std::cerr << n << " ";
-        //         }
-        //         std::cerr << ": ";
-        //         for (auto n : p.second)
-        //         {
-        //             std::cerr << "(node=" << n.second << ", dist=" << n.first << ") ";
-        //         }
-        //         std::cerr << "\n";
-        //     }
-        // }
     };
 
     template <class GraphMove, class GraphComm>
     class CoordSolver : public Solver<GraphMove, GraphComm>, public BoundedSolver<GraphMove, GraphComm>
     {
     private:
+        size_t current_sp_distance = INFINITY;
         int max_iterations = -1;
         int nb_iterations = 0;
         std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> qfuncs_;
         unsigned int window_size_;
         Heuristics<GraphMove, GraphComm> &heuristics_;
+        coupled::DFS<GraphMove, GraphComm> dfs_solver_;
+
 
         std::vector<Configuration> config_stack_;
         std::set<Configuration> closed_;
@@ -551,8 +523,14 @@ namespace coordinated
          *
          * @pre initialize_qfuncs has been called
          * @pre agent_to_eliminate appears in the arguments of some qfuncs
+         * @param agent_to_eliminate all qfuncs which depends on this agent will be combined into a new compound qfunc
+         * @param compoundQFunc the new compound qfunc that combines the eliminated qfuncs
+         * @param qfuncsAfterElim the vector of all qfuncs that after the operation excluding the newly created compound qfunc
          */
-        void reduce_qfuncs(Agent agent_to_eliminate)
+        void reduce_qfuncs(Agent agent_to_eliminate,
+            std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> & compoundQFunc,
+            std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>> & qfuncsAfterElim
+            )
         {
 #ifdef COORD_DEBUG
                 std::cout << "Eliminating agent " << agent_to_eliminate << "\n";
@@ -575,19 +553,22 @@ namespace coordinated
             }
             if (qfuncs_elim.size() == 0)
                 return;
-            std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> qf_comp =
+            //std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> qf_comp
+            compoundQFunc =
                 std::make_shared<LocalQCompound<GraphMove, GraphComm>>(this->instance_, this->heuristics_,
                                                                        qfuncs_elim[0]->getSourceConfiguration(),
                                                                        qfuncs_elim[0]->getGoalConfiguration(),
                                                                        qfuncs_elim,
                                                                        agent_to_eliminate);
+
             // std::cout << "After eliminating " << agent_to_eliminate << "\n";
             // std::cout << "\tArguments of the compound: ";
             // for (auto a : qf_comp->arguments()){
             //     std::cout << a << " ";
             // }
             // std::cout << "\n";
-            qfuncs_rem.push_back(qf_comp);
+            qfuncsAfterElim = qfuncs_rem;
+            qfuncs_rem.push_back(compoundQFunc);
             qfuncs_ = qfuncs_rem;
         }
 
@@ -629,18 +610,31 @@ namespace coordinated
             }
         };
         bool get_next_best_rec(const Configuration &source,
-                               std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &linearized,
+                               std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> &f,
+                               std::vector<std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>>> & F,
                                std::map<Agent, Node> &partial_conf)
         {
             size_t nb_agents = this->instance().nb_agents();
             std::map<Agent, Node> init_partial_conf;
             CoordNodeCmp cmp;
             std::priority_queue<CoordNode, std::vector<CoordNode>, CoordNodeCmp> open(cmp);
-            CoordNode init_node(init_partial_conf,0,0);
+            
+            size_t init_dist = 0;
+            for (int  agt = 0; agt < this->instance_.nb_agents(); agt++){
+                init_dist += this->heuristics_.getHeuristic(source[agt], this->instance_.goal()[agt]);
+            }
+
+            CoordNode init_node(init_partial_conf,init_dist,0);
             open.push(init_node);
+            std::cout << "Starting search...\n";
+            std::cout.flush();
             while(!open.empty()){
 
                 this->nb_iterations++;
+                if (this->nb_iterations % 100 == 0){
+                    std::cout << "#" << this->nb_iterations << "\n";
+                    std::cout.flush();
+                }
                 if (this->max_iterations > 0 && this->nb_iterations > this->max_iterations){
                     return false;
                 }
@@ -672,19 +666,21 @@ namespace coordinated
                     } else {
                         closed_.insert(c);
     #ifdef COORD_DEBUG
-                        std::cout << ANSI_YELLOW << "Selected successor: " << c;
-                        std::cout << " with g = " << cnode.g << ", cost = " << cnode.getCost() << "\n" << ANSI_RESET;
                         // std::cout << ANSI_YELLOW << "Selected successor: " << c;
                         // std::cout << "\n" << ANSI_RESET;
     #endif  
+                        std::cout << ANSI_YELLOW << "Selected successor: " << c;
+                        std::cout << " with g = " << cnode.g << ", cost = " << cnode.getCost() << "\n" << ANSI_RESET;
+                        std::cout << "Coord made " << nb_iterations << " iterations.\n";
+                        // if (nb_iterations > 10000) std::cout << "Coord made " << nb_iterations << " iterations.\n";
                         partial_conf = cnode.partial_conf;
-                        if (nb_iterations > 10000) std::cout << "Coord made " << nb_iterations << " iterations.\n";
                         return true;
                     }                                  
                 }
                 size_t index = cnode.partial_conf.size();
-                Agent agent = linearized[index]->agent_to_eliminate();
-                auto successors = linearized[index]->getValueVector(cnode.partial_conf);
+                // std::cout << "Index: " << index << "\n";
+                Agent agent = f[index]->agent_to_eliminate();
+                auto successors = f[index]->getValueVector(cnode.partial_conf);
                 if (successors.size() == 0)
                 {
                     continue;
@@ -703,14 +699,29 @@ namespace coordinated
                     }
                     // Otherwise, select it
                     size_t new_g = cnode.getG();
-                    size_t suc_dist = p.first.first;
+                    // This is the value of f_i
+                    size_t suc_dist_f = p.first.first; 
                     if (suc_node != source[agent]){
                         new_g++;
                     }
-                    CoordNode new_node(cnode.partial_conf, suc_dist, new_g);
-                    // std::cout <<"\tg=" << new_node.getG() <<" and cost=" << new_node.getCost() <<"\n";
+                    size_t suc_dist_F = 0;
+                    for (auto qf : F[index]){
+                        suc_dist_F += qf->getValue(cnode.partial_conf);
+                    }
+                    CoordNode new_node(cnode.partial_conf, suc_dist_f + suc_dist_F, new_g);
                     new_node.partial_conf[agent] = suc_node;
                     open.push(new_node);
+                    // FIXME
+                    // std::cout << "\tPushing node (index: " << index << ") with agent " << agent << " -> " << suc_node << ", cost: " << new_node.getCost() << "\n";
+
+                    // size_t new_g = cnode.getG();
+                    // size_t suc_dist = p.first.first;
+                    // if (suc_node != source[agent]){
+                    //     new_g++;
+                    // }
+                    // CoordNode new_node(cnode.partial_conf, suc_dist, new_g);
+                    // new_node.partial_conf[agent] = suc_node;
+                    // open.push(new_node);
 
                     // std::cout << "Adding new node: ";
                     // for (auto p : new_node.partial_conf)
@@ -730,54 +741,80 @@ namespace coordinated
             #ifdef COORD_DEBUG
             std::cout << ANSI_BLUE << "\nget_next_best\n" << ANSI_RESET;
             #endif
+            // Each f[n-i-1] is the compound qfunc created when eliminating Agent i
+            // and depends on agents 0,...,i-1.
+            std::list<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> flist;
+            // Each F[n-i-1] is the set of qfuncs that remain after eliminating Agent i (excluding the newly created compound qfunc)
+            // and depends on agents 0,...,i-1.
+            std::list<std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>>> Flist;
             initialize_qfuncs(source, goal);
             // std::cout << "Reducing...\n";
+            // std::cout.flush();
+
             for (int i = 0; i < this->instance_.nb_agents(); i++)
             {
-                // for (auto qf : qfuncs_)
-                // {
-                //     std::cerr << "[";
-                //     for (auto i : qf->arguments())
-                //     {
-                //         std::cerr << i << " ";
-                //     }
-                //     std::cerr << "] ";
-                // }
-                // std::cerr << "\n";
-                reduce_qfuncs(i);
+                std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> newf = nullptr;
+                auto newF = std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>>();
+                reduce_qfuncs(i, newf, newF);
+                flist.push_front(newf);
+                Flist.push_front(newF);
             }
-
+            std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> f(flist.begin(), flist.end());
+            std::vector<std::vector<std::shared_ptr<LocalQ<GraphMove, GraphComm>>>> F(Flist.begin(), Flist.end());
+#ifdef COORD_DEBUG
+            for (int i = 0; i < this->instance_.nb_agents(); i++){
+                for (auto qf : qfuncs_)
+                {
+                    std::cerr << "f_" << i << "(";
+                    for (auto i : f[i]->arguments())
+                    {
+                        std::cerr << i << " ";
+                    }
+                    std::cerr << " !" << f[i]->agent_to_eliminate() << "!) F: ";
+                    for (auto qf : F[i]){
+                        std::cerr << "(";
+                        for (auto i : qf->arguments())
+                        {
+                            std::cerr << i << " ";
+                        }
+                        std::cerr << ") ";
+                    }
+                }
+                std::cerr << "\n";
+            }
+#endif
             assert(qfuncs_.size() == 1);
-            assert(qfuncs_[0]->arguments().size() == 0);
+            assert(qfuncs_[0]->arguments().size() == 0);            
             assert((dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(qfuncs_[0].get()) != nullptr));
 
             // Obtain a list of compound Q-functions in topological order
             // (each qfunc depends only on the variables determined by the functions on its left)
-            std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> linearized;
-            std::queue<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> open;
-            open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove, GraphComm>>(qfuncs_[0]));
-            while (!open.empty())
-            {
-                std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> qf = open.front();
-                open.pop();
-                linearized.push_back(qf);
-                for (auto child_qf : qf->qfunctions())
-                {
-                    if (dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(child_qf.get()) != nullptr)
-                    {
-                        // std::shared_ptr<B> bp = std::dynamic_pointer_cast<B>(ap);
-                        open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove, GraphComm>>(child_qf));
-                    }
-                }
-            }
+            // std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> linearized;
+            // std::queue<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> open;
+            // open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove, GraphComm>>(qfuncs_[0]));
+            // while (!open.empty())
+            // {
+            //     std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> qf = open.front();
+            //     open.pop();
+            //     linearized.push_back(qf);
+            //     assert(linearized.back() == f[linearized.size()-1]);
+            //     for (auto child_qf : qf->qfunctions())
+            //     {
+            //         if (dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(child_qf.get()) != nullptr)
+            //         {
+            //             // std::shared_ptr<B> bp = std::dynamic_pointer_cast<B>(ap);
+            //             open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove, GraphComm>>(child_qf));
+            //         }
+            //     }
+            // }
 
-            // An agent is eliminated at each compound q-function, so there must be exactly nb_agents such objects
-            assert(linearized.size() == this->instance().nb_agents());
+            // // An agent is eliminated at each compound q-function, so there must be exactly nb_agents such objects
+            // assert(linearized.size() == this->instance().nb_agents());
 
             // Choose the best successor
             std::map<Agent, Node> partial_conf;
             std::set<Node> node_support;
-            success = get_next_best_rec(source, linearized, partial_conf);
+            success = get_next_best_rec(source, f, F, partial_conf);
             Configuration successor(source.size());
             if (success)
             {
@@ -789,6 +826,65 @@ namespace coordinated
             return successor;
         }
 
+        bool doWeSwitchToDFS(Configuration & currentConfiguration){
+            bool use_dfs = true;
+            size_t cnear_sp_dist = 0;
+            size_t cnear_be_dist = 0;
+            size_t min_dist = INFINITY;
+            size_t max_dist = 0;
+            int xmax = 0;
+            int xmin = INFINITY;
+            int ymax = 0;
+            int ymin = INFINITY;
+            for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
+            {
+                size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
+                cnear_sp_dist += agt_sp_dist;
+                if (agt_sp_dist < min_dist ){
+                    min_dist = agt_sp_dist;
+                }
+                if (agt_sp_dist > max_dist){
+                    max_dist = agt_sp_dist;
+                }
+                cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
+                std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
+                if (pos.first < xmin){
+                    xmin = pos.first;
+                }
+                if (pos.first > xmax){
+                    xmax = pos.first;
+                }
+                if (pos.second > ymax){
+                    ymax = pos.second;
+                }
+                if (pos.second < ymin){
+                    ymin = pos.second;
+                }
+            }
+            if (cnear_sp_dist < this->current_sp_distance){
+                this->current_sp_distance = cnear_sp_dist;
+                use_dfs = false;
+                // std::cout << "* Coord is improving: " << ANSI_BLUE << this->current_sp_distance << ANSI_RESET << "\n";
+            }
+            size_t stretch_threshold = this->instance().nb_agents() / 1.5;
+            if (stretch_threshold < 5) 
+                stretch_threshold = 5;
+            if (cnear_sp_dist >= cnear_be_dist * 1.2 
+                || min_dist > 5 
+                || (xmax -xmin)> stretch_threshold 
+                || (ymax-ymin) > stretch_threshold)
+            {
+                // std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
+                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
+                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
+                use_dfs = false;
+            } else {
+                // std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
+                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << min_dist << ", max=" << max_dist << "\n";
+                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin)  << ANSI_RESET << " y=" << ANSI_RED << (ymax-ymin)  << ANSI_RESET << "\n";
+            }
+            return use_dfs;
+        }
     public:
         /**
          * @brief
@@ -801,7 +897,8 @@ namespace coordinated
                     Heuristics<GraphMove, GraphComm> &heuristics,
                     unsigned int window_size)
             : Solver<GraphMove, GraphComm>(instance, objective),
-              window_size_(window_size), heuristics_(heuristics)
+              window_size_(window_size), heuristics_(heuristics),
+              dfs_solver_(instance, objective, heuristics, false)
         {
             config_stack_.push_back(instance.start());
             if (window_size < 2)
@@ -847,6 +944,7 @@ namespace coordinated
             // int _iterations = 0;
             bool goal_reached = false;
             closed_.clear();
+            current_sp_distance = INFINITY;
             while (!goal_reached)
             {
                 //_iterations++;
@@ -877,9 +975,40 @@ namespace coordinated
                     goal_reached = true;
                     break;
                 }
+
+                if (this->doWeSwitchToDFS(config_stack_.back())){
+                    std::vector<std::shared_ptr<Configuration> > suffix = this->dfs_solver_.computeBoundedPathTowards(config_stack_.back(), this->instance_.goal(), 1000000);
+                    // Success
+                    if (*suffix.back() == this->instance_.goal()){
+                        auto it = suffix.begin()+1; // copy by ignoring the first element which is duplicated
+                        for(; it != suffix.end(); it++){
+                            config_stack_.push_back(**it);
+                        }
+                        for (int i = 0; i < this->instance_.nb_agents(); i++)
+                        {
+                            std::shared_ptr<Path> path = std::make_shared<Path>();
+                            for (auto c : config_stack_)
+                            {
+                                path->push_back(c[i]);
+                            }
+                            this->execution_.push_back(path);
+                        }
+                        goal_reached = true;
+                        break;
+                    } else { // Failure
+                        return Execution();
+                    }
+                }
+
                 bool success = true;
                 Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
 
+                std::cout << ANSI_YELLOW << next << ANSI_RESET << "\n";
+                // std::cout << "d(" << 981 << ", " << 982 << ") = " << this->heuristics_.getHeuristic(981, 982) <<"\n";
+                // std::cout << "d(" << 982 << ", " << 1658 << ") = " << this->heuristics_.getHeuristic(982, 1658) <<"\n";
+                // std::cout << "d(" << 981 << ", " << 1658 << ") = " << this->heuristics_.getHeuristic(981, 1658) <<"\n";
+
+                exit(0);
                 // std::cout << "<";
                 // for(auto n : next){
                 //     std::cout << n << ", ";
@@ -942,6 +1071,7 @@ namespace coordinated
             }
             //closed_.clear();
             closed_.insert(source);
+            current_sp_distance = INFINITY;
             std::vector<std::shared_ptr<Configuration>> pathSegment{std::make_shared<Configuration>(source)};
             for (int i = 0; i < steps; i++)
             {

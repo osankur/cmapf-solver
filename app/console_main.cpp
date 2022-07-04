@@ -50,7 +50,7 @@ int main(int argc, const char *argv[])
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
         "verbose,v", value<bool>()->default_value(true), "Verbose mode.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
-        "step_size,s", value<int>()->default_value(10), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.")(
+        "step_size,s", value<int>()->default_value(25), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.")(
         "exec", value<bool>()->default_value(false), "Show execution.");
 
     variables_map vm;
@@ -173,6 +173,7 @@ int main(int argc, const char *argv[])
     // exit(0);
 
     AStarSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
+    // DijkstraSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
     std::unique_ptr<Heuristics<ExplicitGraph, ExplicitGraph>> heuristics = nullptr;
     auto heuristics_mode = magic_enum::enum_cast<HeuristicsEnum>(vm["heuristics"].as<std::string>());
     switch (heuristics_mode.value())

@@ -35,6 +35,8 @@ def plot_success():
             with open(absfile[1], mode='r') as csv_file:
                 lines = list(csv_file.readlines())
                 nb_lines = len(lines)
+                if nb_lines <= 0:
+                    nb_lines = 1
                 #print("nb_lines: ", nb_lines)
                 # success = len(lines)
                 success = 0
