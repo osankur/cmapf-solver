@@ -19,8 +19,7 @@ enum class Algorithm : int
 {
   CBS = 0,
   CCBS,
-  CA,
-  MAS,
+  CASTAR,
   DFS,
   COORD,
   CMARRT,

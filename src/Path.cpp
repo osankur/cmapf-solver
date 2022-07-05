@@ -18,9 +18,9 @@
 #include <iostream>
 #include <Graph.hpp>
 
-Path::Path() {}
+Path::Path() : std::vector<Node>() {}
 
-Path::Path(const Path& rhs) : std::vector<Node>(*this) {}
+Path::Path(const Path& rhs) : std::vector<Node>(rhs) {}
 
 //void Path::Resize(size_t time) { path_.resize(time); }
 

@@ -313,7 +313,7 @@ namespace coupled
      *
      * @return last configuration of the computed execution.
      */
-    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps, int max_iterations=-1) override
+    std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps = -1, int max_iterations=-1) override
     {
       exec_.clear();
       exec_.push_back(std::make_shared<Configuration>(source));
@@ -322,7 +322,7 @@ namespace coupled
       this->iteration_count_ = 0;
       // closed_.insert(std::make_shared<Configuration>(source));
 
-      for (int i = 0; i < steps; i++)
+      for (int i = 0; steps == - 1 || i < steps; i++)
       {
         if (StepCompute(goal)) break;
         if (this->max_iterations_ > 0 && this->iteration_count_ > this->max_iterations_)

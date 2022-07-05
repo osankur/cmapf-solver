@@ -24,14 +24,16 @@
 #include <DFS.hpp>
 #include <CoordSolver.hpp>
 #include <CMARRT.hpp>
+#include <CAStar.hpp>
 #include "AppConfig.h"
+#include <vector>
 
 using namespace boost::program_options;
 
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
-constexpr char DEFAULT_COLLISIONS[] = "IGNORE_COLLISIONS";
+constexpr char DEFAULT_COLLISIONS[] = "CHECK_COLLISIONS";
 constexpr char DEFAULT_SUBSOLVER[] = "COORD_SOLVER";
 
 int main(int argc, const char *argv[])
@@ -171,6 +173,15 @@ int main(int argc, const char *argv[])
     // }
     // std::cout << ">\n";
     // exit(0);
+    int random_seed = vm["random_seed"].as<int>();
+    if (random_seed < 0)
+    {
+      srand(time(NULL));
+    }
+    else
+    {
+      srand(random_seed);
+    }
 
     AStarSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
     // DijkstraSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
@@ -213,17 +224,11 @@ int main(int argc, const char *argv[])
                                                                                         *heuristics.get(),
                                                                                         window_size);
       break;
+    case Algorithm::CASTAR:
+      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), verbose);
+      break;
     case Algorithm::CMARRT:
     case Algorithm::CMARRTSTAR:
-      int random_seed = vm["random_seed"].as<int>();
-      if (random_seed < 0)
-      {
-        srand(time(NULL));
-      }
-      else
-      {
-        srand(random_seed);
-      }
       bool cmarrtstar = algo.value() == Algorithm::CMARRTSTAR;
       LOG_INFO("Prob2goal:" << vm["prob2goal"].as<int>());
       LOG_INFO("Step size:" << vm["step_size"].as<int>());
