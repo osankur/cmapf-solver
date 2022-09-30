@@ -65,8 +65,7 @@ namespace cmarrt
     // Whether start and goal configurations are window-connected
     bool _window_connected = false;
 
-    int max_dfs_iterations_ = 50000;
-    int max_coord_iterations_ = 50000;
+    int max_subsolver_iterations_ = 50000;
 
     Heuristics<GraphMove, GraphComm> &heuristics_;
 
@@ -462,12 +461,7 @@ namespace cmarrt
 
 
       // If we are moving towards a random configuration; then limit the nb of iterations
-      int max_its = -1;
-      if (*c_target != this->instance().goal()){
-        max_its = this->max_coord_iterations_;
-      }
-      pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size, max_its);
-
+      pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size, this->max_subsolver_iterations_);
 
       // Now decide if we want to run DFS instead
       bool use_dfs = false;
@@ -571,7 +565,7 @@ namespace cmarrt
                       << ANSI_RESET;
           }
           use_dfs = true;
-          use_dfs_max_iterations = this->max_dfs_iterations_;
+          use_dfs_max_iterations = this->max_subsolver_iterations_;
         }
       }
       if (use_dfs){
@@ -603,15 +597,8 @@ namespace cmarrt
           std::cout << ANSI_RED << "computeBoundedPathTowards failed.\n"
                     << ANSI_RESET;
           std::cout.flush();
-          // If we were moving towards goal and have failed, then try moving towards crand
-          if (*c_target == this->instance().goal()){
-            std::cout << "- Running solver again to move towards ";
-            std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
-            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_coord_iterations_);
-          }
         }
-        if (pathSegment.size() == 0)
-          return;
+        return;
       }
 
       std::shared_ptr<Configuration> c_new = pathSegment.back();
@@ -621,45 +608,22 @@ namespace cmarrt
       } else {
         if (!this->towards_goal_becoming_redundant_)
           this->towards_goal_becoming_redundant_ = true;
-        if (_verbose)
-        {
-          std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << " (use_dfs: " << use_dfs << ")\n";
-          if (*c_target == this->instance().goal()){
-            std::cout << "- Running solver again to move towards ";
-            std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
-            pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_coord_iterations_);
-            if (pathSegment.size() > 0){
-              c_new = pathSegment.back();
-              if (not(this->treeContains(*c_new)))
-              {
-                addConfiguration(c_new, c_nearest, pathSegment);
-              }
-            }
-          }
-
-          // if (!use_dfs){
-          //   std::cout << "- Running DFS subsolver with bound... ";
-          //   std::cout.flush();
-          //   pathSegment = dfs_solver_.computeBoundedPathTowards(*c_nearest, *c_target, this->_step_size, this->max_dfs_iterations_);
-          //   if (pathSegment.size() ==0){
-          //     std::cout << "- Failed.\n";
-          //   } else {
-          //     std::cout << "- Done: " << pathSegment.size() << "\n";
-          //     c_new = pathSegment.back();
-          //     if (not(this->treeContains(*c_new)))
-          //     {
-          //       addConfiguration(c_new, c_nearest, pathSegment);
-          //     }
-          //   }
-          // }
-
-          // std::cout << "\tPath segment has size " << pathSegment.size() << ": \n";
-          // for (auto c : pathSegment){
-          //   std::cout << "\t" << *c;
-          //   std::cout << "\n";
-          // }
-          // std::cout.flush();
-        }
+        std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << " (use_dfs: " << use_dfs << ")\n";
+        // if (_verbose)
+        // {
+        //   if (*c_target == this->instance().goal()){
+        //     std::cout << "- Running solver again to move towards ";
+        //     std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
+        //     pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_subsolver_iterations_);
+        //     if (pathSegment.size() > 0){
+        //       c_new = pathSegment.back();
+        //       if (not(this->treeContains(*c_new)))
+        //       {
+        //         addConfiguration(c_new, c_nearest, pathSegment);
+        //       }
+        //     }
+        //   }
+        // }
       }
 
       if (_cmarrtstar){

@@ -34,7 +34,7 @@ constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
 constexpr char DEFAULT_COLLISIONS[] = "CHECK_COLLISIONS";
-constexpr char DEFAULT_SUBSOLVER[] = "COORD_SOLVER";
+constexpr char DEFAULT_SUBSOLVER[] = "DFS_SOLVER";
 
 int main(int argc, const char *argv[])
 {
@@ -50,6 +50,7 @@ int main(int argc, const char *argv[])
         "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: BIRDEYE or SHORTEST_PATH")(
         "subsolver,ss", value<std::string>()->default_value(DEFAULT_SUBSOLVER), "Which solver to use to generate segment paths in CMARRT: DECOUPLED_SOLVER | DFS_SOLVER | COORD_SOLVER.")(
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
+        "nb_trials,nbt", value<int>()->default_value(100), "Number of trials to be made by CA*.")(
         "verbose,v", value<bool>()->default_value(true), "Verbose mode.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(25), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.")(
@@ -203,6 +204,7 @@ int main(int argc, const char *argv[])
 
     int window_size = vm["window"].as<int>();
     LOG_INFO("Window size:" << window_size);
+    int number_of_trials = vm["nb_trials"].as<int>();
     bool verbose = vm["verbose"].as<bool>();
     LOG_INFO("Verbose: " << verbose);
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
@@ -225,7 +227,7 @@ int main(int argc, const char *argv[])
                                                                                         window_size);
       break;
     case Algorithm::CASTAR:
-      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), verbose);
+      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_trials, verbose);
       break;
     case Algorithm::CMARRT:
     case Algorithm::CMARRTSTAR:

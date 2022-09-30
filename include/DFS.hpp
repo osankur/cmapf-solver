@@ -175,61 +175,61 @@ namespace coupled
       }
       return nullptr;
     }
-        bool doWeSwitchToDFS(Configuration & currentConfiguration){
-            bool use_dfs = true;
-            size_t cnear_sp_dist = 0;
-            size_t cnear_be_dist = 0;
-            size_t min_dist = INFINITY;
-            size_t max_dist = 0;
-            int xmax = 0;
-            int xmin = INFINITY;
-            int ymax = 0;
-            int ymin = INFINITY;
-            for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
-            {
-                size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
-                cnear_sp_dist += agt_sp_dist;
-                if (agt_sp_dist < min_dist ){
-                    min_dist = agt_sp_dist;
-                }
-                if (agt_sp_dist > max_dist){
-                    max_dist = agt_sp_dist;
-                }
-                cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
-                std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
-                if (pos.first < xmin){
-                    xmin = pos.first;
-                }
-                if (pos.first > xmax){
-                    xmax = pos.first;
-                }
-                if (pos.second > ymax){
-                    ymax = pos.second;
-                }
-                if (pos.second < ymin){
-                    ymin = pos.second;
-                }
-            }
+        // bool doWeSwitchToDFS(Configuration & currentConfiguration){
+        //     bool use_dfs = true;
+        //     size_t cnear_sp_dist = 0;
+        //     size_t cnear_be_dist = 0;
+        //     size_t min_dist = INFINITY;
+        //     size_t max_dist = 0;
+        //     int xmax = 0;
+        //     int xmin = INFINITY;
+        //     int ymax = 0;
+        //     int ymin = INFINITY;
+        //     for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
+        //     {
+        //         size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
+        //         cnear_sp_dist += agt_sp_dist;
+        //         if (agt_sp_dist < min_dist ){
+        //             min_dist = agt_sp_dist;
+        //         }
+        //         if (agt_sp_dist > max_dist){
+        //             max_dist = agt_sp_dist;
+        //         }
+        //         cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
+        //         std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
+        //         if (pos.first < xmin){
+        //             xmin = pos.first;
+        //         }
+        //         if (pos.first > xmax){
+        //             xmax = pos.first;
+        //         }
+        //         if (pos.second > ymax){
+        //             ymax = pos.second;
+        //         }
+        //         if (pos.second < ymin){
+        //             ymin = pos.second;
+        //         }
+        //     }
 
-            size_t stretch_threshold = this->instance().nb_agents() / 1.5;
-            if (stretch_threshold < 5) 
-                stretch_threshold = 5;
-            if (cnear_sp_dist >= cnear_be_dist * 1.2 
-                || min_dist > 5 
-                || (xmax -xmin)> stretch_threshold 
-                || (ymax-ymin) > stretch_threshold)
-            {
-                // std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
-                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
-                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
-                use_dfs = false;
-            } else {
-                // std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
-                // std::cout << "* Min/Max Distance of agents to their goals: Min=" << min_dist << ", max=" << max_dist << "\n";
-                // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin)  << ANSI_RESET << " y=" << ANSI_RED << (ymax-ymin)  << ANSI_RESET << "\n";
-            }
-            return use_dfs;
-        }
+        //     size_t stretch_threshold = this->instance().nb_agents() / 1.5;
+        //     if (stretch_threshold < 5) 
+        //         stretch_threshold = 5;
+        //     if (cnear_sp_dist >= cnear_be_dist * 1.2 
+        //         || min_dist > 5 
+        //         || (xmax -xmin)> stretch_threshold 
+        //         || (ymax-ymin) > stretch_threshold)
+        //     {
+        //         // std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
+        //         // std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
+        //         // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
+        //         use_dfs = false;
+        //     } else {
+        //         // std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
+        //         // std::cout << "* Min/Max Distance of agents to their goals: Min=" << min_dist << ", max=" << max_dist << "\n";
+        //         // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin)  << ANSI_RESET << " y=" << ANSI_RED << (ymax-ymin)  << ANSI_RESET << "\n";
+        //     }
+        //     return use_dfs;
+        // }
 
     /**
      * @brief execute one step of computation of DFS from [Tateo et al.] towards given custom goal
@@ -267,7 +267,6 @@ namespace coupled
         closed_.insert(config);
         exec_.push_back(config);
       }
-      return doWeSwitchToDFS(*config);
       return false;
     }
 
@@ -308,10 +307,9 @@ namespace coupled
 
     /**
      * @brief compute an execution that goes
-     * `steps` steps from source towards goal (but not necessary reaching the goal), and return the last configuration of this execution.
-     * If the greedy algorithm is stuck (retuning nullptr), the function returns the last configuration that was generated.
+     * `steps` steps from source towards goal (but not necessary reaching the goal).
      *
-     * @return last configuration of the computed execution.
+     * @return computed partial execution towards goal
      */
     std::vector<std::shared_ptr<Configuration> > computeBoundedPathTowards(const Configuration & source, const Configuration & goal, int steps = -1, int max_iterations=-1) override
     {
