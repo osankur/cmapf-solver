@@ -50,7 +50,8 @@ int main(int argc, const char *argv[])
         "heuristics,h", value<std::string>()->default_value(DEFAULT_HEURISTICS), "The heuristics to be used in DFS and CMARRT: BIRDEYE or SHORTEST_PATH")(
         "subsolver,ss", value<std::string>()->default_value(DEFAULT_SUBSOLVER), "Which solver to use to generate segment paths in CMARRT: DECOUPLED_SOLVER | DFS_SOLVER | COORD_SOLVER.")(
         "random_seed,rs", value<int>()->default_value(-1), "Seed for the random generator.")(
-        "nb_trials,nbt", value<int>()->default_value(100), "Number of trials to be made by CA*.")(
+        "nb_trials,nbt", value<int>()->default_value(100), "Number of trials from scratch to be made by CA*.")(
+        "nb_subtrials,nbst", value<int>()->default_value(100), "Number of subtrials to be made by CA* to extend found execution.")(
         "verbose,v", value<bool>()->default_value(true), "Verbose mode.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(25), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.")(
@@ -205,6 +206,7 @@ int main(int argc, const char *argv[])
     int window_size = vm["window"].as<int>();
     LOG_INFO("Window size:" << window_size);
     int number_of_trials = vm["nb_trials"].as<int>();
+    int number_of_subtrials = vm["nb_subtrials"].as<int>();
     bool verbose = vm["verbose"].as<bool>();
     LOG_INFO("Verbose: " << verbose);
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
@@ -227,7 +229,9 @@ int main(int argc, const char *argv[])
                                                                                         window_size);
       break;
     case Algorithm::CASTAR:
-      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_trials, verbose);
+      LOG_INFO("Number of trials: " << number_of_trials);
+      LOG_INFO("Number of subtrials: " << number_of_subtrials);
+      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_trials, number_of_subtrials, verbose);
       break;
     case Algorithm::CMARRT:
     case Algorithm::CMARRTSTAR:

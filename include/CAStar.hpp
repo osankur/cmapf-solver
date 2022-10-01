@@ -43,41 +43,20 @@ private:
     Heuristics<GraphMove, GraphComm> & heuristics_;
     bool verbose_ = false;
     int number_of_trials_ = 100;
+    int number_of_subtrials_ = 100;
 public:
-    CAStar(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_trials, bool verbose)
-        : Solver<GraphMove, GraphComm>(instance, objective), dfs_solver_(instance, objective, heuristics, false), dijkstra_(instance), heuristics_(heuristics), number_of_trials_(number_of_trials), verbose_(verbose) {}
+    CAStar(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_trials, int number_of_subtrials, bool verbose)
+        : Solver<GraphMove, GraphComm>(instance, objective), dfs_solver_(instance, objective, heuristics, false), dijkstra_(instance), heuristics_(heuristics), number_of_trials_(number_of_trials), number_of_subtrials_(number_of_subtrials),verbose_(verbose) {}
     ~CAStar() {}
 
 private:
 
-        // class CANode {
-        //     public:
-        //     CANode(Node node, Node parent, size_t dist, size_t g) : node(node), parent(parent), dist(dist), g(g){
-        //     }
-        //     size_t getCost() const{
-        //         return dist+g;
-        //     }
-        //     size_t getDistance() const{
-        //         return dist;
-        //     }
-        //     size_t getG() const{
-        //         return g;
-        //     }
-        //     Node node;
-        //     Node parent;
-        //     size_t dist;
-        //     size_t g;
-        // };
-        // struct CANodeCmp
-        // {
-        //     bool operator()(const CANode & a, const CANode & b) const
-        //     {
-        //         return (a.getCost() > b.getCost() ||
-        //                 a.getCost() == b.getCost() && a.getG() < b.getG() ||
-        //                 a.getCost() == b.getCost() && a.getG() == b.getG() && &a < &b);
-        //     }
-        // };
-
+        /**
+         * @brief Serch node for the CA* algorithm. Each node is given with its successor, whether from the successor
+         * there is an actual path to goal (\a has_path), the length of the feasible suffix from the current node (\a suffix_length),
+         * the h value (feasible suffix + heuristic value), and whether the current node has no successor in the next frame (\a dead_end)
+         * 
+         */
         class CANode {
             public:
             CANode(){}
@@ -104,21 +83,55 @@ private:
         };
 
     /**
-     * @brief Find path of length at least that of \a neighborhoods, which minimizes the H-value to goal at the last vertex,
-     * while staying inside neighborhoods[t] at each step t.
+     * @brief Find the longest such that at each step t, the node is in \a neighborhoods[t], while either actually reaching goal,
+     * or minimizing the h-value to goal at the last vertex.
+     *
+     * Each set neighborhoods[t] is called a frame. We first compute the set of nodes in the last frame which has a path to goal
+     * which stays in this frame. These nodes have an actual path to goal; and the execution can be extended for agt to reach goal
+     * by making all other agents idle.
+     * Then we compute the best path from each node of each frame backwards. At each frame t, and node n, we assign to n the successor
+     * from frame t+1 which has, if possible, an actual path to goal and in this case the one admitting the shortest one,
+     * and otherwise a successor node with the longest path with the least h value. Some nodes of frame t might have no successors in
+     * frame t+1. These are marked as deadends, and assigned a heuristics h value.
+     * At the end of the computation, the start node at frame 0 has been assigned the best path. We follow this path, and possibly 
+     * complete it with a suffix path within the last frame.
+     * 
      * @pre Agent \a agt staying inside \a neighborhoods must ensure connectivity with agents 0 .. \a agt -1, and collision-freedom.
      * @param i 
      * @param neighborhoods 
      * @return Path 
      */
-    Path getConnectedPathTowardsGoal(Agent agt, std::vector<std::unordered_set<Node>> & neighborhoods){
+    Path getConnectedPathTowardsGoal(Configuration startConf, Agent agt, std::vector<std::unordered_set<Node>> & neighborhoods){
         bool local_verbose = false;
-        Node start = this->instance_.start()[agt];
+        Node start = startConf[agt];
         Node goal = this->instance_.goal()[agt];
         Path p;
         
+        // std::cout << "\n* getConnectedPathTowardsGoal(Agt: " << agt << " Start: " << start << ", goal: " << goal << ") with neighborhoods size: " <<
+        //     neighborhoods.size() << "\n";
+        // std::cout << "neighborhoods[0] = ";
+        // for (auto node : neighborhoods[0]){
+        //     std::cout << node << " ";
+        // }
+        // std::cout << "\n";  
+
+        // if (neighborhoods.size()>1){
+        //     std::cout << "neighborhoods[1] = ";
+        //     for (auto node : neighborhoods[1]){
+        //         std::cout << node << " ";
+        //     }
+        //     std::cout << "\n";  
+        // }
+
+        // std::cout << "neighborhoods[" << neighborhoods.size()-1 << "] = ";
+        // for (auto node : neighborhoods[neighborhoods.size()-1]){
+        //     std::cout << node << " ";
+        // }
+        // std::cout << "\n";  
+        assert(neighborhoods[0].contains(start));
+
         if (local_verbose){
-            std::cout << "Agt: " << agt << "Start: " << start << ", goal: " << goal << "\n";
+            std::cout << "Agt: " << agt << " Start: " << start << ", goal: " << goal << "\n";
         }
         // We start by computing the suffix. Let suffix_h be the distance from each vertex of the last frame to goal,
         // while staying inside the said frame. Let suffix_next be the next node to go to follow this suffix.
@@ -206,7 +219,7 @@ private:
         if (local_verbose)
             std::cout << "Prefix (" << start << " to " << goal << "): " << canode.node << " ";
         p.push_back(canode.node);
-        for(int i = 1; !canode.dead_end && i < neighborhoods.size()-1;i++){
+        for(int i = 1; !canode.dead_end && i < neighborhoods.size();i++){
             assert(prefix_h[i].count(canode.successor)>0);
             canode = prefix_h[i][canode.successor];
             if (local_verbose){
@@ -215,11 +228,19 @@ private:
             }
             p.push_back(canode.node);
         }
-        if (local_verbose){
-            std::cout << canode.successor << "@" << neighborhoods.size() << " ";
-            std::cout.flush();
+
+        // check
+        for(int i = 0; i < p.size(); i++){
+            assert(neighborhoods.at(i).contains(p[i]));
         }
-        p.push_back(canode.successor);
+
+        // if (!canode.dead_end){
+        //     p.push_back(canode.successor);
+        //     std::cout << canode.successor << "$" << neighborhoods.size() << " ";
+        //     std::cout.flush();
+        // }
+
+        // check 
         Node node = p[0];
         for(int i = 1; i < p.size(); i++){
             if (!this->instance_.graph().movement().get_neighbors(node).contains(p[i])){
@@ -228,17 +249,22 @@ private:
             }
             node = p[i];
         }
+
         if (canode.has_path){
-            if (local_verbose){
-                std::cout << " :: \n"; std::cout.flush();
+            if ( local_verbose){
+                std::cout << " :: "; std::cout.flush();
             }
             Node node = canode.successor;
             while(node != goal){
                 node = suffix_next[node];
                 p.push_back(node);
-                if (local_verbose)
+                assert(neighborhoods[neighborhoods.size()-1].contains(node));
+                if ( local_verbose)
                     std::cout << node << " ";
             }
+        }
+        if ( local_verbose){
+            std::cout << "\n"; std::cout.flush();
         }
         node = p[0];
         for(int i = 1; i < p.size(); i++){
@@ -250,176 +276,18 @@ private:
             node = p[i];
         }
         return p;
-        // if (prefix_next[0].contains(start)){
-        //     Node current = start;
-        //     if (local_verbose){
-        //         std::cout << "Found path in the first phase: " << start << " to " << goal << "\n";
-        //         std::cout << "Length: " << neighborhoods.size() << "\n";
-        //     }
-        //     for(int i = 0; i < neighborhoods.size()-1; i++){
-        //         p.push_back(current);
-        //         if (local_verbose){
-        //             std::cout << i << ". " << current << " (prefix_h[" << i <<
-        //             "][" << current << "] = " << prefix_h[i][current] << ")\n";
-        //         }
-        //         current = prefix_next[i][current];
-        //     }
-        //     int i = neighborhoods.size()-1;
-        //     if (local_verbose){
-        //         std::cout << i << ". " << current << " (prefix_h[" << i <<
-        //         "][" << current << "] = " << prefix_h[i][current] << ")\n";
-        //     }
-        //     p.push_back(current);
-        //     if (has_path_to_goal.contains(current)){
-        //         if (local_verbose){
-        //             std::cout << "\n\tAnd suffix: ";
-        //         }
-        //         while (current != goal){
-        //             current = suffix_next[current];
-        //             p.push_back(current);
-        //             if (local_verbose){
-        //                 std::cout << current << " ";
-        //             }
-        //         }
-        //         if (local_verbose)
-        //             std::cout << "\n";
-        //     }
-        //     return p;
-        // } 
-        
-
-        // prefix_next.clear();
-        // prefix_h.clear();
-        // for(int i=0; i < neighborhoods.size(); i++){
-        //     prefix_next.push_back(std::unordered_map<Node,Node>());
-        //     prefix_h.push_back(std::unordered_map<Node,size_t>());
-        // }
-        // // Initialize the last frame with heuristic h values
-        // for(Node node : neighborhoods[neighborhoods.size()-1]){
-        //     prefix_h[neighborhoods.size()-1][node] = this->heuristics_.getHeuristic(node, goal);
-        // }
-        // for(int i=neighborhoods.size()-2; i>= 0; i--){
-        //     // Set the values of prefix_next and prefix_h by quantifying over successors in neighborhoods[i+1] for each vertex
-        //     for(Node node : neighborhoods[i]){
-        //         for (Node sucnode : this->instance_.graph().movement().get_neighbors(node)){
-        //             if ( neighborhoods[i+1].contains(sucnode)
-        //                 && (prefix_next[i].count(node) == 0 || prefix_h[i][node] > prefix[i+1][sucnode]+1))
-        //             {
-        //                     prefix_next[i][node] = sucnode;
-        //                     prefix_h[i][node] = prefix_h[i+1][sucnode] + 1;
-        //             }
-        //         }
-        //     }
-        //     // For all nodes in neighborhoods[i] not having any successor in neighborhoods[i+1], set the prefix_h to their heuristic value
-        //     for(Node node : neighborhoods[i]){
-        //         if (prefix_h[i].count(node) == 0){
-        //             prefix_h[i][node] = this->heuristics_.getHeuristic(node, goal);
-        //         }
-        //     }
-        // }
-
-        // TODO Here, we won't be able to reach goal but we do the exact same thing to minimize h-value at the last frame
-
-        // else {
-        //     p.push_back(start);
-        // }
-
-        std::cout.flush();
-        return p;
     }
-
-    // Path getConnectedPathTowardsGoal_dijkstra(Agent agt, std::vector<std::unordered_set<Node>> & neighborhoods){
-    //     bool local_verbose = false;
-    //     Node start = this->instance_.start()[agt];
-    //     Node goal = this->instance_.goal()[agt];
-    //     CANodeCmp cmp;
-    //     std::priority_queue<CANode, std::vector<CANode>, CANodeCmp> open(cmp);
-    //     std::unordered_map<Node,Node> parent;   // parent of a given node in the shortest path
-    //     std::unordered_map<Node,size_t> distance; // the h-value from current node
-
-    //     size_t best_h =  std::numeric_limits<int>::max();
-    //     Node best_node = 0;
-
-    //     size_t maxg = neighborhoods.size()-1;
-
-    //     CANode init_node(start, start, this->heuristics_.getHeuristic(start, goal), 0);
-    //     open.push(init_node);
-    //     if (local_verbose)
-    //         std::cout << "initially node " << start << " has h = " << init_node.getDistance() << " parent: " << init_node.parent << "(goal = " << goal << ")\n";
-    //     int nb_iterations = 0;
-    //     while(!open.empty()){
-    //         nb_iterations++;
-    //         // if (nb_iterations % 100 == 0){
-    //         //     std::cout << "#" << nb_iterations << "\n";
-    //         //     std::cout.flush();
-    //         // }
-
-    //         CANode cnode = open.top();
-    //         open.pop();
-    //         if (distance.count(cnode.node) > 0){
-    //             if (distance[cnode.node] <= cnode.getDistance())
-    //                 continue;
-    //         }
-    //         parent[cnode.node] = cnode.parent;
-    //         distance[cnode.node] = cnode.getDistance();
-    //         if (cnode.node == goal){
-    //             best_node = goal;
-    //             best_h = cnode.getDistance();
-    //             assert(best_h == 0);
-    //             break;
-    //         //} else if ( cnode.g > best_g || cnode.g == best_g && cnode.dist < best_h) {
-    //         } else if ( cnode.getDistance() < best_h) {
-    //             best_node = cnode.node;
-    //             best_h = cnode.getDistance();
-    //             if (local_verbose)
-    //                 std::cout << "Updating best_h:" << best_h << "\n";
-    //             // best_g = cnode.g;
-    //             // best_h = cnode.dist;
-    //         }
-    //         if (local_verbose)
-    //             std::cout << "Popped: " << cnode.node << " h=" << cnode.dist << " g=" << cnode.g << " parent: " << cnode.parent << " \n";
-    //         if(cnode.getG() + 1 >= neighborhoods.size()){
-    //             for(int i = neighborhoods.size(); i <= cnode.getG()+1; i++){
-    //                 neighborhoods.push_back(neighborhoods.back());
-    //             }
-    //             //if (local_verbose)
-    //             // std::cout << ANSI_RED << "Extending neighborhoods to " << neighborhoods.size() << "\n" << ANSI_RESET;
-    //         }
-    //         for (Node sucnode : this->instance_.graph().movement().get_neighbors(cnode.node)){
-    //             assert(cnode.getG()+1 < neighborhoods.size());
-    //             if (neighborhoods.at(cnode.getG()+1 ).contains(sucnode)){
-    //                 CANode newnode(sucnode, cnode.node, this->heuristics_.getHeuristic(sucnode, goal), cnode.getG()+1);
-    //                 open.push(newnode);
-    //                 if (local_verbose)
-    //                     std::cout << "\tPushing: " << newnode.node << " (with parent: " << newnode.parent << ")\n";
-    //             }
-    //         }
-    //     }
-    //     Path p;
-    //     std::list<Node> path_list;
-    //     Node current = best_node;
-    //     int count = 0;
-    //     path_list.push_front(current);
-    //     while( current != start){
-    //         current = parent[current];
-    //         path_list.push_front(current);
-    //     }
-    //     // reverse it
-    //     for (auto node : path_list){
-    //         p.push_back(node);
-    //     }
-    //     return p;
-    // }
 
     /**
      * @brief This is a best-effort CA* procedure that attempts to find the longest path towards goal configuration:
      * Pick random order, fill in config_stack_ by a path of Agent 1, then Agent 2 connected to 1, then 3 connected to 1,2 etc.
      * 
      */
-    void computePrefix()
+    std::vector<Configuration> computePrefix(const Configuration & start)
     {
+        // std::cout << "* computePrefix(" << start;
+        // std::cout << ")\n";
 
-        const Configuration & start = this->instance_.start();
         const Configuration & goal = this->instance_.goal();
         std::vector<Agent> shuffled;
         for(Agent agt = 0; agt < this->instance_.nb_agents(); agt++){
@@ -466,10 +334,10 @@ private:
         
         // Initialize neighborhoods: neighborhoods[t] is the set of unoccupied vertices that communicate with some vertex occupied by
         // some agent at time t. Any subsequent agent must be and can be somewhere in neighboorhoods[t].
-        std::vector<std::unordered_set<Node>> neighborhoods;
-        for(int t = 0; t < paths.back().size(); t++){
-            neighborhoods.push_back(std::unordered_set<Node>());
-        }
+        std::vector<std::unordered_set<Node>> neighborhoods(paths.back().size());
+        // for(int t = 0; t < paths.back().size(); t++){
+        //     neighborhoods.push_back(std::unordered_set<Node>());
+        // }
         for(int t = 0; t < paths.back().size(); t++){
             // Add the comm. neighborhood of the new path
             for(auto node : this->instance_.graph().communication().get_neighbors(paths.back().at(t))){
@@ -486,10 +354,24 @@ private:
         }
         // Add other paths one by one
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
-            paths.push_back(this->getConnectedPathTowardsGoal(shuffled[i], neighborhoods));
+            paths.push_back(this->getConnectedPathTowardsGoal(start, shuffled[i], neighborhoods));
+
             if(paths.back().size() > path_size){
+                // If the added path is longer than the previous ones, extend the neighborhoods by assuming all others idle at their
+                // last positions. We do not actually extend the paths, they are implicitly extended.
                 path_size = paths.back().size();
+                for (int t = neighborhoods.size(); t < path_size; t++){
+                    neighborhoods.push_back(neighborhoods.back());
+                }
+            } else {
+                // If the added path is shorter, than shorten all previous paths and neigborhoods
+                path_size = paths.back().size();
+                neighborhoods.resize(path_size);
+                for(int i = 0; i <paths.size();i++){
+                    paths[i].resize(path_size);
+                }
             }
+            // std::cout << "path size is " << path_size << "\n";
 
             // std::cout << ANSI_GREEN << "Got path for Agent " << shuffled[i] << " (number " << i << ") of size : " << paths.back().size() << ANSI_RESET
             //     << " from " << this->instance_.start()[shuffled[i]] << " to " << this->instance_.goal()[shuffled[i]] << "\n<";
@@ -504,80 +386,74 @@ private:
                     neighborhoods[t].insert(node);
                 }
                 if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS ){
-                    for (Agent j = 0; j < i; j++){
-                        neighborhoods[t].erase(paths[j].getAtTimeOrLast(t));
+                    for (Agent j = 0; j <= i; j++){
+                        neighborhoods[t].erase(paths.at(j).getAtTimeOrLast(t));
                     }
                 }
             }
         }
 
-        // // Try to fix failed paths
-        // for(Agent i = 1; i < this->instance_.nb_agents(); i++){
-        //     if (paths[shuffled[i]] == this->instance_.goal()[shuffled[i]]){
-        //         continue;
-        //     }
-        //     std::cout << ANSI_BLUE << "Attempting to fix " << shuffled[i] << "\n";
-        //     // recompute neighborhoods
-        //     for(int t = 0; t < neighborhoods.size(); t++){
-        //         neighborhoods[t] = std::unordered_set<Node>();
-        //     }
-        //     for(int t = 0; t < paths.back().size(); t++){
-        //         for (Agent agt = 0; agt < this->instance_.nb_agents(); agt++){
-        //             if (shuffled[i] == agt) continue;
-        //             // Add the comm. neighborhood of the new path
-        //             for(auto node : this->instance_.graph().communication().get_neighbors(paths.at(agt).getAtTimeOrLast(t))){
-        //                 neighborhoods.at(t).insert(node);
-        //             }
-        //         }
-        //         if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS ){
-        //             for (Agent agt = 0; agt < this->instance_.nb_agents(); agt++){
-        //                 if (shuffled[i] == agt) continue;
-        //                     neighborhoods[t].erase(paths.at(agt).getAtTimeOrLast(t));
-        //             }
-        //         }
-        //     }
-        //     paths[i] = this->getConnectedPathTowardsGoal(shuffled[i], neighborhoods);
-        //     std::cout << ANSI_BLUE << "Updated path for Agent " << shuffled[i] << " (number " << i << ") of size : " << paths.back().size() << "\n<" << ANSI_RESET
-        //         << this->instance_.start()[shuffled[i]] << " to " << this->instance_.goal()[shuffled[i]] << "\n<" << ANSI_RESET;
-
-        // }
-        
         // Convert to vector of Configurations
+        std::vector<Configuration> configSeq;
         for(int t = 0; t < path_size; t++){
+            // std::cout << "paths[" << t << "].size() == " << paths[t].size() << "\n";
             Configuration c(this->instance_.nb_agents());
             for(Agent i = 0; i < this->instance_.nb_agents(); i++){
                 c[shuffled[i]] = paths[i].getAtTimeOrLast(t);
             }
             if (this->instance_.graph().communication().isConfigurationConnected(c)){
-                config_stack_.push_back(c);
-                // std::cout << ANSI_YELLOW << c;
-                // std::cout << "\n";
+                configSeq.push_back(c);
             } else {
-                // std::cout << ANSI_RED << "The following configuration at t=" << t << " becomes disconnected: " << c;
-                // std::cout <<"\n" << ANSI_RESET;
                 break;
             }
+            if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS && c.hasCollisions()){
+                std::cout << " [error] Collision at step " << t << ": " << c;
+                std::cout <<"\n";
+                assert(!c.hasCollisions());
+            }
         }
+        return configSeq;
     }
     const Execution compute() override
     {
         std::vector<Configuration> bestPrefix;
-
-        for(int i = 0; i < this->number_of_trials_; i++){
+        bool goal_reached = false;
+        for(int i = 0; i < this->number_of_trials_ && !goal_reached; i++){
             config_stack_.clear();
             // std::cout << ANSI_PURPLE << "\n\ncomputePrefix:\n" << ANSI_RESET;
-            computePrefix();
-            // std::cout << ANSI_PURPLE << "Got: " << config_stack_.size() << ANSI_RESET;
-            if (this->config_stack_.size() > bestPrefix.size()){
-                bestPrefix = this->config_stack_;
-                std::cout << ANSI_CYAN << "Got new prefix of length " << bestPrefix.size() << "\n" << ANSI_RESET;
+            // for (int j = 0; j < 1; j++){
+            //     const Configuration start = this->instance_.start();
+            //     std::vector<Path> paths = computePrefix(start);
+            // }
+            Configuration start = this->instance_.start();
+            std::vector<Configuration> prefix = computePrefix(start);
+            // std::cout << "(got prefix of size " << prefix.size() << ")\n";
+            // std::cout << " ending in " << prefix.back() << "\n";
+            // Try to extend it further
+            if (prefix.back() != this->instance_.goal()){
+                for (int j = 0; j < this->number_of_subtrials_; j++){
+                    std::vector<Configuration> segment = computePrefix(prefix.back());
+                    if (segment.size()>1){
+                        // std::cout << "(extending prefix by segment of size " << segment.size() << ")\n";
+                        for(auto c = segment.begin()+1; c != segment.end(); c++){
+                            prefix.push_back(*c);
+                        }
+                    }
+                }
+            }
+            if (prefix.size() > bestPrefix.size()){
+                bestPrefix = prefix;
+                std::cout << ANSI_CYAN << "Got new prefix of length " << prefix.size() << "\n" << ANSI_RESET;
                 std::cout << "\t" << bestPrefix.back();
                 std::cout << "\n";
-            }
-            if (config_stack_.back() == this->instance_.goal()){
-                break;
+                if (bestPrefix.back() == this->instance_.goal()){
+                    goal_reached = true;
+                    break;
+                }
             }
         }
+        this->config_stack_ = bestPrefix;
+
         std::vector<std::shared_ptr<Configuration> > suffix;
         if (config_stack_.back() != this->instance_.goal()){
             if(verbose_){
@@ -588,25 +464,42 @@ private:
             }
             suffix = this->dfs_solver_.computeBoundedPathTowards(bestPrefix.back(), this->instance_.goal(), 1000000, false);
             std::cout << ANSI_CYAN << "Got suffix of length " << suffix.size() << "\n" << ANSI_RESET;
+        } else {
+            std::cout << ANSI_GREEN << "CA* solved the instance alone.\n" << ANSI_RESET;
+        }
+
+        if (suffix.size() > 0){
+            for (auto it = suffix.begin()+1; it != suffix.end(); it++){
+                config_stack_.push_back(**it);
+            }
+        }
+
+        // Check
+        assert(this->config_stack_.front() == this->instance_.start());
+        assert(this->config_stack_.back() == this->instance_.goal());
+        for(auto c : this->config_stack_){
+            this->instance_.graph().communication().isConfigurationConnected(c);
         }
 
         // Create the execution
         for (int i = 0; i < this->instance_.nb_agents(); i++)
         {
             std::shared_ptr<Path> path = std::make_shared<Path>();
-            for (auto c : bestPrefix)
+            for (auto c : config_stack_)
             {
                 path->push_back(c[i]);
             }
-            if (suffix.size() > 0){
-                for (auto it = suffix.begin()+1; it != suffix.end(); it++)
-                {
-                    path->push_back((*it)->at(i));
-                }
-            }
+            // if (suffix.size() > 0){
+            //     for (auto it = suffix.begin()+1; it != suffix.end(); it++)
+            //     {
+            //         path->push_back((*it)->at(i));
+            //     }
+            // }
             assert(path->isValid(this->instance_.graph().movement()));
             this->execution_.push_back(path);
         }
+
+
         return this->execution_;
     }
 
