@@ -175,15 +175,17 @@ int main(int argc, const char *argv[])
     // }
     // std::cout << ">\n";
     // exit(0);
-    int random_seed = vm["random_seed"].as<int>();
+    time_t random_seed = vm["random_seed"].as<int>();
     if (random_seed < 0)
     {
-      srand(time(NULL));
+      random_seed = time(NULL);
+      srand(random_seed);
     }
     else
     {
       srand(random_seed);
     }
+    LOG_INFO("Random seed: " << random_seed);
 
     AStarSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());
     // DijkstraSPCalculator<ExplicitGraph,ExplicitGraph> sp(il.instance());

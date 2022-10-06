@@ -2,9 +2,10 @@ import sys
 import re
 def parse(filename):
     with open(filename,'r') as f:
-        bench=""
-        time=0
-        cost=0
+        bench = ""
+        time = 0
+        cost = 0
+        castar_alone = 0
         for line in f:
             m = re.search('>>>>> (.*)', line)
             if m:
@@ -13,17 +14,20 @@ def parse(filename):
                 bench=m.group(1)
                 time=0
                 cost=0
+                castar_alone = 0
             m = re.search('(.*)user', line)
             if m:
                 time = float(m.group(1))
                 if cost > 0:
-                    print(bench,";",cost,"; 1 ;",time)
+                    print(bench,";",cost,"; 1 ;",time, " ;", castar_alone)
                 else:
-                    print(bench,";",cost,"; 0 ;",time)
+                    print(bench,";",cost,"; 0 ;",time, " ;", castar_alone)
                     # pass # if printed cost is 0, this means the benchmark failed
             m = re.search('Execution cost:([0-9]+)', line)
             if m:
                 cost = int(m.group(1))
+            if "solved the instance alone" in line:
+                castar_alone = 1
             #m = re.search('Execution found', line)
             #if m:
             #    print(bench + ";" + str(length) +  ";1;" + str(time))

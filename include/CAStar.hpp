@@ -266,6 +266,7 @@ private:
         if ( local_verbose){
             std::cout << "\n"; std::cout.flush();
         }
+        // check
         node = p[0];
         for(int i = 1; i < p.size(); i++){
             if (!this->instance_.graph().movement().get_neighbors(node).contains(p[i])){
@@ -353,15 +354,33 @@ private:
             // std::cout << "\n";
         }
         // Add other paths one by one
+        // std::cout << "\nconnected_path_towards..."; std::cout.flush();
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
+            // std::cout << "\nconnected_path_towards..."; std::cout.flush();
             paths.push_back(this->getConnectedPathTowardsGoal(start, shuffled[i], neighborhoods));
+            // std::cout << " done\n"; std::cout.flush();
+            // std::cout << "\t Got path for agent " << shuffled[i] << ": ";
+            // for(Node n : paths.back()){
+            //     std::cout << n << " ";
+            // }
+            // std::cout << "\n";
+            
 
+            // std::cout << "updating..."; std::cout.flush();
             if(paths.back().size() > path_size){
                 // If the added path is longer than the previous ones, extend the neighborhoods by assuming all others idle at their
-                // last positions. We do not actually extend the paths, they are implicitly extended.
+                // last positions. Also extend the paths that are shorter than the new size.
                 path_size = paths.back().size();
                 for (int t = neighborhoods.size(); t < path_size; t++){
                     neighborhoods.push_back(neighborhoods.back());
+                }
+                for(int i = 0; i < paths.size(); i++){
+                    if (paths[i].size() < path_size){
+                        for(int t = paths[i].size(); t < path_size; t++){
+                            paths[i].push_back(paths[i].back());
+                        }
+
+                    }
                 }
             } else {
                 // If the added path is shorter, than shorten all previous paths and neigborhoods
@@ -371,6 +390,10 @@ private:
                     paths[i].resize(path_size);
                 }
             }
+            // for(Node n : paths.back()){
+            //     std::cout << n << " ";
+            // }
+            // std::cout << "\n";
             // std::cout << "path size is " << path_size << "\n";
 
             // std::cout << ANSI_GREEN << "Got path for Agent " << shuffled[i] << " (number " << i << ") of size : " << paths.back().size() << ANSI_RESET
@@ -392,6 +415,17 @@ private:
                 }
             }
         }
+        // std::cout << "done\n"; std::cout.flush();
+
+        assert(paths.size() == this->instance_.nb_agents());
+        // for(Agent i = 0; i < this->instance_.nb_agents(); i++){
+        //     assert(paths[i].size()>0);
+        //     std::cout << "Path of " << shuffled[i] << ": ";
+        //     for(Node n : paths[i]){
+        //         std::cout << n << " ";
+        //     }
+        //     std::cout << "\n";
+        // }
 
         // Convert to vector of Configurations
         std::vector<Configuration> configSeq;
@@ -419,6 +453,8 @@ private:
         std::vector<Configuration> bestPrefix;
         bool goal_reached = false;
         for(int i = 0; i < this->number_of_trials_ && !goal_reached; i++){
+            std::cout << ANSI_PURPLE << "trial number " << i << "\t " << ANSI_RESET;
+            std::cout.flush();
             config_stack_.clear();
             // std::cout << ANSI_PURPLE << "\n\ncomputePrefix:\n" << ANSI_RESET;
             // for (int j = 0; j < 1; j++){

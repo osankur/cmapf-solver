@@ -9,8 +9,9 @@
 
 # This is the set of prefix base names to be run
 benchmarks=()
-for i in {17..23}; do
-	benchmarks=("${benchmarks[@]}" "obstacle_field_range5_window2_agents${i}_")
+for i in {2..40}; do
+	benchmarks=("${benchmarks[@]}" "obstacle_field_range1_agents${i}_")
+	benchmarks=("${benchmarks[@]}" "offices_range1_agents${i}_")
 	#benchmarks=("${benchmarks[@]}" "pyramid_range5_only-start-window2_agents${i}_")
 done
 algo=$1 # CMARRT, COORD, DFS

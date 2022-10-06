@@ -10,6 +10,7 @@ alg = "CMARRT"
 col = "IGNORE_COLLISIONS"
 logfolder = "logs/"
 plottype = "success"
+caalone=False
 results={}
 
 # hardcoded value: number of experiments per csv file``
@@ -90,7 +91,7 @@ def plot_success():
             print(f"{key} ; {key2nb_agents[key]} ; {costs[key] / nbexps[key]} ; {times[key] / nbexps[key]}")
 
 def main():
-    global alg, col, logfolder, prefix, plottype
+    global alg, col, logfolder, prefix, caalone,plottype
     parser = argparse.ArgumentParser(description="Given prefix, alg and collision mode, read all csv files in given log directory, produce summary.")
     parser.add_argument("-a", "--algorithm", type=str, dest="alg",
                         help="Algorithm",required=True)
@@ -102,6 +103,8 @@ def main():
                         help="log folder to read",required=False)
     parser.add_argument("-t",dest="plottype", type=str,
                         help="success or performance",required=True)
+    parser.add_argument("-q",dest="alone", type=bool,
+                        help="whether to filter benchmarks that were not solved by ca* alone",required=False)
     args = parser.parse_args()
 
     alg = args.alg
@@ -110,5 +113,6 @@ def main():
         logfolder = args.logfolder
     prefix = args.prefix    
     plottype = args.plottype
+    caalone = args.alone
     plot_success()
 main()
