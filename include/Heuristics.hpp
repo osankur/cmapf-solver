@@ -98,24 +98,26 @@ public:
     }
     double getHeuristic(const Configuration &c, const Configuration &goal) override
     {
-        if (goal == this->instance_.goal())
-        {
-            return ShortestPathHeuristics<GraphMove, GraphComm>::getHeuristic(c, goal);
-        }
-        else
-        {
-            return this->getBirdEyeHeuristic(c, goal);
-        }
+        return this->getBirdEyeHeuristic(c, goal);
+        // if (goal == this->instance_.goal())
+        // {
+        //     return ShortestPathHeuristics<GraphMove, GraphComm>::getHeuristic(c, goal);
+        // }
+        // else
+        // {
+        //     return this->getBirdEyeHeuristic(c, goal);
+        // }
     }
     double getHeuristic(const Node &c, const Node &goal) override
     {
-        if (targetNodes.find(goal) != targetNodes.end())
-        {
-            return this->getShortestPathDistance(c, goal);
-        }
-        else
-        {
-            return this->getBirdEyeDistance(c, goal);
-        }
+        return this->getBirdEyeDistance(c, goal);
+        // if (targetNodes.find(goal) != targetNodes.end())
+        // {
+        //     return this->getShortestPathDistance(c, goal);
+        // }
+        // else
+        // {
+        //     return this->getBirdEyeDistance(c, goal);
+        // }
     }
 };

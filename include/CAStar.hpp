@@ -58,7 +58,9 @@ private:
          */
         class CANode {
             public:
-            CANode(){}
+            CANode(){
+                node = std::numeric_limits<Node>::max(); // undefined
+            }
             CANode(Node node, Node successor, bool has_path, size_t suffix_length, size_t h, bool dead_end = false) : node(node), successor(successor), has_path(has_path), suffix_length(suffix_length), h(h), dead_end(dead_end){
             }
             Node node;
@@ -78,6 +80,9 @@ private:
                 os << "* canode " << node << " -> " 
                                 << successor << ", has_path: " << has_path << ", suffix_length: " << suffix_length
                                 << ", h: " << h << "\n";        
+            }
+            inline bool defined() const {
+                return node < std::numeric_limits<Node>::max();
             }
         };
 
@@ -136,12 +141,26 @@ private:
         // while staying inside the said frame. Let suffix_next be the next node to go to follow this suffix.
         // The path that follows suffix_next corresponds to previous agents idling at their final positions while agt continuing towards their goal.
 
-        std::unordered_map<Node,Node> suffix_next; // for a vertex of the last frame, the vertex to go to for agt
-        std::unordered_map<Node,size_t> suffix_h; // for a vertex of the last frame, the distance to go for agt from given node to goal
+        // Node * suffix_next = new Node[this->instance_.graph().movement().node_count()];
+        auto suffix_next = std::make_unique<Node[]>(this->instance_.graph().movement().node_count());
+        auto suffix_h = std::make_unique<size_t[]>(this->instance_.graph().movement().node_count());
+        // size_t * suffix_h = new size_t[this->instance_.graph().movement().node_count()];
+        for(int i = 0; i < this->instance_.nb_agents(); i++){
+            suffix_next[i] = std::numeric_limits<Node>::max();
+            suffix_h[i] = std::numeric_limits<size_t>::max();
+        }
+        // std::unordered_map<Node,Node> suffix_next; // for a vertex of the last frame, the vertex to go to for agt
+        // std::unordered_map<Node,size_t> suffix_h; // for a vertex of the last frame, the distance to go for agt from given node to goal
         suffix_next[goal] = goal;
         suffix_h[goal] = 0;
         std::stack<Node> wait;
-        std::unordered_set<Node> has_path_to_goal;
+        auto has_path_to_goal_v = std::make_unique<bool[]>(this->instance_.graph().movement().node_count());
+        for(int i = 0; i < this->instance_.graph().movement().node_count(); i++){
+            has_path_to_goal_v[i] = false;
+        }
+        std::vector<Node> has_path_to_goal_v_support; // vector of nodes node such that has_path_to_goal_v[node] = true
+
+        // std::unordered_set<Node> has_path_to_goal;
         // We do this step only if goal is in the last frame
         if (neighborhoods[neighborhoods.size()-1].contains(goal))
             wait.push(goal);
@@ -149,12 +168,17 @@ private:
         while(!wait.empty()){
             Node current = wait.top();
             wait.pop();
-            if (has_path_to_goal.contains(current))
+            if (has_path_to_goal_v[current])
                 continue;
-            has_path_to_goal.insert(current);
+            // if (has_path_to_goal.contains(current))
+            //     continue;
+            // // has_path_to_goal.insert(current);
+            has_path_to_goal_v[current] = true;
+            has_path_to_goal_v_support.push_back(current);
             for (Node sucnode : this->instance_.graph().movement().get_neighbors(current)){
                 // for all movement neighbor node sucnode that are in the last frame
-                if (neighborhoods[neighborhoods.size()-1].contains(sucnode) && !has_path_to_goal.contains(sucnode)){
+                if (neighborhoods[neighborhoods.size()-1].contains(sucnode) && !has_path_to_goal_v[sucnode]){
+                // if (neighborhoods[neighborhoods.size()-1].contains(sucnode) && !has_path_to_goal.contains(sucnode)){
                     suffix_next[sucnode] = current;
                     suffix_h[sucnode] = suffix_h[current] + 1;
                     if (local_verbose){
@@ -166,15 +190,24 @@ private:
             }
         }
 
-        std::vector<std::unordered_map<Node,CANode> > prefix_h;
+        // std::vector<std::unordered_map<Node,CANode> > prefix_h;
+        std::vector<std::unique_ptr<CANode[]>> prefix_h;
         for(int i=0; i < neighborhoods.size(); i++){
-            prefix_h.push_back(std::unordered_map<Node,CANode>());
+            prefix_h.push_back(std::make_unique<CANode[]>(this->instance_.graph().movement().node_count()));
         }
-        for(Node node : has_path_to_goal){
+        // for(int i=0; i < neighborhoods.size(); i++){
+        //     prefix_h.push_back(std::unordered_map<Node,CANode>());
+        // }
+
+        for (Node node : has_path_to_goal_v_support){
             prefix_h[neighborhoods.size()-1][node] = CANode(node, node, true, suffix_h[node], suffix_h[node]);
         }
+        // for(Node node : has_path_to_goal){
+        //     prefix_h[neighborhoods.size()-1][node] = CANode(node, node, true, suffix_h[node], suffix_h[node]);
+        // }
         for (Node node : neighborhoods[neighborhoods.size()-1]){
-            if (!has_path_to_goal.contains(node)){
+            // if (!has_path_to_goal.contains(node)){
+            if (!has_path_to_goal_v[node]){
                 prefix_h[neighborhoods.size()-1][node] = CANode(node, node, false, 0, this->heuristics_.getHeuristic(node,goal));
             }
         }
@@ -190,12 +223,13 @@ private:
                 for (Node sucnode : this->instance_.graph().movement().get_neighbors(node)){
                     if (!neighborhoods[i].contains(sucnode))
                         continue;
-                    assert(prefix_h[i].count(sucnode) != 0);
+                    // assert(prefix_h[i].count(sucnode) != 0);
                     CANode sucCANode = prefix_h[i][sucnode];
                     // std::cout << "Successor is: "; sucCANode.print(std::cout);
 
                     CANode candidate(node, sucnode, sucCANode.has_path, sucCANode.suffix_length+1, sucCANode.h+1);
-                    if (prefix_h[i-1].count(node) == 0 
+                    // if (prefix_h[i-1].count(node) == 0 
+                    if (!prefix_h[i-1][node].defined()
                         || candidate < prefix_h[i-1][node])
                     {
                         prefix_h[i-1][node] = candidate;
@@ -206,20 +240,23 @@ private:
                     }
                 }
                 // if node has no successors in neighborhoods[i], then it is a dead end
-                if (prefix_h[i-1].count(node) == 0){
+                // if (prefix_h[i-1].count(node) == 0){
+                if (!prefix_h[i-1][node].defined()){
                     CANode candidate(node, node, false, 0, this->heuristics_.getHeuristic(node,goal), true);
                     prefix_h[i-1][node] = candidate;
                 }
             }
         }
 
-        assert(prefix_h[0].count(start) > 0);
+        // assert(prefix_h[0].count(start) > 0);
+        assert(prefix_h[0][start].defined());
         CANode canode = prefix_h[0][start];
         if (local_verbose)
             std::cout << "Prefix (" << start << " to " << goal << "): " << canode.node << " ";
         p.push_back(canode.node);
         for(int i = 1; !canode.dead_end && i < neighborhoods.size();i++){
-            assert(prefix_h[i].count(canode.successor)>0);
+            // assert(prefix_h[i].count(canode.successor)>0);
+            assert(prefix_h[i][canode.successor].defined());
             canode = prefix_h[i][canode.successor];
             if (local_verbose){
                 std::cout << canode.node << "@" << i << " ";
@@ -229,9 +266,9 @@ private:
         }
 
         // check
-        for(int i = 0; i < p.size(); i++){
-            assert(neighborhoods.at(i).contains(p[i]));
-        }
+        // for(int i = 0; i < p.size(); i++){
+        //     assert(neighborhoods.at(i).contains(p[i]));
+        // }
 
         // if (!canode.dead_end){
         //     p.push_back(canode.successor);
@@ -240,14 +277,14 @@ private:
         // }
 
         // check 
-        Node node = p[0];
-        for(int i = 1; i < p.size(); i++){
-            if (!this->instance_.graph().movement().get_neighbors(node).contains(p[i])){
-                std::cout << "Prefix Step " << i << " is not a neighbor of previous step\n";
-                exit(-1);
-            }
-            node = p[i];
-        }
+        // Node node = p[0];
+        // for(int i = 1; i < p.size(); i++){
+        //     if (!this->instance_.graph().movement().get_neighbors(node).contains(p[i])){
+        //         std::cout << "Prefix Step " << i << " is not a neighbor of previous step\n";
+        //         exit(-1);
+        //     }
+        //     node = p[i];
+        // }
 
         if (canode.has_path){
             if ( local_verbose){
@@ -257,7 +294,7 @@ private:
             while(node != goal){
                 node = suffix_next[node];
                 p.push_back(node);
-                assert(neighborhoods[neighborhoods.size()-1].contains(node));
+                // assert(neighborhoods[neighborhoods.size()-1].contains(node));
                 if ( local_verbose)
                     std::cout << node << " ";
             }
@@ -266,15 +303,15 @@ private:
             std::cout << "\n"; std::cout.flush();
         }
         // check
-        node = p[0];
-        for(int i = 1; i < p.size(); i++){
-            if (!this->instance_.graph().movement().get_neighbors(node).contains(p[i])){
-                std::cout << "Whole Step " << i << " is not a neighbor of previous step\n";
-                std::cout << "node " << p[i] << " not neighbor of node" << node << "\n";
-                exit(-1);
-            }
-            node = p[i];
-        }
+        // node = p[0];
+        // for(int i = 1; i < p.size(); i++){
+        //     if (!this->instance_.graph().movement().get_neighbors(node).contains(p[i])){
+        //         std::cout << "Whole Step " << i << " is not a neighbor of previous step\n";
+        //         std::cout << "node " << p[i] << " not neighbor of node" << node << "\n";
+        //         exit(-1);
+        //     }
+        //     node = p[i];
+        // }
         return p;
     }
 
@@ -300,12 +337,12 @@ private:
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
             // Make sure that shuffle[agt] is connected to shuffle[0...agt-1], swap with someone if needed
             Agent j = i;
-            while (!cluster.contains(start.at(shuffled.at(j))) && j < this->instance_.nb_agents()){
+            while (!cluster.contains(start[shuffled[j]]) && j < this->instance_.nb_agents()){
                 j++;
             }
-            assert(cluster.contains(start.at(shuffled.at(j))));
-            Agent tmp = shuffled.at(i);
-            shuffled[i] = shuffled.at(j);
+            assert(cluster.contains(start[shuffled[j]]));
+            Agent tmp = shuffled[i];
+            shuffled[i] = shuffled[j];
             shuffled[j] = tmp;
             for(auto node : this->instance_.graph().communication().get_neighbors(start[shuffled[i]])){
                 cluster.insert(node);
@@ -323,7 +360,7 @@ private:
 
         // Add first path
         std::vector<Path> paths;
-        paths.push_back(this->dijkstra_.getShortestPath(start.at(shuffled.at(0)), goal.at(shuffled.at(0))));
+        paths.push_back(this->dijkstra_.getShortestPath(start[shuffled[0]], goal[shuffled[0]]));
         if (max_path_size >0){
             if (paths.back().size() > max_path_size){
                 paths.back().resize(max_path_size);
@@ -421,7 +458,7 @@ private:
                 }
                 if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS ){
                     for (Agent j = 0; j <= i; j++){
-                        neighborhoods[t].erase(paths.at(j).getAtTimeOrLast(t));
+                        neighborhoods[t].erase(paths[j].getAtTimeOrLast(t));
                     }
                 }
             }

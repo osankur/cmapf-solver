@@ -32,7 +32,7 @@ using namespace boost::program_options;
 
 constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
-constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
+constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
 constexpr char DEFAULT_COLLISIONS[] = "CHECK_COLLISIONS";
 constexpr char DEFAULT_SUBSOLVER[] = "CASTAR";
 
