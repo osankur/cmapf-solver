@@ -34,7 +34,7 @@ constexpr char DEFAULT_ALG[] = "CCBS";
 constexpr char DEFAULT_OBJ[] = "SUM";
 constexpr char DEFAULT_HEURISTICS[] = "SHORTEST_PATH";
 constexpr char DEFAULT_COLLISIONS[] = "CHECK_COLLISIONS";
-constexpr char DEFAULT_SUBSOLVER[] = "DFS_SOLVER";
+constexpr char DEFAULT_SUBSOLVER[] = "CASTAR";
 
 int main(int argc, const char *argv[])
 {
@@ -230,10 +230,14 @@ int main(int argc, const char *argv[])
                                                                                         *heuristics.get(),
                                                                                         window_size);
       break;
+    case Algorithm::CASTARDFS:
+      LOG_INFO("Number of runs: " << number_of_trials);
+      LOG_INFO("Number of extension trials: " << number_of_subtrials);
+      solver = std::make_unique<decoupled::CAStarDFSFinish<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_trials, number_of_subtrials, verbose);
+      break;
     case Algorithm::CASTAR:
-      LOG_INFO("Number of trials: " << number_of_trials);
-      LOG_INFO("Number of subtrials: " << number_of_subtrials);
-      solver = std::make_unique<decoupled::CAStar<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_trials, number_of_subtrials, verbose);
+      LOG_INFO("Number of extension trials: " << number_of_subtrials);
+      solver = std::make_unique<decoupled::CAStarShake<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_subtrials, subsolver, verbose);
       break;
     case Algorithm::CMARRT:
     case Algorithm::CMARRTSTAR:
@@ -242,7 +246,7 @@ int main(int argc, const char *argv[])
       LOG_INFO("Step size:" << vm["step_size"].as<int>());
       bool start_window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().start(), il.instance(), window_size);
       bool goal_window_connected = coordinated::CoordSolver<ExplicitGraph, ExplicitGraph>::isConfigurationWindowConnected(il.instance().goal(), il.instance(), window_size);
-      if (subsolver == SubsolverEnum::COORD_SOLVER)
+      if (subsolver == SubsolverEnum::COORD)
       {
         if (!start_window_connected){
           LOG_FATAL("Start configuration *is not* window-connected.");

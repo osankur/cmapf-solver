@@ -1,18 +1,18 @@
 #!/usr/bin/bash
 
 # Usage examples:
-#   run_all.sh CMARRT IGNORE_COLLISIONS
-#   run_all.sh DFS IGNORE_COLLISIONS
-#   run_all.sh CMARRT CHECK_COLLISIONS
+#   run_all.sh CMARRT
+#   run_all.sh DFS
+#   run_all.sh CASTAR
 #   ...
 #
 
 # This is the set of prefix base names to be run
 benchmarks=()
 for i in {2..40}; do
-	benchmarks=("${benchmarks[@]}" "obstacle_field_range1_agents${i}_")
-	benchmarks=("${benchmarks[@]}" "offices_range1_agents${i}_")
-	#benchmarks=("${benchmarks[@]}" "pyramid_range5_only-start-window2_agents${i}_")
+	#benchmarks=("${benchmarks[@]}" "obstacle_field_range1_agents${i}_")
+	#benchmarks=("${benchmarks[@]}" "offices_range1_agents${i}_")
+	benchmarks=("${benchmarks[@]}" "parallel_range1_agents${i}_")
 done
 algo=$1 # CMARRT, COORD, DFS
 if [[ $algo = "" ]]; then
@@ -24,7 +24,8 @@ col=$2 # IGNORE_COLLISIONS or CHECK_COLLISIONS
 # success_rate_log="logs/success_rate_${algo}_${col}.csv"
 # rm -f ${success_rate_log}
 for bench_prefix in ${benchmarks[*]}; do
-		cmd="./run.sh $algo $bench_prefix $col"
+		#cmd="./run.sh $algo $bench_prefix $col"
+		cmd="./run.sh $algo $bench_prefix CHECK_COLLISIONS"
 		echo $cmd
 		$cmd
     	# file="logs/${bench}_${algo}_${col_short}"

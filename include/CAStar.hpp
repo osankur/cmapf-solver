@@ -17,17 +17,18 @@
 #include <Objective.hpp>
 #include <Solver.hpp>
 #include <DFS.hpp>
+#include <ShortestPathCalculator.hpp>
+#include <Options.hpp>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
-#include <ShortestPathCalculator.hpp>
 #include <list>
 namespace decoupled{
 
 /**
  * @brief CA* algorithm. The compute method attempts to find the longest connected and collision-free execution towards the goal configuration,
- * by trying \a number_of_trials different random orderings of the agents. The longest computed prefix is stored. Then we try to finish with the
- * DFS solver.
+ * by trying \a number_of_runs different random orderings of the agents. 
+ * This abstract class provides \a computePrefix function which implements the CA* algorithm to compute an execution towards goal.
  * 
  * @tparam GraphMove 
  * @tparam GraphComm 
@@ -36,17 +37,15 @@ namespace decoupled{
 template <class GraphMove, class GraphComm>
 class CAStar : public Solver<GraphMove, GraphComm>
 {
-private:
+protected:
     coupled::DFS<GraphMove, GraphComm> dfs_solver_;
     std::vector<Configuration> config_stack_;
     DijkstraSPCalculator<GraphMove,GraphComm> dijkstra_;
     Heuristics<GraphMove, GraphComm> & heuristics_;
     bool verbose_ = false;
-    int number_of_trials_ = 100;
-    int number_of_subtrials_ = 100;
 public:
-    CAStar(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_trials, int number_of_subtrials, bool verbose)
-        : Solver<GraphMove, GraphComm>(instance, objective), dfs_solver_(instance, objective, heuristics, false), dijkstra_(instance), heuristics_(heuristics), number_of_trials_(number_of_trials), number_of_subtrials_(number_of_subtrials),verbose_(verbose) {}
+    CAStar(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, bool verbose)
+        : Solver<GraphMove, GraphComm>(instance, objective), dfs_solver_(instance, objective, heuristics, false), dijkstra_(instance), heuristics_(heuristics), verbose_(verbose) {}
     ~CAStar() {}
 
 private:
@@ -279,17 +278,18 @@ private:
         return p;
     }
 
+
+    protected:
     /**
      * @brief This is a best-effort CA* procedure that attempts to find the longest path towards goal configuration:
      * Pick random order, fill in config_stack_ by a path of Agent 1, then Agent 2 connected to 1, then 3 connected to 1,2 etc.
      * 
      */
-    std::vector<Configuration> computePrefix(const Configuration & start)
+    std::vector<Configuration> computePrefix(const Configuration & start, const Configuration & goal, int max_path_size = -1)
     {
         // std::cout << "* computePrefix(" << start;
         // std::cout << ")\n";
 
-        const Configuration & goal = this->instance_.goal();
         std::vector<Agent> shuffled;
         for(Agent agt = 0; agt < this->instance_.nb_agents(); agt++){
             shuffled.push_back(agt);
@@ -324,6 +324,11 @@ private:
         // Add first path
         std::vector<Path> paths;
         paths.push_back(this->dijkstra_.getShortestPath(start.at(shuffled.at(0)), goal.at(shuffled.at(0))));
+        if (max_path_size >0){
+            if (paths.back().size() > max_path_size){
+                paths.back().resize(max_path_size);
+            }
+        }
         int path_size = paths.back().size();
 
         // std::cout << ANSI_GREEN << "Got path for Agent " << shuffled[0] << " (number " << 0 << ") of size : " << paths.back().size() << ". From "
@@ -358,6 +363,11 @@ private:
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
             // std::cout << "\nconnected_path_towards..."; std::cout.flush();
             paths.push_back(this->getConnectedPathTowardsGoal(start, shuffled[i], neighborhoods));
+            if (max_path_size > 0){
+                if (paths.back().size() > max_path_size){
+                    paths.back().resize(max_path_size);
+                }
+            }
             // std::cout << " done\n"; std::cout.flush();
             // std::cout << "\t Got path for agent " << shuffled[i] << ": ";
             // for(Node n : paths.back()){
@@ -370,6 +380,7 @@ private:
             if(paths.back().size() > path_size){
                 // If the added path is longer than the previous ones, extend the neighborhoods by assuming all others idle at their
                 // last positions. Also extend the paths that are shorter than the new size.
+
                 path_size = paths.back().size();
                 for (int t = neighborhoods.size(); t < path_size; t++){
                     neighborhoods.push_back(neighborhoods.back());
@@ -446,29 +457,52 @@ private:
                 assert(!c.hasCollisions());
             }
         }
+        assert(configSeq.front() == start);
         return configSeq;
     }
+};
+
+
+/**
+ * @brief Instance of the CA* algorithm where we attempt \a number_of_runs runs towards goal, and if goal was not reached, then we finish with the DFS solver.
+ * 
+ * @tparam GraphMove 
+ * @tparam GraphComm 
+ */
+template <class GraphMove, class GraphComm>
+class CAStarDFSFinish : public CAStar<GraphMove, GraphComm>
+{
+private:
+    int number_of_runs_ = 100;
+    int number_of_extrials_ = 100;
+
+public:
+    CAStarDFSFinish(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_runs, int number_of_extrials, bool verbose)
+        : CAStar<GraphMove, GraphComm>(instance, objective, heuristics, verbose){}
+    ~CAStarDFSFinish() {}
+
     const Execution compute() override
     {
         std::vector<Configuration> bestPrefix;
         bool goal_reached = false;
-        for(int i = 0; i < this->number_of_trials_ && !goal_reached; i++){
+        int steps_since_progress = 0;
+        for(int i = 0; i < this->number_of_runs_ && !goal_reached; i++){
             std::cout << ANSI_PURPLE << "trial number " << i << "\t " << ANSI_RESET;
             std::cout.flush();
-            config_stack_.clear();
+            this->config_stack_.clear();
             // std::cout << ANSI_PURPLE << "\n\ncomputePrefix:\n" << ANSI_RESET;
             // for (int j = 0; j < 1; j++){
             //     const Configuration start = this->instance_.start();
             //     std::vector<Path> paths = computePrefix(start);
             // }
             Configuration start = this->instance_.start();
-            std::vector<Configuration> prefix = computePrefix(start);
+            std::vector<Configuration> prefix = this->computePrefix(start, this->instance_.goal());
             // std::cout << "(got prefix of size " << prefix.size() << ")\n";
             // std::cout << " ending in " << prefix.back() << "\n";
             // Try to extend it further
             if (prefix.back() != this->instance_.goal()){
-                for (int j = 0; j < this->number_of_subtrials_; j++){
-                    std::vector<Configuration> segment = computePrefix(prefix.back());
+                for (int j = 0; j < this->number_of_extrials_; j++){
+                    std::vector<Configuration> segment = this->computePrefix(prefix.back(), this->instance_.goal());
                     if (segment.size()>1){
                         // std::cout << "(extending prefix by segment of size " << segment.size() << ")\n";
                         for(auto c = segment.begin()+1; c != segment.end(); c++){
@@ -491,8 +525,8 @@ private:
         this->config_stack_ = bestPrefix;
 
         std::vector<std::shared_ptr<Configuration> > suffix;
-        if (config_stack_.back() != this->instance_.goal()){
-            if(verbose_){
+        if (this->config_stack_.back() != this->instance_.goal()){
+            if(this->verbose_){
                 std::cout << ANSI_CYAN << "Keeping prefix of length " << bestPrefix.size() << "\n" << ANSI_RESET;
                 std::cout << ANSI_BLUE << "Now running DFS from " << bestPrefix.back();
                 std::cout << "\t towards " << this->instance_.goal();
@@ -506,7 +540,7 @@ private:
 
         if (suffix.size() > 0){
             for (auto it = suffix.begin()+1; it != suffix.end(); it++){
-                config_stack_.push_back(**it);
+                this->config_stack_.push_back(**it);
             }
         }
 
@@ -521,7 +555,7 @@ private:
         for (int i = 0; i < this->instance_.nb_agents(); i++)
         {
             std::shared_ptr<Path> path = std::make_shared<Path>();
-            for (auto c : config_stack_)
+            for (auto c : this->config_stack_)
             {
                 path->push_back(c[i]);
             }
@@ -534,10 +568,172 @@ private:
             assert(path->isValid(this->instance_.graph().movement()));
             this->execution_.push_back(path);
         }
-
-
         return this->execution_;
     }
+};
 
+
+/**
+ * @brief Instance of the CA* algorithm where we attempt an unbounded number of runs. At each run,
+ * if goal was not reached, we shuffle the order and try to extend the execution \a number_of_extrials times.
+ * If in the last \a shake_threshold_ runs, we failed to improve the execution (that is, the found execution was
+ * not longer than the previous best), then we attempt a "shaked run". A shaked run is defined as follows:
+ * Pick a random connected configuration and run either CA* or DFS towards it for \a shake_length_ steps, depending
+ * ont the shake_mode_;
+ * retry \a shake_trials_ times if no steps can be made. Then run CA* from the current configuration towards goal.
+ * 
+ * @tparam GraphMove 
+ * @tparam GraphComm 
+ */
+
+template <class GraphMove, class GraphComm>
+class CAStarShake : public CAStar<GraphMove, GraphComm>
+{
+public: 
+    enum class ShakeMode : int
+    {
+        CASTAR,
+        DFS
+    };
+private:
+    int shake_threshold_ = 5; // Nb of trials after which we will shake
+    int shake_length_ = 10;   // Size of the shaking prefix before we try again
+    int shake_trials_ = 25;   // Number of times we try to shake with CA*
+    int number_of_extrials_ = 100;
+    SubsolverEnum subsolver_;
+public: 
+
+    CAStarShake(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_extrials, SubsolverEnum subsolver, bool verbose)
+        : CAStar<GraphMove, GraphComm>(instance, objective, heuristics, verbose), number_of_extrials_(number_of_extrials), subsolver_(subsolver){}
+    ~CAStarShake() {}
+
+
+    Configuration getRandomConfiguration()
+    {
+        // Pick a node of Gc for the 1st agent
+        size_t nb_nodes = this->instance().graph().communication().node_count();
+        Node first = (uint64_t)rand() % (nb_nodes - 1);
+        Configuration config = {first};
+        std::unordered_set<Node> neighbors;
+        // Pick in the Gc neighbors the position for the 2nd, etc
+        for (size_t agt = 1; agt < this->instance().nb_agents(); agt++)
+        {
+          auto new_neighbors = this->instance().graph().communication().get_neighbors(
+              config.at(agt - 1));
+          neighbors.insert(new_neighbors.begin(), new_neighbors.end());
+
+          auto neighbors_vector =
+              std::vector<Node>(neighbors.begin(), neighbors.end());
+          auto size = neighbors_vector.size();
+          // std::cout << "size for agt " << agt << ":" << size;
+          auto nextagt = rand() % size;
+          config.push_back(neighbors_vector.at(nextagt));
+          assert(neighbors_vector.at(nextagt) <
+                 this->instance().graph().movement().node_count());
+        }
+        std::random_shuffle(config.begin(), config.end());
+        return config;
+    }
+
+
+    const Execution compute() override
+    {
+        std::vector<Configuration> prefix;
+        std::vector<Configuration> bestSuffix;
+        const Configuration & start = this->instance_.start();
+        bool goal_reached = false;
+        int steps_since_progress = 0;
+        int i = 0;
+        while(!goal_reached){
+            steps_since_progress++;
+            i++;
+            std::cout << ANSI_RED << "Trial number " << i << " (progress made " << steps_since_progress << " steps ago)\n " << ANSI_RESET;
+            std::cout.flush();
+            this->config_stack_.clear();
+
+            if (steps_since_progress >= this->shake_threshold_){
+                prefix.clear();
+                int st = 0;
+                if(this->subsolver_ == SubsolverEnum::CASTAR){
+                    // Shaking step: try random directions number_of_extrials_ times
+                    for (st = 0; prefix.size() <= 1 && st < this->shake_trials_; st++){
+                        // std::cout << ANSI_BLUE << "\nShaking with CA*: " << st << "\n"  << ANSI_RESET;
+                        Configuration intermediate_goal = this->getRandomConfiguration();
+                        prefix = this->computePrefix(start, intermediate_goal, this->shake_length_);
+                    }
+                    // Optional: if the above fails, then switch to DFS
+                    // if (prefix.size() <= 1){
+                    // }
+                    std::cout << ANSI_PURPLE << "\nShooked with CA*: " << st << " times\n"  << ANSI_RESET;
+                } else if (this->subsolver_ == SubsolverEnum::DFS){
+                    std::cout << ANSI_BLUE << "\nShaking with DFS\n" << ANSI_RESET;
+                    Configuration intermediate_goal = this->getRandomConfiguration();
+                    std::vector<std::shared_ptr<Configuration> > dfs_prefix =
+                        this->dfs_solver_.computeBoundedPathTowards(start, intermediate_goal, this->shake_length_/2);
+                    prefix.clear();
+                    for(auto c : dfs_prefix){
+                        prefix.push_back(*c);
+                    }
+                } else {
+                    throw std::runtime_error("Subsolver not supported for CASTAR");
+                }
+                std::cout << ANSI_PURPLE << "Got prefix of size " << prefix.size()  << ". Now running CA* from new source\n" << ANSI_RESET;
+            } else {
+                prefix = {this->instance_.start()};
+            }
+            std::vector<Configuration> suffix = this->computePrefix(prefix.back(), this->instance_.goal());
+
+            // Try to extend it further
+            if (suffix.back() != this->instance_.goal()){
+                for (int j = 0; j < this->number_of_extrials_; j++){
+                    std::vector<Configuration> segment = this->computePrefix(suffix.back(), this->instance_.goal());
+                    if (segment.size()>1){
+                        // std::cout << "(extending prefix by segment of size " << segment.size() << ")\n";
+                        for(auto c = segment.begin()+1; c != segment.end(); c++){
+                            suffix.push_back(*c);
+                        }
+                    }
+                }
+            }
+            if (suffix.back() == this->instance_.goal()){
+                bestSuffix = suffix;
+                std::cout << ANSI_GREEN << "CA*-Shake solved the instance.\n" << ANSI_RESET;
+                goal_reached = true;
+                break;
+            }
+        }
+
+        this->config_stack_ = prefix;
+        for (auto it = bestSuffix.begin()+1; it != bestSuffix.end(); it++){
+            this->config_stack_.push_back(*it);
+        }
+
+
+        // Check
+        assert(this->config_stack_.front() == this->instance_.start());
+        assert(this->config_stack_.back() == this->instance_.goal());
+        for(auto c : this->config_stack_){
+            this->instance_.graph().communication().isConfigurationConnected(c);
+        }
+
+        // Create the execution
+        for (int i = 0; i < this->instance_.nb_agents(); i++)
+        {
+            std::shared_ptr<Path> path = std::make_shared<Path>();
+            for (auto c : this->config_stack_)
+            {
+                path->push_back(c[i]);
+            }
+            // if (suffix.size() > 0){
+            //     for (auto it = suffix.begin()+1; it != suffix.end(); it++)
+            //     {
+            //         path->push_back((*it)->at(i));
+            //     }
+            // }
+            assert(path->isValid(this->instance_.graph().movement()));
+            this->execution_.push_back(path);
+        }
+        return this->execution_;
+    }
 };
 }

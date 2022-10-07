@@ -14,12 +14,13 @@
 #include <stdint.h>
 #include <cmath>
 
-enum class SubsolverEnum : int { DECOUPLED_SOLVER, DFS_SOLVER, COORD_SOLVER };
+enum class SubsolverEnum : int { CASTAR, DFS, COORD };
 enum class Algorithm : int
 {
   CBS = 0,
   CCBS,
   CASTAR,
+  CASTARDFS,
   DFS,
   COORD,
   CMARRT,

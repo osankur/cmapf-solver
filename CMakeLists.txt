@@ -79,6 +79,8 @@ target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to li
 target_set_warnings(main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(main optimized)  # enable link-time-optimization if available for non-debug configurations
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and main (change as needed).
 set_target_properties(
     ${LIBRARY_NAME} main 

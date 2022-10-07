@@ -448,10 +448,10 @@ namespace cmarrt
 
       switch (this->subsolver)
       {
-      case SubsolverEnum::COORD_SOLVER:
+      case SubsolverEnum::COORD:
         currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&coord_solver_;
         break;
-      case SubsolverEnum::DFS_SOLVER:
+      case SubsolverEnum::DFS:
         currentSubsolver = (BoundedSolver<GraphMove, GraphComm> *)&dfs_solver_;
         break;
       }
@@ -466,7 +466,7 @@ namespace cmarrt
       // Now decide if we want to run DFS instead
       bool use_dfs = false;
       int use_dfs_max_iterations = -1;
-      if (this->subsolver == SubsolverEnum::COORD_SOLVER && !this->_window_connected && *c_target == this->instance().goal())
+      if (this->subsolver == SubsolverEnum::COORD && !this->_window_connected && *c_target == this->instance().goal())
       {
         use_dfs = true;
         size_t cnear_sp_dist = 0;
