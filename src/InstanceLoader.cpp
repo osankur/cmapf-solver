@@ -30,9 +30,6 @@ void XMLInstanceLoader::Load() {
   if (!file_exists(file_path_)) 
   {
     throw std::runtime_error("File " + std::string(file_path_) + " not found.");
-  } else {
-    std::cout << "Accessing: " << file_path_ << "\n"; 
-    std::cout.flush();
   }
   std::ifstream infile(file_path_);
 

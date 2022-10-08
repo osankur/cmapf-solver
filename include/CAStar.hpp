@@ -107,8 +107,8 @@ private:
      */
     Path getConnectedPathTowardsGoal(Configuration startConf, Agent agt, std::vector<std::unordered_set<Node>> & neighborhoods){
         bool local_verbose = false;
-        Node start = startConf[agt];
-        Node goal = this->instance_.goal()[agt];
+        Node start = startConf.at(agt);
+        Node goal = this->instance_.goal().at(agt);
         Path p;
         
         // std::cout << "\n* getConnectedPathTowardsGoal(Agt: " << agt << " Start: " << start << ", goal: " << goal << ") with neighborhoods size: " <<
@@ -141,46 +141,51 @@ private:
         // while staying inside the said frame. Let suffix_next be the next node to go to follow this suffix.
         // The path that follows suffix_next corresponds to previous agents idling at their final positions while agt continuing towards their goal.
 
-        // Node * suffix_next = new Node[this->instance_.graph().movement().node_count()];
-        auto suffix_next = std::make_unique<Node[]>(this->instance_.graph().movement().node_count());
-        auto suffix_h = std::make_unique<size_t[]>(this->instance_.graph().movement().node_count());
-        // size_t * suffix_h = new size_t[this->instance_.graph().movement().node_count()];
-        for(int i = 0; i < this->instance_.nb_agents(); i++){
-            suffix_next[i] = std::numeric_limits<Node>::max();
-            suffix_h[i] = std::numeric_limits<size_t>::max();
+        // auto suffix_next = std::make_unique<Node[]>(this->instance_.graph().movement().node_count());
+        // auto suffix_h = std::make_unique<size_t[]>(this->instance_.graph().movement().node_count());
+
+        std::vector<Node> suffix_next;
+        std::vector<size_t> suffix_h;
+        for(int i = 0; i < this->instance_.graph().movement().node_count(); i++){
+            suffix_next.push_back(std::numeric_limits<Node>::max());
+            suffix_h.push_back(std::numeric_limits<size_t>::max());
         }
+        //     suffix_next[i] = std::numeric_limits<Node>::max();
+        //     suffix_h[i] = std::numeric_limits<size_t>::max();
+        // }
         // std::unordered_map<Node,Node> suffix_next; // for a vertex of the last frame, the vertex to go to for agt
         // std::unordered_map<Node,size_t> suffix_h; // for a vertex of the last frame, the distance to go for agt from given node to goal
-        suffix_next[goal] = goal;
-        suffix_h[goal] = 0;
+        suffix_next.at(goal)= goal;
+        suffix_h.at(goal) = 0;
         std::stack<Node> wait;
-        auto has_path_to_goal_v = std::make_unique<bool[]>(this->instance_.graph().movement().node_count());
+        // auto has_path_to_goal_v = std::make_unique<bool[]>(this->instance_.graph().movement().node_count());
+        std::vector<bool> has_path_to_goal_v;
         for(int i = 0; i < this->instance_.graph().movement().node_count(); i++){
-            has_path_to_goal_v[i] = false;
+            has_path_to_goal_v.push_back(false);
         }
         std::vector<Node> has_path_to_goal_v_support; // vector of nodes node such that has_path_to_goal_v[node] = true
 
         // std::unordered_set<Node> has_path_to_goal;
         // We do this step only if goal is in the last frame
-        if (neighborhoods[neighborhoods.size()-1].contains(goal))
+        if (neighborhoods.at(neighborhoods.size()-1).contains(goal))
             wait.push(goal);
 
         while(!wait.empty()){
             Node current = wait.top();
             wait.pop();
-            if (has_path_to_goal_v[current])
+            if (has_path_to_goal_v.at(current))
                 continue;
             // if (has_path_to_goal.contains(current))
             //     continue;
             // // has_path_to_goal.insert(current);
-            has_path_to_goal_v[current] = true;
+            has_path_to_goal_v.at(current) = true;
             has_path_to_goal_v_support.push_back(current);
             for (Node sucnode : this->instance_.graph().movement().get_neighbors(current)){
                 // for all movement neighbor node sucnode that are in the last frame
-                if (neighborhoods[neighborhoods.size()-1].contains(sucnode) && !has_path_to_goal_v[sucnode]){
+                if (neighborhoods[neighborhoods.size()-1].contains(sucnode) && !has_path_to_goal_v.at(sucnode)){
                 // if (neighborhoods[neighborhoods.size()-1].contains(sucnode) && !has_path_to_goal.contains(sucnode)){
-                    suffix_next[sucnode] = current;
-                    suffix_h[sucnode] = suffix_h[current] + 1;
+                    suffix_next.at(sucnode) = current;
+                    suffix_h.at(sucnode) = suffix_h.at(current) + 1;
                     if (local_verbose){
                         std::cout << "suffix_next[" << sucnode << "] = " << current << "\n";
                         std::cout << "suffix_h[" << sucnode << "] = " << suffix_h[sucnode] <<"\n";
@@ -191,16 +196,18 @@ private:
         }
 
         // std::vector<std::unordered_map<Node,CANode> > prefix_h;
-        std::vector<std::unique_ptr<CANode[]>> prefix_h;
+        // std::vector<std::unique_ptr<CANode[]>> prefix_h;
+        std::vector<std::vector<CANode>> prefix_h;
         for(int i=0; i < neighborhoods.size(); i++){
-            prefix_h.push_back(std::make_unique<CANode[]>(this->instance_.graph().movement().node_count()));
+            // prefix_h.push_back(std::make_unique<CANode[]>(this->instance_.graph().movement().node_count()));
+            prefix_h.push_back(std::vector<CANode>(this->instance_.graph().movement().node_count()));
         }
         // for(int i=0; i < neighborhoods.size(); i++){
         //     prefix_h.push_back(std::unordered_map<Node,CANode>());
         // }
 
         for (Node node : has_path_to_goal_v_support){
-            prefix_h[neighborhoods.size()-1][node] = CANode(node, node, true, suffix_h[node], suffix_h[node]);
+            prefix_h.at(neighborhoods.size()-1).at(node) = CANode(node, node, true, suffix_h.at(node), suffix_h.at(node));
         }
         // for(Node node : has_path_to_goal){
         //     prefix_h[neighborhoods.size()-1][node] = CANode(node, node, true, suffix_h[node], suffix_h[node]);
@@ -337,30 +344,30 @@ private:
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
             // Make sure that shuffle[agt] is connected to shuffle[0...agt-1], swap with someone if needed
             Agent j = i;
-            while (!cluster.contains(start[shuffled[j]]) && j < this->instance_.nb_agents()){
+            while (!cluster.contains(start.at(shuffled[j])) && j < this->instance_.nb_agents()){
                 j++;
             }
-            assert(cluster.contains(start[shuffled[j]]));
+            assert(cluster.contains(start.at(shuffled[j])));
             Agent tmp = shuffled[i];
             shuffled[i] = shuffled[j];
             shuffled[j] = tmp;
-            for(auto node : this->instance_.graph().communication().get_neighbors(start[shuffled[i]])){
+            for(auto node : this->instance_.graph().communication().get_neighbors(start.at(shuffled[i]))){
                 cluster.insert(node);
             }
         }
 
         // Safety check for debugging
-        cluster = this->instance_.graph().communication().get_neighbors(start[shuffled[0]]);
+        cluster = this->instance_.graph().communication().get_neighbors(start.at(shuffled[0]));
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
-            assert(cluster.contains(start[shuffled[i]]));
-            for(auto node : this->instance_.graph().communication().get_neighbors(start[shuffled[i]])){
+            assert(cluster.contains(start.at(shuffled[i])));
+            for(auto node : this->instance_.graph().communication().get_neighbors(start.at(shuffled[i]))){
                 cluster.insert(node);
             }
         }
 
         // Add first path
         std::vector<Path> paths;
-        paths.push_back(this->dijkstra_.getShortestPath(start[shuffled[0]], goal[shuffled[0]]));
+        paths.push_back(this->dijkstra_.getShortestPath(start.at(shuffled[0]), goal.at(shuffled[0])));
         if (max_path_size >0){
             if (paths.back().size() > max_path_size){
                 paths.back().resize(max_path_size);
@@ -387,7 +394,7 @@ private:
                 neighborhoods.at(t).insert(node);
             }
             if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS ){
-                neighborhoods[t].erase(paths.back().at(t));
+                neighborhoods.at(t).erase(paths.back().at(t));
             }
             // std::cout << "Neighborhood[" << t<< "] = ";
             // for(auto node : neighborhoods[t]){
@@ -399,7 +406,7 @@ private:
         // std::cout << "\nconnected_path_towards..."; std::cout.flush();
         for(Agent i = 1; i < this->instance_.nb_agents(); i++){
             // std::cout << "\nconnected_path_towards..."; std::cout.flush();
-            paths.push_back(this->getConnectedPathTowardsGoal(start, shuffled[i], neighborhoods));
+            paths.push_back(this->getConnectedPathTowardsGoal(start, shuffled.at(i), neighborhoods));
             if (max_path_size > 0){
                 if (paths.back().size() > max_path_size){
                     paths.back().resize(max_path_size);
@@ -423,9 +430,9 @@ private:
                     neighborhoods.push_back(neighborhoods.back());
                 }
                 for(int i = 0; i < paths.size(); i++){
-                    if (paths[i].size() < path_size){
-                        for(int t = paths[i].size(); t < path_size; t++){
-                            paths[i].push_back(paths[i].back());
+                    if (paths.at(i).size() < path_size){
+                        for(int t = paths.at(i).size(); t < path_size; t++){
+                            paths.at(i).push_back(paths[i].back());
                         }
 
                     }
@@ -435,7 +442,7 @@ private:
                 path_size = paths.back().size();
                 neighborhoods.resize(path_size);
                 for(int i = 0; i <paths.size();i++){
-                    paths[i].resize(path_size);
+                    paths.at(i).resize(path_size);
                 }
             }
             // for(Node n : paths.back()){
@@ -454,11 +461,11 @@ private:
             for(int t = 0; t < neighborhoods.size(); t++){
                 // Add the comm. neighborhood of the new path
                 for(auto node : this->instance_.graph().communication().get_neighbors(paths.back().getAtTimeOrLast(t))){
-                    neighborhoods[t].insert(node);
+                    neighborhoods.at(t).insert(node);
                 }
                 if (this->instance().getCollisionMode() == CollisionMode::CHECK_COLLISIONS ){
                     for (Agent j = 0; j <= i; j++){
-                        neighborhoods[t].erase(paths[j].getAtTimeOrLast(t));
+                        neighborhoods.at(t).erase(paths.at(j).getAtTimeOrLast(t));
                     }
                 }
             }
@@ -481,7 +488,7 @@ private:
             // std::cout << "paths[" << t << "].size() == " << paths[t].size() << "\n";
             Configuration c(this->instance_.nb_agents());
             for(Agent i = 0; i < this->instance_.nb_agents(); i++){
-                c[shuffled[i]] = paths[i].getAtTimeOrLast(t);
+                c.at(shuffled.at(i)) = paths.at(i).getAtTimeOrLast(t);
             }
             if (this->instance_.graph().communication().isConfigurationConnected(c)){
                 configSeq.push_back(c);
@@ -650,13 +657,16 @@ public:
         // Pick a node of Gc for the 1st agent
         size_t nb_nodes = this->instance().graph().communication().node_count();
         Node first = (uint64_t)rand() % (nb_nodes - 1);
-        Configuration config = {first};
+        Configuration config;
+        config.push_back(first);
         std::unordered_set<Node> neighbors;
         // Pick in the Gc neighbors the position for the 2nd, etc
         for (size_t agt = 1; agt < this->instance().nb_agents(); agt++)
         {
+          // std::cout << "Size of config: " << config.size() << ", agt = " << agt << "\n";
           auto new_neighbors = this->instance().graph().communication().get_neighbors(
-              config.at(agt - 1));
+            config.back());
+            //   config.at(agt - 1));
           neighbors.insert(new_neighbors.begin(), new_neighbors.end());
 
           auto neighbors_vector =
