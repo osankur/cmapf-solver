@@ -40,7 +40,8 @@ class CAStar : public Solver<GraphMove, GraphComm>
 protected:
     coupled::DFS<GraphMove, GraphComm> dfs_solver_;
     std::vector<Configuration> config_stack_;
-    DijkstraSPCalculator<GraphMove,GraphComm> dijkstra_;
+    //DijkstraSPCalculator<GraphMove,GraphComm> dijkstra_;
+    AStarSPCalculator<GraphMove,GraphComm> dijkstra_;
     Heuristics<GraphMove, GraphComm> & heuristics_;
     bool verbose_ = false;
 public:
@@ -368,6 +369,10 @@ private:
         // Add first path
         std::vector<Path> paths;
         paths.push_back(this->dijkstra_.getShortestPath(start.at(shuffled[0]), goal.at(shuffled[0])));
+        // std::cout << paths.back();
+        // std::cout << "\nStart: " << start[shuffled[0]] << ". Goal: " << goal[shuffled[0]] << "\n";
+        // assert(paths.back().front() == start[shuffled[0]]);
+        // assert(paths.back().back() == goal[shuffled[0]]);
         if (max_path_size >0){
             if (paths.back().size() > max_path_size){
                 paths.back().resize(max_path_size);
@@ -694,7 +699,7 @@ public:
         while(!goal_reached){
             steps_since_progress++;
             i++;
-            std::cout << ANSI_RED << "Trial number " << i << " (progress made " << steps_since_progress << " steps ago)\n " << ANSI_RESET;
+            std::cout << ANSI_RED << "Run number " << i << " (progress made " << steps_since_progress << " steps ago)\n " << ANSI_RESET;
             std::cout.flush();
             this->config_stack_.clear();
 
@@ -708,9 +713,6 @@ public:
                         Configuration intermediate_goal = this->getRandomConfiguration();
                         prefix = this->computePrefix(start, intermediate_goal, this->shake_length_);
                     }
-                    // Optional: if the above fails, then switch to DFS
-                    // if (prefix.size() <= 1){
-                    // }
                     std::cout << ANSI_PURPLE << "\nShooked with CA*: " << st << " times\n"  << ANSI_RESET;
                 } else if (this->subsolver_ == SubsolverEnum::DFS){
                     std::cout << ANSI_BLUE << "\nShaking with DFS\n" << ANSI_RESET;
@@ -732,17 +734,42 @@ public:
 
             // Try to extend it further
             if (suffix.back() != this->instance_.goal()){
+                int extension_progress_ago = 0;
                 for (int j = 0; j < this->number_of_extrials_; j++){
+                    extension_progress_ago++;
+                    if (suffix.back() == this->instance_.goal()){
+                        bestSuffix = suffix;
+                        std::cout << ANSI_GREEN << "CA*-Shake solved the instance.\n" << ANSI_RESET;
+                        goal_reached = true;
+                        break;
+                    }
                     std::vector<Configuration> segment = this->computePrefix(suffix.back(), this->instance_.goal());
                     if (segment.size()>1){
-                        // std::cout << "(extending prefix by segment of size " << segment.size() << ")\n";
+                        std::cout << "\t(extending prefix by segment of size " << segment.size() << ")\n";
                         for(auto c = segment.begin()+1; c != segment.end(); c++){
                             suffix.push_back(*c);
                         }
+                        extension_progress_ago = 0;
+                    } else if (extension_progress_ago > this->number_of_extrials_/2){
+                        extension_progress_ago = 0;
+                        Configuration intermediate_goal = this->getRandomConfiguration();
+                        if(this->subsolver_ == SubsolverEnum::CASTAR){
+                            segment = this->computePrefix(suffix.back(), intermediate_goal, this->shake_length_);
+                            for(auto c = segment.begin()+1; c != segment.end(); c++){
+                                suffix.push_back(*c);
+                            }
+                            std::cout << ANSI_BLUE << "\nExtension Shaking with CASTAR: " << segment.size() << " steps\n" << ANSI_RESET;
+                        } else if (this->subsolver_ == SubsolverEnum::DFS){
+                            std::vector<std::shared_ptr<Configuration> > dfs_segment =
+                                this->dfs_solver_.computeBoundedPathTowards(suffix.back(), intermediate_goal, this->shake_length_/2);
+                            for(auto c = dfs_segment.begin()+1; c != dfs_segment.end(); c++){
+                                suffix.push_back(**c);
+                            }
+                            std::cout << ANSI_BLUE << "\nExtension Shaking with DFS: " << dfs_segment.size() << " steps\n" << ANSI_RESET;
+                        }
                     }
                 }
-            }
-            if (suffix.back() == this->instance_.goal()){
+            } else {
                 bestSuffix = suffix;
                 std::cout << ANSI_GREEN << "CA*-Shake solved the instance.\n" << ANSI_RESET;
                 goal_reached = true;

@@ -206,7 +206,8 @@ public:
       while( current != source ){
         path_list.push_front(current);
         current = parent[current];
-      }      
+      }
+      path_list.push_front(current);
       for (auto node : path_list){
         p.push_back(node);
       }
