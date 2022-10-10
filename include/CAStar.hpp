@@ -534,7 +534,6 @@ public:
     {
         std::vector<Configuration> bestPrefix;
         bool goal_reached = false;
-        int steps_since_progress = 0;
         for(int i = 0; i < this->number_of_runs_ && !goal_reached; i++){
             std::cout << ANSI_PURPLE << "trial number " << i << "\t " << ANSI_RESET;
             std::cout.flush();
@@ -694,16 +693,14 @@ public:
         std::vector<Configuration> bestSuffix;
         const Configuration & start = this->instance_.start();
         bool goal_reached = false;
-        int steps_since_progress = 0;
         int i = 0;
         while(!goal_reached){
-            steps_since_progress++;
             i++;
-            std::cout << ANSI_RED << "Run number " << i << " (progress made " << steps_since_progress << " steps ago)\n " << ANSI_RESET;
+            std::cout << ANSI_RED << "Run number " << i << "\n " << ANSI_RESET;
             std::cout.flush();
             this->config_stack_.clear();
 
-            if (steps_since_progress >= this->shake_threshold_){
+            if (i >= this->shake_threshold_){
                 prefix.clear();
                 int st = 0;
                 if(this->subsolver_ == SubsolverEnum::CASTAR){
@@ -735,6 +732,8 @@ public:
             // Try to extend it further
             if (suffix.back() != this->instance_.goal()){
                 int extension_progress_ago = 0;
+                if (this->verbose_)
+                    std::cout << "Attempting to extend prefix of size " << prefix.size() << "\n";
                 for (int j = 0; j < this->number_of_extrials_; j++){
                     extension_progress_ago++;
                     if (suffix.back() == this->instance_.goal()){
@@ -745,7 +744,8 @@ public:
                     }
                     std::vector<Configuration> segment = this->computePrefix(suffix.back(), this->instance_.goal());
                     if (segment.size()>1){
-                        std::cout << "\t(extending prefix by segment of size " << segment.size() << ")\n";
+                        if (this->verbose_)
+                            std::cout << "\t(extending prefix of size " << prefix.size()<< " by segment of size " << segment.size() << ")\n";
                         for(auto c = segment.begin()+1; c != segment.end(); c++){
                             suffix.push_back(*c);
                         }

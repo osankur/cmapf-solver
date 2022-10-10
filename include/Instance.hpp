@@ -30,7 +30,7 @@ class Instance {
   Instance(const TopologicalGraph<GraphMove,GraphComm> & topo_graph,
            const Configuration & start,
            const Configuration & goal,
-           CollisionMode collision_mode = CollisionMode::IGNORE_COLLISIONS) : topo_graph_(topo_graph), start_(start), goal_(goal), nb_agents_(start.size()),
+           CollisionMode collision_mode = CollisionMode::CHECK_COLLISIONS) : topo_graph_(topo_graph), start_(start), goal_(goal), nb_agents_(start.size()),
            collision_mode_(collision_mode)
            {}
   ~Instance() = default;

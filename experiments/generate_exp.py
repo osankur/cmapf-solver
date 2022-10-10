@@ -23,7 +23,8 @@ def generate_connected_configuration(comm, nb_agents, from_base=None):
         # resample if the chosen vertex is already occupied by another agent
         neighbors = list(cluster)
         if len(neighbors) <= a:
-            raise Exception("Cannot make connected configuration collision-free")
+            #raise Exception("Cannot make connected configuration collision-free")
+            return None
         while prev_node in start:
             prev_node = neighbors[random.randint(0,len(neighbors)-1)]
         cluster = cluster | set(map(lambda x: x.index, comm.vs[prev_node].neighbors()))
@@ -207,8 +208,12 @@ def generate(phys_filename, comm_filename, nb_agents, window_mode, window_size, 
         # goal = generate_window_connected_configuration(comm, nb_agents, window_size)
     else:
         print("Generating connected configurations")
-        start = generate_connected_configuration(comm, nb_agents)
-        goal = generate_connected_configuration(comm, nb_agents)
+        start = None
+        goal = None
+        while (start is None):
+            start = generate_connected_configuration(comm, nb_agents)
+        while (goal is None):
+            goal = generate_connected_configuration(comm, nb_agents)
     assert(check_connected(comm,start))
     assert(check_connected(comm,goal))
     # We have start[0] == goal[0]. This is the base agent's position
