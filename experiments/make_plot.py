@@ -89,6 +89,31 @@ def plot_success():
                         times[key] = time
         for key in nbexps.keys():
             print(f"{key} ; {key2nb_agents[key]} ; {costs[key] / nbexps[key]} ; {times[key] / nbexps[key]}")
+    elif plottype == "length":
+        print("Experiment ; nb_agents ; cost ; time ")
+        # nb_agents x exp_no -> nb of rows
+        nbexps = {} 
+        # nb_agents x exp_no -> sum of costs
+        costs = {}
+        # nb_agents x exp_no -> nb of exec times
+        times = {}
+        #
+        key2nb_agents = {}
+        #exppat = re.compile(f"({prefix})([0-9]*)__(.*?)_(.*).csv")
+
+        for absfile in files:
+            with open(absfile[1], mode='r') as csv_file:
+                nb_agents = absfile[0]
+                lines = list(csv_file.readlines())
+                for line in lines:
+                    parts = line.split(" ; ")
+                    exp = parts[0]
+                    cost = int(parts[1])
+                    success = int(parts[2])
+                    time = float(parts[3])
+                    key = parts[0]
+                    if (success == 1):
+                        print(f"{absfile[1]} ; {nb_agents} ; {cost} ; {time}")
 
 def main():
     global alg, col, logfolder, prefix, caalone,plottype
