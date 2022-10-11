@@ -662,7 +662,9 @@ public:
         size_t nb_nodes = this->instance().graph().communication().node_count();
         Node first = (uint64_t)rand() % (nb_nodes - 1);
         Configuration config;
-        config.push_back(first);
+        for (size_t agt = 0; agt < this->instance().nb_agents(); agt++)
+            config.push_back(first);
+        /*
         std::unordered_set<Node> neighbors;
         // Pick in the Gc neighbors the position for the 2nd, etc
         for (size_t agt = 1; agt < this->instance().nb_agents(); agt++)
@@ -683,6 +685,7 @@ public:
                  this->instance().graph().movement().node_count());
         }
         std::random_shuffle(config.begin(), config.end());
+        */
         return config;
     }
 
@@ -705,10 +708,13 @@ public:
                 int st = 0;
                 if(this->subsolver_ == SubsolverEnum::CASTAR){
                     // Shaking step: try random directions number_of_extrials_ times
-                    for (st = 0; prefix.size() <= 1 && st < this->shake_trials_; st++){
+                    for (st = 0; prefix.size() < this->shake_length_ && st < this->shake_trials_; st++){
                         // std::cout << ANSI_BLUE << "\nShaking with CA*: " << st << "\n"  << ANSI_RESET;
                         Configuration intermediate_goal = this->getRandomConfiguration();
-                        prefix = this->computePrefix(start, intermediate_goal, this->shake_length_);
+                        auto prefix_candidate = this->computePrefix(start, intermediate_goal, this->shake_length_);
+                        if (prefix_candidate.size() > prefix.size()){
+                            prefix = prefix_candidate;
+                        }
                     }
                     std::cout << ANSI_PURPLE << "\nShooked with CA*: " << st << " times\n"  << ANSI_RESET;
                 } else if (this->subsolver_ == SubsolverEnum::DFS){
@@ -754,7 +760,17 @@ public:
                         extension_progress_ago = 0;
                         Configuration intermediate_goal = this->getRandomConfiguration();
                         if(this->subsolver_ == SubsolverEnum::CASTAR){
-                            segment = this->computePrefix(suffix.back(), intermediate_goal, this->shake_length_);
+                            int st = 0;
+                            segment.clear();
+                            for (st = 0; st < this->shake_trials_ && segment.size() < this->shake_length_; st++){
+                                // std::cout << ANSI_BLUE << "\nShaking with CA*: " << st << "\n"  << ANSI_RESET;
+                                Configuration intermediate_goal = this->getRandomConfiguration();
+                                auto candidate_segment = this->computePrefix(suffix.back(), intermediate_goal, this->shake_length_);
+                                if (candidate_segment.size() >= segment.size()){
+                                    segment = candidate_segment;
+                                }
+                            }
+                            // segment = this->computePrefix(suffix.back(), intermediate_goal, this->shake_length_);
                             for(auto c = segment.begin()+1; c != segment.end(); c++){
                                 suffix.push_back(*c);
                             }
