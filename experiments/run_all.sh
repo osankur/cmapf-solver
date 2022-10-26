@@ -9,11 +9,11 @@
 
 # This is the set of prefix base names to be run
 benchmarks=()
-for i in {2..40}; do
+for i in {2..80}; do
 	#benchmarks=("${benchmarks[@]}" "small_obstacles_3d_agents${i}_")
-	#benchmarks=("${benchmarks[@]}" "obstacle_field_range1_agents${i}_")
 	#benchmarks=("${benchmarks[@]}" "offices_range1_agents${i}_")
-	benchmarks=("${benchmarks[@]}" "parallel_range1_agents${i}_")
+	#benchmarks=("${benchmarks[@]}" "parallel_range1_agents${i}_")
+	benchmarks=("${benchmarks[@]}" "pyramid_range3_3d_agents${i}_")
 done
 algo=$1 # CMARRT, COORD, DFS
 if [[ $algo = "" ]]; then

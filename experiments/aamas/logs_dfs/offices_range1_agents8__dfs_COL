@@ -1,0 +1,303 @@
+>>>>> cmarrt-data/offices_range1_agents8_0.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_0.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_0.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.66
+user 300.10
+sys 0.25
+>>>>> cmarrt-data/offices_range1_agents8_10.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_10.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_10.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.62
+user 300.09
+sys 0.23
+>>>>> cmarrt-data/offices_range1_agents8_11.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_11.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_11.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1665875509.557632803]: Planner started[0m
+[0m[ INFO] [1665875510.988344951]: Plan found[0m
+[0m[ INFO] [1665875510.988368219]: Elapsed time: 1.43298 s[0m
+Computed plan: 
+Plan size: 119
+[1357 1358 1393 1428 1427 1429 1453 1430]
+[1321 1322 1357 1393 1392 1394 1427 1395]
+[1285 1286 1321 1357 1356 1358 1392 1359]
+[1284 1285 1320 1321 1355 1322 1356 1323]
+[1283 1284 1319 1285 1355 1286 1320 1287]
+[1254 1283 1319 1284 1355 1285 1320 1286]
+[1225 1254 1283 1284 1319 1285 1320 1286]
+[1217 1225 1254 1283 1319 1284 1320 1285]
+[1161 1217 1225 1254 1283 1284 1319 1285]
+[1105 1161 1217 1225 1254 1283 1319 1284]
+[1049 1105 1161 1217 1225 1254 1283 1284]
+[1050 1049 1105 1161 1217 1225 1254 1283]
+[1051 1050 1049 1105 1161 1217 1225 1254]
+[1052 1051 1050 1049 1105 1161 1217 1225]
+[1053 1052 1051 1050 1049 1105 1161 1217]
+[1054 1053 1052 1051 1050 1049 1105 1161]
+[1055 1054 1053 1052 1051 1050 1049 1105]
+[1056 1055 1054 1053 1052 1051 1050 1049]
+[1057 1056 1055 1054 1053 1052 1051 1050]
+[1058 1057 1056 1055 1054 1053 1052 1051]
+[1009 1058 1057 1056 1055 1054 1053 1052]
+[957 1009 1058 1057 1056 1055 1054 1053]
+[905 957 1009 1058 1057 1056 1055 1054]
+[853 905 957 1009 1058 1057 1056 1055]
+[854 853 905 957 1009 1058 1057 1056]
+[855 854 853 905 957 1009 1058 1057]
+[856 855 854 853 905 957 1009 1058]
+[857 856 855 854 853 905 957 1009]
+[858 857 856 855 854 853 905 957]
+[859 858 857 856 855 854 853 905]
+[860 859 858 857 856 855 854 853]
+[861 860 859 858 857 856 855 854]
+[862 861 860 859 858 857 856 855]
+[834 862 861 860 859 858 857 856]
+[805 834 862 861 860 859 858 857]
+[765 805 834 862 861 860 859 858]
+[715 765 805 834 862 861 860 859]
+[664 715 765 805 834 862 861 860]
+[608 664 715 765 805 834 862 861]
+[553 608 664 715 765 805 834 862]
+[499 553 608 664 715 765 805 834]
+[453 499 553 608 664 715 765 805]
+[423 453 499 553 608 664 715 765]
+[379 423 453 499 553 608 664 715]
+[316 379 423 453 499 553 608 664]
+[317 316 379 423 453 499 553 608]
+[318 317 316 379 423 453 499 553]
+[319 318 317 316 379 423 453 499]
+[320 319 318 317 316 379 423 453]
+[279 320 319 318 317 316 379 423]
+[248 279 320 319 318 317 316 379]
+[209 248 279 320 319 318 317 316]
+[170 209 248 279 320 319 318 317]
+[171 210 209 248 279 320 319 318]
+[172 211 210 249 248 279 320 319]
+[173 212 211 250 249 248 279 320]
+[174 213 212 251 250 249 248 279]
+[175 214 213 252 251 250 249 248]
+[176 215 214 253 252 251 250 249]
+[177 216 215 254 253 252 251 250]
+[178 217 216 255 254 253 252 251]
+[179 218 217 256 255 254 253 252]
+[180 219 218 257 256 255 254 253]
+[181 220 219 258 257 256 255 254]
+[181 220 219 259 218 217 216 215]
+[181 220 219 259 179 218 217 216]
+[181 220 219 259 180 218 178 217]
+[181 220 219 259 180 218 179 217]
+[181 220 258 259 180 219 179 218]
+[181 220 258 259 180 219 140 179]
+[181 220 258 259 180 219 141 218]
+[181 220 258 259 180 219 142 218]
+[181 220 257 259 180 219 142 218]
+[181 220 258 259 141 219 142 218]
+[181 220 258 259 180 219 142 179]
+[181 221 258 259 180 220 142 179]
+[181 221 219 259 180 220 142 218]
+[181 182 219 259 180 220 142 218]
+[181 221 219 258 180 220 142 218]
+[181 221 219 259 141 220 142 218]
+[181 221 219 259 180 220 141 218]
+[181 221 219 259 180 220 142 179]
+[181 221 219 260 180 220 142 218]
+[181 221 219 259 179 220 142 218]
+[181 260 219 259 180 220 142 218]
+[181 260 219 259 141 220 142 218]
+[181 221 219 258 141 220 142 218]
+[181 221 219 258 180 220 141 218]
+[181 221 219 258 180 220 142 179]
+[181 221 219 259 180 220 141 179]
+[181 182 219 259 180 220 142 179]
+[181 221 218 259 180 220 142 179]
+[181 221 219 260 180 220 142 179]
+[181 182 219 260 180 221 142 218]
+[220 181 219 259 180 221 142 218]
+[220 181 219 258 180 221 142 218]
+[220 181 219 259 141 221 142 218]
+[220 181 219 259 180 182 142 218]
+[220 181 219 259 180 221 141 218]
+[220 181 219 259 180 221 142 179]
+[220 181 219 259 180 260 142 218]
+[220 181 219 259 179 221 142 218]
+[220 181 219 260 180 221 142 218]
+[220 181 219 260 141 221 142 218]
+[220 181 219 259 141 182 142 218]
+[220 181 219 259 180 143 142 218]
+[220 181 219 259 180 182 141 218]
+[220 181 219 259 180 182 142 179]
+[220 181 219 259 180 221 141 179]
+[220 181 218 259 180 221 142 179]
+[220 181 219 258 180 221 142 179]
+[220 181 219 259 180 260 142 179]
+[220 181 258 259 180 221 142 179]
+[220 181 219 260 180 221 142 179]
+[220 181 219 260 180 221 141 218]
+[220 181 219 259 180 260 141 218]
+[221 220 219 259 180 260 141 218]
+[182 220 219 259 180 221 141 218]
+[181 220 219 259 180 221 142 218]
+real 2.15
+user 1.98
+sys 0.16
+>>>>> cmarrt-data/offices_range1_agents8_12.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_12.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_12.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.75
+user 300.10
+sys 0.28
+>>>>> cmarrt-data/offices_range1_agents8_13.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_13.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_13.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.70
+user 300.11
+sys 0.23
+>>>>> cmarrt-data/offices_range1_agents8_14.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_14.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_14.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.67
+user 300.11
+sys 0.27
+>>>>> cmarrt-data/offices_range1_agents8_15.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_15.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_15.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.63
+user 300.12
+sys 0.21
+>>>>> cmarrt-data/offices_range1_agents8_16.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_16.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_16.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.70
+user 300.10
+sys 0.25
+>>>>> cmarrt-data/offices_range1_agents8_17.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_17.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_17.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.74
+user 300.16
+sys 0.25
+>>>>> cmarrt-data/offices_range1_agents8_18.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_18.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_18.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.65
+user 300.07
+sys 0.28
+>>>>> cmarrt-data/offices_range1_agents8_19.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_19.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_19.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.72
+user 300.16
+sys 0.22
+>>>>> cmarrt-data/offices_range1_agents8_1.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_1.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_1.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.63
+user 300.03
+sys 0.30
+>>>>> cmarrt-data/offices_range1_agents8_2.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_2.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_2.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.71
+user 300.12
+sys 0.23
+>>>>> cmarrt-data/offices_range1_agents8_3.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_3.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_3.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.64
+user 300.09
+sys 0.24
+>>>>> cmarrt-data/offices_range1_agents8_4.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_4.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_4.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.73
+user 300.12
+sys 0.27
+>>>>> cmarrt-data/offices_range1_agents8_5.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_5.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_5.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.73
+user 300.09
+sys 0.27
+>>>>> cmarrt-data/offices_range1_agents8_6.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_6.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_6.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.71
+user 300.12
+sys 0.24
+>>>>> cmarrt-data/offices_range1_agents8_7.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_7.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_7.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.76
+user 300.19
+sys 0.23
+>>>>> cmarrt-data/offices_range1_agents8_8.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_8.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_8.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.70
+user 299.96
+sys 0.39
+>>>>> cmarrt-data/offices_range1_agents8_9.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/offices_range1_agents8_9.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/offices_range1_agents8_9.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.67
+user 300.05
+sys 0.31

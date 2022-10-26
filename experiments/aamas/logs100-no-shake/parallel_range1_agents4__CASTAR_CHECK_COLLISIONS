@@ -1,0 +1,2894 @@
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_0.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_0.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 27529 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_0.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 27529
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0mCommand terminated by signal 9
+299.97user 0.00system 5:00.95elapsed 99%CPU (0avgtext+0avgdata 12292maxresident)k
+8inputs+72outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_10.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_10.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 5116 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_10.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 5116
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0mCommand terminated by signal 9
+299.98user 0.00system 5:00.91elapsed 99%CPU (0avgtext+0avgdata 12316maxresident)k
+8inputs+72outputs (0major+2336minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_11.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_11.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 22960 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_11.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 22960
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:01.03elapsed 99%CPU (0avgtext+0avgdata 12288maxresident)k
+8inputs+88outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_12.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_12.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 32643 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_12.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 32643
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:01.06elapsed 99%CPU (0avgtext+0avgdata 12036maxresident)k
+8inputs+80outputs (0major+2333minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_13.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_13.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 27763 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_13.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 27763
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0mCommand terminated by signal 9
+299.97user 0.01system 5:01.11elapsed 99%CPU (0avgtext+0avgdata 12292maxresident)k
+8inputs+80outputs (0major+2333minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_14.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_14.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 28013 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_14.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 28013
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0mCommand terminated by signal 9
+299.91user 0.07system 5:01.04elapsed 99%CPU (0avgtext+0avgdata 12284maxresident)k
+8inputs+80outputs (0major+2337minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_15.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_15.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 28141 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_15.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 28141
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0mCommand terminated by signal 9
+299.97user 0.01system 5:01.06elapsed 99%CPU (0avgtext+0avgdata 12032maxresident)k
+8inputs+88outputs (0major+2336minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_16.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_16.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 13626 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_16.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 13626
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0mCommand terminated by signal 9
+299.95user 0.03system 5:01.10elapsed 99%CPU (0avgtext+0avgdata 12296maxresident)k
+8inputs+80outputs (0major+2336minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_17.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_17.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 11207 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_17.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 11207
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0m[31mRun number 118
+ [0m[31mRun number 119
+ [0mCommand terminated by signal 9
+299.95user 0.03system 5:01.03elapsed 99%CPU (0avgtext+0avgdata 12304maxresident)k
+8inputs+88outputs (0major+2337minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_18.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_18.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 9923 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_18.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 9923
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:02.32elapsed 99%CPU (0avgtext+0avgdata 12316maxresident)k
+8inputs+80outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_19.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_19.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 1917 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_19.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 1917
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:02.75elapsed 99%CPU (0avgtext+0avgdata 12292maxresident)k
+8inputs+80outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_1.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_1.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 7278 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_1.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 7278
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:02.72elapsed 99%CPU (0avgtext+0avgdata 12316maxresident)k
+8inputs+88outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_2.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_2.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 25827 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_2.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 25827
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0m[31mRun number 118
+ [0mCommand terminated by signal 9
+299.93user 0.05system 5:02.64elapsed 99%CPU (0avgtext+0avgdata 12280maxresident)k
+8inputs+80outputs (0major+2336minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_3.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_3.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 4902 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_3.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 4902
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0m[31mRun number 118
+ [0mCommand terminated by signal 9
+299.81user 0.17system 5:01.08elapsed 99%CPU (0avgtext+0avgdata 12292maxresident)k
+8inputs+80outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_4.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_4.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 29075 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_4.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 29075
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0mCommand terminated by signal 9
+299.89user 0.09system 5:01.10elapsed 99%CPU (0avgtext+0avgdata 12284maxresident)k
+8inputs+88outputs (0major+2337minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_5.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_5.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 8183 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_5.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 8183
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0mCommand terminated by signal 9
+299.94user 0.04system 5:01.12elapsed 99%CPU (0avgtext+0avgdata 12304maxresident)k
+8inputs+80outputs (0major+2335minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_6.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_6.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 25465 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_6.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 25465
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0m[31mRun number 118
+ [0mCommand terminated by signal 9
+299.94user 0.04system 5:01.02elapsed 99%CPU (0avgtext+0avgdata 12308maxresident)k
+8inputs+80outputs (0major+2336minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_7.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_7.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 19952 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_7.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 19952
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0mCommand terminated by signal 9
+299.91user 0.07system 5:01.02elapsed 99%CPU (0avgtext+0avgdata 12292maxresident)k
+8inputs+80outputs (0major+2334minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_8.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_8.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 19457 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_8.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 19457
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0mCommand terminated by signal 9
+299.97user 0.01system 5:01.04elapsed 99%CPU (0avgtext+0avgdata 12288maxresident)k
+8inputs+72outputs (0major+2335minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents4_9.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents4_9.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 22986 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents4_9.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 4
+INFO: Start configuration: <75, 130, 173, 249>
+INFO: Goal configuration: <76, 131, 203, 214>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 22986
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[31mRun number 10
+ [0m[31mRun number 11
+ [0m[31mRun number 12
+ [0m[31mRun number 13
+ [0m[31mRun number 14
+ [0m[31mRun number 15
+ [0m[31mRun number 16
+ [0m[31mRun number 17
+ [0m[31mRun number 18
+ [0m[31mRun number 19
+ [0m[31mRun number 20
+ [0m[31mRun number 21
+ [0m[31mRun number 22
+ [0m[31mRun number 23
+ [0m[31mRun number 24
+ [0m[31mRun number 25
+ [0m[31mRun number 26
+ [0m[31mRun number 27
+ [0m[31mRun number 28
+ [0m[31mRun number 29
+ [0m[31mRun number 30
+ [0m[31mRun number 31
+ [0m[31mRun number 32
+ [0m[31mRun number 33
+ [0m[31mRun number 34
+ [0m[31mRun number 35
+ [0m[31mRun number 36
+ [0m[31mRun number 37
+ [0m[31mRun number 38
+ [0m[31mRun number 39
+ [0m[31mRun number 40
+ [0m[31mRun number 41
+ [0m[31mRun number 42
+ [0m[31mRun number 43
+ [0m[31mRun number 44
+ [0m[31mRun number 45
+ [0m[31mRun number 46
+ [0m[31mRun number 47
+ [0m[31mRun number 48
+ [0m[31mRun number 49
+ [0m[31mRun number 50
+ [0m[31mRun number 51
+ [0m[31mRun number 52
+ [0m[31mRun number 53
+ [0m[31mRun number 54
+ [0m[31mRun number 55
+ [0m[31mRun number 56
+ [0m[31mRun number 57
+ [0m[31mRun number 58
+ [0m[31mRun number 59
+ [0m[31mRun number 60
+ [0m[31mRun number 61
+ [0m[31mRun number 62
+ [0m[31mRun number 63
+ [0m[31mRun number 64
+ [0m[31mRun number 65
+ [0m[31mRun number 66
+ [0m[31mRun number 67
+ [0m[31mRun number 68
+ [0m[31mRun number 69
+ [0m[31mRun number 70
+ [0m[31mRun number 71
+ [0m[31mRun number 72
+ [0m[31mRun number 73
+ [0m[31mRun number 74
+ [0m[31mRun number 75
+ [0m[31mRun number 76
+ [0m[31mRun number 77
+ [0m[31mRun number 78
+ [0m[31mRun number 79
+ [0m[31mRun number 80
+ [0m[31mRun number 81
+ [0m[31mRun number 82
+ [0m[31mRun number 83
+ [0m[31mRun number 84
+ [0m[31mRun number 85
+ [0m[31mRun number 86
+ [0m[31mRun number 87
+ [0m[31mRun number 88
+ [0m[31mRun number 89
+ [0m[31mRun number 90
+ [0m[31mRun number 91
+ [0m[31mRun number 92
+ [0m[31mRun number 93
+ [0m[31mRun number 94
+ [0m[31mRun number 95
+ [0m[31mRun number 96
+ [0m[31mRun number 97
+ [0m[31mRun number 98
+ [0m[31mRun number 99
+ [0m[31mRun number 100
+ [0m[31mRun number 101
+ [0m[31mRun number 102
+ [0m[31mRun number 103
+ [0m[31mRun number 104
+ [0m[31mRun number 105
+ [0m[31mRun number 106
+ [0m[31mRun number 107
+ [0m[31mRun number 108
+ [0m[31mRun number 109
+ [0m[31mRun number 110
+ [0m[31mRun number 111
+ [0m[31mRun number 112
+ [0m[31mRun number 113
+ [0m[31mRun number 114
+ [0m[31mRun number 115
+ [0m[31mRun number 116
+ [0m[31mRun number 117
+ [0m[31mRun number 118
+ [0m[31mRun number 119
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:02.61elapsed 99%CPU (0avgtext+0avgdata 12312maxresident)k
+8inputs+88outputs (0major+2336minor)pagefaults 0swaps

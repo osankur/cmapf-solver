@@ -1,4 +1,4 @@
-set term png size 600, 400 crop
+set term png size 300, 200 crop
 set datafile separator ";"
 set pointsize 2
 set yrange [0:1.1]
@@ -6,7 +6,7 @@ set xrange [0:40]
 
 set key right bottom
 
-set title "Obstacle Field Range 1 - CA*"
+set title "Obstacle Range 1 - CA*"
 castar_filename="logs/obstacle_field_range1_CASTAR_CHECK_COLLISIONS.csv"
 castar2_filename="logs2/obstacle_field_range1_CASTAR_CHECK_COLLISIONS.csv"
 #castar_dfs_filename="logs/obstacle_field_range1_CASTAR_DFS_CHECK_COLLISIONS.csv"
@@ -15,12 +15,36 @@ plot castar_filename using ($3) title 'CA* 1000 - 1000' with lines,\
     castar2_filename using ($3) title 'CA* 500 - 100' with lines
 #    castar_dfs_filename using ($3) title 'CASTAR+DFS' with lines
 
-set title "Offices Field Range 1 - CA* alone"   
+set title "Offices Range 1 - CA* alone"   
 castar_filename="logs/offices_range1_CASTAR_CHECK_COLLISIONS.csv"
 castar2_filename="logs2/offices_range1_CASTAR_CHECK_COLLISIONS.csv"
 set output "offices_range1_castar.png"
 plot castar_filename using ($3) title 'CA* 1000 - 1000' with lines,\
      castar2_filename using ($3) title 'CA* 500 - 100' with lines#,\
+
+set key left top
+set autoscale
+set output "offices_time.png"
+set title "Cactus Plot of Execution Times"
+plot "< sort -n logs/offices_range1_lengths.csv -k4 -t ';'" using ($4) title 'WHCA* w/ rand.' with linespoints ls 1
+
+
+set autoscale
+set output "offices_length.png"
+set title "Cactus Plot of Total Execution Lengths"
+plot "< sort -n logs/offices_range1_lengths.csv -k3 -t ';'" using ($3) title 'WHCA* w/ rand.' with linespoints ls 1
+
+set key left top
+set autoscale
+set output "parallel_time.png"
+#set title "Cactus Plot of Execution Times"
+plot "< sort -n logs/parallel_range1_nbst100_length.csv -k4 -t ';'" using ($4) title 'WHCA* nbst100  w/ rand.' with linespoints ls 1
+
+set key left top
+set autoscale
+set output "parallel_length.png"
+#set title "Cactus Plot of Execution Times"
+plot "< sort -n logs/parallel_range1_nbst100_length.csv -k3 -t ';'" using ($3) title 'WHCA* nbst100 w/ rand.' with linespoints ls 1
 
 
 # cmarrt_filename="logs/obstacles_window2_CMARRT_IGNORE_COLLISIONS.csv"

@@ -648,11 +648,12 @@ private:
     int shake_length_ = 10;   // Size of the shaking prefix before we try again
     int shake_trials_ = 25;   // Number of times we try to shake with CA*
     int number_of_extrials_ = 100;
+    bool random_shaking_ = true;
     SubsolverEnum subsolver_;
 public: 
 
-    CAStarShake(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_extrials, SubsolverEnum subsolver, bool verbose)
-        : CAStar<GraphMove, GraphComm>(instance, objective, heuristics, verbose), number_of_extrials_(number_of_extrials), subsolver_(subsolver){}
+    CAStarShake(const Instance<GraphMove, GraphComm> &instance, const Objective &objective, Heuristics<GraphMove, GraphComm>& heuristics, int number_of_extrials, SubsolverEnum subsolver, bool random_shaking, bool verbose)
+        : CAStar<GraphMove, GraphComm>(instance, objective, heuristics, verbose), number_of_extrials_(number_of_extrials), subsolver_(subsolver), random_shaking_(random_shaking){}
     ~CAStarShake() {}
 
 
@@ -703,7 +704,7 @@ public:
             std::cout.flush();
             this->config_stack_.clear();
 
-            if (i >= this->shake_threshold_){
+            if (this->random_shaking_ && i >= this->shake_threshold_){
                 prefix.clear();
                 int st = 0;
                 if(this->subsolver_ == SubsolverEnum::CASTAR){
@@ -756,7 +757,7 @@ public:
                             suffix.push_back(*c);
                         }
                         extension_progress_ago = 0;
-                    } else if (extension_progress_ago > this->number_of_extrials_/2){
+                    } else if (this->random_shaking_ && extension_progress_ago > this->number_of_extrials_/2){
                         extension_progress_ago = 0;
                         Configuration intermediate_goal = this->getRandomConfiguration();
                         if(this->subsolver_ == SubsolverEnum::CASTAR){

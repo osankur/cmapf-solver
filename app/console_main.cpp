@@ -55,7 +55,8 @@ int main(int argc, const char *argv[])
         "verbose,v", value<bool>()->default_value(true), "Verbose mode.")(
         "prob2goal,p", value<int>()->default_value(50), "In CMARRT, the probability expressed as a percentage in [0,100] of picking goal as a target. Default is 50%.")(
         "step_size,s", value<int>()->default_value(25), "In CMARRT, the number of steps of the expanding path to create the new node expanding the tree.")(
-        "exec", value<bool>()->default_value(false), "Show execution.");
+        "exec", value<bool>()->default_value(false), "Show execution.")(
+        "shake", value<bool>()->default_value(true), "Randomized shaking in CASTAR.");
 
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -209,6 +210,7 @@ int main(int argc, const char *argv[])
     LOG_INFO("Window size:" << window_size);
     int number_of_trials = vm["nb_trials"].as<int>();
     int number_of_subtrials = vm["nb_subtrials"].as<int>();
+    bool shaking = vm["shake"].as<bool>();
     bool verbose = vm["verbose"].as<bool>();
     LOG_INFO("Verbose: " << verbose);
     LOG_INFO("Algorithm:" << vm["algo"].as<std::string>());
@@ -237,7 +239,8 @@ int main(int argc, const char *argv[])
       break;
     case Algorithm::CASTAR:
       LOG_INFO("Number of extension trials: " << number_of_subtrials);
-      solver = std::make_unique<decoupled::CAStarShake<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_subtrials, subsolver, verbose);
+      LOG_INFO("Randomized shaking: " << shaking);
+      solver = std::make_unique<decoupled::CAStarShake<ExplicitGraph, ExplicitGraph>>(il.instance(), *objective.get(), *heuristics.get(), number_of_subtrials, subsolver, shaking, verbose);
       break;
     case Algorithm::CMARRT:
     case Algorithm::CMARRTSTAR:

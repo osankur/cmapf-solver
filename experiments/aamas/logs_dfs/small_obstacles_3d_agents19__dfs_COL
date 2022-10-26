@@ -1,0 +1,265 @@
+>>>>> cmarrt-data/small_obstacles_3d_agents19_0.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_0.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_0.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.81
+user 300.03
+sys 0.35
+>>>>> cmarrt-data/small_obstacles_3d_agents19_10.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_10.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_10.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.88
+user 299.89
+sys 0.46
+>>>>> cmarrt-data/small_obstacles_3d_agents19_11.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_11.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_11.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666065940.010303847]: Planner started[0m
+[0m[ INFO] [1666065945.424296946]: Plan found[0m
+[0m[ INFO] [1666065945.424321357]: Elapsed time: 5.42173 s[0m
+Computed plan: 
+Plan size: 45
+[1599 3032 171 1600 4479 170 3065 1631 3126 143 4610 141 3034 5967 144 140 3091 5968 6098]
+[142 3031 204 1632 2994 169 1601 1630 3125 171 4609 1598 3033 4480 143 141 3090 4481 6064]
+[170 3030 203 172 1528 168 145 1629 3124 204 4608 1597 3032 4479 142 1598 3063 4480 6063]
+[169 3029 202 171 1527 167 144 1628 3123 203 4607 1596 3031 4516 141 3062 3063 2995 6034]
+[168 3028 201 170 1526 200 143 1627 3122 202 4606 1596 3030 4515 140 4546 3062 2994 6033]
+[168 3027 232 169 1525 1655 142 3087 3121 202 4605 1627 3029 4514 1597 4546 3061 2993 6032]
+[201 3059 263 168 1524 1685 141 3120 3155 202 4604 1655 3029 4513 1628 4546 3061 2992 6003]
+[232 3086 262 201 1562 1718 169 3154 3188 202 4635 1655 3029 4512 3088 4546 3061 1526 6003]
+[263 3119 262 232 1596 3187 169 3154 3188 202 4667 1655 3029 4544 3088 4546 3061 1564 6003]
+[263 3153 262 232 1627 3187 169 3154 3188 202 4697 1655 3029 4575 3088 4546 3061 109 6003]
+[263 3186 262 232 1627 3187 169 3154 3188 202 4697 1655 3029 4604 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 3187 169 3154 3188 202 4697 1655 3029 4635 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 3187 169 3154 3188 202 4727 1655 3029 4667 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 3187 169 3154 3188 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 1718 169 3187 3188 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 1718 169 3220 3187 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 1718 169 3220 4667 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[263 3186 262 232 1627 3187 169 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[263 1717 262 232 1627 3187 169 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[263 3186 261 232 1627 3187 169 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 232 1627 3187 169 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 263 1627 3187 169 3220 6157 201 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 263 1627 3187 202 3220 6157 201 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 263 1627 3187 233 3220 6157 202 4727 200 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 263 1655 3187 233 3220 6157 202 4727 200 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 263 1685 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[262 3186 261 263 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[297 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[296 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[231 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 1717 262 263 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 232 1718 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1685 3187 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3154 233 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 232 3220 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 1748 6157 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 4667 202 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 169 4727 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 3248 1655 3029 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 1563 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 1597 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 1628 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 1656 4697 3088 4546 3061 141 6003]
+[261 3186 262 263 1718 3187 233 3220 6157 202 4727 1655 3121 4697 3088 4546 3061 141 6003]
+real 7.13
+user 6.84
+sys 0.27
+>>>>> cmarrt-data/small_obstacles_3d_agents19_12.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_12.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_12.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.85
+user 299.99
+sys 0.38
+>>>>> cmarrt-data/small_obstacles_3d_agents19_13.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_13.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_13.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.87
+user 300.02
+sys 0.37
+>>>>> cmarrt-data/small_obstacles_3d_agents19_14.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_14.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_14.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.92
+user 300.11
+sys 0.34
+>>>>> cmarrt-data/small_obstacles_3d_agents19_15.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_15.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_15.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.93
+user 300.07
+sys 0.34
+>>>>> cmarrt-data/small_obstacles_3d_agents19_16.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_16.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_16.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.81
+user 299.96
+sys 0.36
+>>>>> cmarrt-data/small_obstacles_3d_agents19_17.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_17.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_17.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.87
+user 299.96
+sys 0.40
+>>>>> cmarrt-data/small_obstacles_3d_agents19_18.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_18.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_18.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.83
+user 299.98
+sys 0.33
+>>>>> cmarrt-data/small_obstacles_3d_agents19_19.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_19.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_19.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666068053.291196748]: Planner started[0m
+[0m[ INFO] [1666068195.567866383]: Plan found[0m
+[0m[ INFO] [1666068195.567892710]: Elapsed time: 142.286 s[0m
+Computed plan: 
+Plan size: 27
+[2558 4047 5523 1131 1104 5551 4022 5495 5553 4023 5477 1061 5496 4075 5478 2531 4005 1062 3983]
+[2532 4046 5524 1105 1078 4074 2533 5495 5525 4022 5452 1039 4021 5553 5453 2509 4006 1040 3957]
+[2510 5523 5497 1079 1061 4046 2511 5496 5498 4022 5423 1008 4007 5525 3984 2509 4006 1009 3922]
+[2489 5523 5478 1062 1039 2558 2490 5477 4023 4021 5385 2459 3983 5498 3958 2510 4007 1010 3889]
+[2489 5496 5453 1040 1008 2532 2460 5452 2534 4021 5384 3957 3983 5479 3958 2511 4007 978 5355]
+[2459 5477 5454 1009 977 1078 2422 5423 1080 5496 6864 3957 3983 6949 3958 2511 4007 952 5355]
+[2421 5452 5454 1010 977 1061 2389 5385 1063 5477 6864 3957 3983 6931 2460 2490 4007 921 5323]
+[3922 5423 5455 978 2421 1039 3890 5386 1041 5452 6864 3958 3957 6899 2422 2460 3983 2367 5323]
+[5385 5423 5424 979 2421 1008 5356 5386 1010 5452 6864 3958 3922 6866 2389 2422 3957 3859 6804]
+[5385 5423 3959 979 2421 977 5356 5386 1009 5452 6864 3958 3889 6835 2366 2423 3922 3825 6804]
+[5385 5423 3923 979 2422 950 5356 5386 1008 5452 6864 3958 3857 6834 2367 2390 3889 3826 6804]
+[5385 5423 3923 979 2422 919 5356 5386 977 5452 6864 3958 3823 6834 3859 2391 3889 3826 6775]
+[5385 5423 3923 979 2422 919 5356 5386 977 5452 6864 3958 3823 6834 3859 3892 3889 3826 6775]
+[5385 5423 3923 979 2422 919 5356 5386 977 5452 6864 3958 3823 6834 3859 3860 3889 3793 6775]
+[5385 5423 3923 979 2422 919 5356 5386 977 5452 6864 3958 3824 6834 3859 3860 3890 3793 5292]
+[5385 5423 3923 979 2422 919 5356 5386 977 5452 6864 3958 3824 6834 3859 3826 3891 3756 5292]
+[5385 5423 3923 979 2422 919 5356 5386 977 5452 6864 3958 3824 6834 3859 3826 3892 3756 5292]
+[5385 5423 3923 979 2422 920 5356 5386 977 5452 6864 3958 3825 6834 3858 3826 3892 3756 5292]
+[5385 5423 3923 979 2422 921 5356 5386 977 5452 6864 3958 3825 6834 3859 3826 3892 3756 3823]
+[5385 5423 3923 979 2422 922 5356 5386 977 5452 6864 3958 3825 6834 3859 3826 3892 3756 3823]
+[3922 5385 3923 979 2422 922 5356 5386 977 5423 6864 3958 3825 6834 3859 3826 3892 3756 3823]
+[3922 5385 3923 979 2422 922 5356 5386 977 5422 6864 3958 3825 6834 3859 3826 3892 3756 3823]
+[3922 5385 3923 979 2422 922 5356 5386 977 5384 6864 3958 3825 6834 3859 3826 3892 3756 3823]
+[3922 5385 3923 979 2422 922 3890 5356 977 5384 6864 3958 3825 6834 3859 3826 3892 3756 3823]
+[3922 5386 3923 979 2422 922 3890 5324 977 5384 6864 3958 3825 6834 3859 3826 3892 3756 5292]
+[5385 5387 3923 979 2422 922 5356 5293 977 5384 6864 3958 3825 6834 3859 3826 3892 3756 6775]
+[5386 5387 3923 979 2422 922 5356 5293 977 5384 6864 3958 3825 6834 3859 3826 3892 3756 6737]
+real 144.12
+user 143.54
+sys 0.32
+>>>>> cmarrt-data/small_obstacles_3d_agents19_1.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_1.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_1.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.83
+user 299.93
+sys 0.38
+>>>>> cmarrt-data/small_obstacles_3d_agents19_2.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_2.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_2.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.93
+user 300.07
+sys 0.35
+>>>>> cmarrt-data/small_obstacles_3d_agents19_3.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_3.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_3.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.86
+user 299.98
+sys 0.39
+>>>>> cmarrt-data/small_obstacles_3d_agents19_4.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_4.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_4.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.89
+user 300.01
+sys 0.40
+>>>>> cmarrt-data/small_obstacles_3d_agents19_5.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_5.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_5.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.83
+user 299.97
+sys 0.38
+>>>>> cmarrt-data/small_obstacles_3d_agents19_6.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_6.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_6.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.83
+user 300.00
+sys 0.36
+>>>>> cmarrt-data/small_obstacles_3d_agents19_7.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_7.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_7.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 301.14
+user 299.92
+sys 0.44
+>>>>> cmarrt-data/small_obstacles_3d_agents19_8.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_8.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_8.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666070303.999176796]: Planner started[0m
+[0m[ INFO] [1666070606.808677839]: Computational time excedeed[0m
+[0m[ INFO] [1666070606.808688749]: No plan found[0m
+[0m[ INFO] [1666070606.808705579]: Elapsed time: 302.818 s[0m
+Computed plan: 
+NO_PLAN_FOUND_WITHIN_DEADLINE
+real 305.20
+user 299.04
+sys 0.70
+>>>>> cmarrt-data/small_obstacles_3d_agents19_9.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/small_obstacles_3d_agents19_9.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/small_obstacles_3d_agents19_9.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 300.87
+user 299.95
+sys 0.43

@@ -1,0 +1,651 @@
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_0.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_0.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 14706
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_0.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <5660, 5661, 4213, 4210, 2762, 2794, 1304, 7100, 4283, 7099, 2726, 5693, 7060, 5628, 5695, 4244, 1338, 7198, 4115, 5593, 2696, 4179, 5626, 7230, 2761, 2765, 1308, 5625, 4182, 4184, 5665, 2725, 1302, 7166, 1272, 1303, 2665, 2700, 4180, 4120, 5559, 5561, 4281, 7171, 7131, 5562, 2793, 6999, 5563, 7025, 5631, 7291, 1342, 5799, 7164, 4116, 5662, 5731, 4084, 2697, 5699, 2834, 4054, 7066, 2591, 1177, 1404, 7030, 4119, 4086, 4319, 2663, 4079, 4056, 5635, 2730, 4030, 2698, 2661>
+INFO: Goal configuration: <735, 2206, 3700, 761, 795, 760, 2170, 3630, 2237, 759, 3736, 2136, 3631, 3632, 3701, 2311, 663, 5202, 5277, 699, 3557, 3698, 6790, 3559, 3808, 3805, 2140, 2138, 5070, 5238, 2350, 702, 2272, 3596, 2107, 797, 830, 5072, 3527, 6757, 869, 904, 3703, 3840, 3560, 2238, 6546, 636, 3597, 2074, 763, 5199, 3772, 2310, 2076, 5341, 3807, 600, 5275, 632, 4982, 6682, 764, 638, 3907, 3528, 5276, 3908, 2275, 5307, 2102, 5201, 2378, 2109, 828, 5110, 2174, 3734, 3875>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 14706
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:38394
+INFO: Execution found
+56.65user 0.05system 0:56.81elapsed 99%CPU (0avgtext+0avgdata 56308maxresident)k
+8inputs+984outputs (0major+15097minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_10.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_10.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 32385
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_10.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <2104, 2042, 700, 2138, 2140, 5071, 6581, 2171, 3594, 572, 3633, 2013, 3596, 2076, 3562, 732, 6550, 2206, 760, 5107, 5075, 3635, 601, 2174, 3559, 3734, 3499, 6553, 1949, 2176, 5046, 6583, 6549, 5143, 699, 3469, 3498, 6518, 2103, 3525, 3494, 2175, 602, 733, 6483, 5006, 5204, 1919, 5044, 3431, 6620, 792, 3429, 666, 4950, 3665, 736, 3697, 507, 3428, 3701, 6687, 2041, 3398, 5144, 5039, 3671, 3500, 1984, 3556, 2137, 4876, 5146, 6461, 5110, 4985, 1850, 697, 3361>
+INFO: Goal configuration: <6152, 6209, 4721, 6236, 3182, 1774, 4785, 1830, 350, 3181, 1714, 6265, 4695, 3184, 1713, 6182, 4753, 4630, 3244, 4665, 1715, 6183, 3335, 6235, 4724, 6124, 3273, 4602, 3217, 6057, 6123, 1829, 6299, 6088, 4819, 6238, 3218, 4599, 3408, 3406, 4663, 4633, 3150, 4573, 295, 4884, 1743, 3214, 1895, 3270, 3116, 321, 4600, 6332, 6370, 1799, 259, 4754, 4784, 6401, 3118, 3183, 6208, 1744, 6185, 1896, 480, 3243, 1958, 293, 6151, 4817, 4818, 4723, 6210, 4542, 1653, 379, 6234>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 32385
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:24174
+INFO: Execution found
+72.17user 0.26system 1:12.53elapsed 99%CPU (0avgtext+0avgdata 64348maxresident)k
+8inputs+984outputs (0major+210096minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_11.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_11.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 20984
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_11.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <358, 1783, 1784, 3281, 1752, 1810, 3252, 4762, 1839, 298, 356, 3345, 1811, 1812, 6245, 329, 4795, 4732, 1750, 4701, 6190, 6221, 360, 1837, 4794, 267, 3193, 3279, 3341, 1804, 1867, 6247, 383, 3162, 4796, 4735, 6189, 6305, 4825, 1754, 1809, 4793, 1834, 454, 456, 3277, 1899, 4729, 236, 1901, 4670, 6215, 385, 1722, 418, 174, 1723, 6162, 4639, 270, 1807, 4791, 1692, 328, 6306, 3130, 175, 3380, 6249, 486, 3447, 2003, 1694, 6244, 1964, 4788, 3094, 4669, 6273>
+INFO: Goal configuration: <6793, 6823, 5311, 5312, 6854, 5343, 3810, 2318, 3843, 3877, 6762, 5279, 3842, 5374, 3941, 5373, 6821, 6795, 3878, 2445, 2317, 2478, 6853, 3846, 5440, 2408, 3848, 3773, 3703, 5308, 2353, 2477, 2208, 6916, 5315, 5376, 2320, 3845, 6759, 5241, 3912, 2352, 3998, 1052, 873, 6914, 939, 5276, 6792, 5468, 3913, 2383, 968, 3814, 6797, 2314, 906, 3914, 3944, 6822, 4014, 867, 2407, 5142, 3884, 5441, 6687, 5278, 6764, 2277, 871, 797, 5246, 6584, 2319, 6918, 3772, 3972, 5378>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 20984
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0mCommand terminated by signal 9
+299.52user 0.12system 5:00.17elapsed 99%CPU (0avgtext+0avgdata 58128maxresident)k
+8inputs+0outputs (0major+38199minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_12.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_12.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 7957
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_12.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <809, 2293, 2329, 2328, 2364, 917, 777, 2365, 778, 2295, 2292, 3788, 5215, 848, 2330, 3821, 2366, 3890, 2363, 5324, 918, 2390, 711, 744, 3753, 920, 2327, 5386, 5256, 779, 810, 2260, 811, 6737, 6738, 714, 6773, 3754, 845, 5322, 3647, 6866, 2368, 2121, 3825, 5253, 952, 2256, 3857, 2387, 2362, 3612, 6699, 2122, 6632, 3786, 5056, 6805, 3749, 6667, 6931, 3716, 2218, 5325, 976, 2253, 6662, 3921, 681, 5479, 6739, 5257, 6806, 5149, 2261, 5182, 6834, 2255, 6864>
+INFO: Goal configuration: <1728, 1759, 1726, 305, 338, 365, 303, 1760, 341, 3196, 1725, 309, 394, 3260, 1758, 4675, 3291, 4707, 4679, 242, 241, 213, 1667, 6169, 4676, 4804, 3257, 1815, 1761, 244, 1729, 6225, 3200, 3353, 4646, 4680, 1727, 6197, 308, 4706, 6255, 1665, 1701, 1669, 1816, 3354, 6192, 4834, 3227, 240, 1640, 1641, 4647, 366, 364, 4770, 3355, 4801, 1881, 3199, 274, 4837, 3290, 4649, 425, 3391, 1841, 4803, 3286, 1944, 310, 4768, 1642, 1614, 1843, 4766, 6253, 3317, 1847>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 7957
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:31916
+INFO: Execution found
+45.14user 0.29system 0:45.50elapsed 99%CPU (0avgtext+0avgdata 75952maxresident)k
+8inputs+984outputs (0major+211125minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_13.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_13.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 11011
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_13.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <2758, 2825, 5726, 7194, 4280, 7227, 1335, 7160, 2893, 5798, 1368, 4382, 1367, 5761, 4241, 7161, 7192, 7162, 5759, 1366, 2788, 7259, 7261, 1432, 2756, 5863, 5796, 5797, 1333, 4314, 7286, 7158, 4384, 5725, 4277, 7126, 5762, 4346, 7193, 4345, 1267, 2892, 4203, 4274, 5793, 4273, 2787, 7127, 7224, 4238, 2860, 2688, 7284, 5760, 4279, 1330, 1393, 1363, 7316, 2723, 4276, 4381, 5830, 5622, 7090, 5832, 5686, 4239, 4378, 5829, 2854, 7281, 2894, 5791, 7255, 1392, 5685, 4340, 7318>
+INFO: Goal configuration: <6090, 4600, 4630, 4573, 3183, 4599, 4632, 4664, 6124, 3184, 4695, 6151, 4539, 3117, 3149, 1652, 163, 3084, 6210, 228, 4542, 6123, 3182, 3214, 4724, 198, 4721, 4571, 1623, 4722, 4631, 3025, 4694, 6091, 6185, 3216, 1592, 165, 3215, 6152, 1743, 6126, 4602, 5996, 102, 103, 4723, 4538, 1559, 1520, 3022, 6155, 1716, 5998, 259, 1625, 1593, 1624, 6211, 293, 5923, 2985, 100, 3273, 3305, 3150, 2987, 133, 32, 3085, 1746, 4819, 2950, 6025, 6054, 4536, 1558, 5960, 295>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 11011
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:80501
+INFO: Execution found
+129.40user 0.19system 2:09.80elapsed 99%CPU (0avgtext+0avgdata 61504maxresident)k
+8inputs+984outputs (0major+89814minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_14.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_14.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 619
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_14.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <4377, 5859, 4375, 5858, 4312, 5795, 7281, 7284, 2820, 4314, 1362, 1361, 4272, 1329, 2856, 5759, 2819, 4345, 5827, 2857, 1426, 1331, 5824, 1427, 4276, 4273, 2783, 5720, 5685, 5856, 5826, 1294, 4309, 5755, 5855, 7253, 5684, 2886, 5760, 7256, 7312, 1298, 7280, 7258, 4310, 2816, 2751, 7186, 2756, 4339, 7155, 7157, 5758, 5797, 1296, 5822, 4378, 7187, 4307, 2719, 1393, 7287, 7283, 2718, 1233, 4174, 5653, 5721, 5651, 7192, 7279, 2853, 1360, 2752, 5857, 4274, 2784, 2887, 4340>
+INFO: Goal configuration: <1630, 1599, 3063, 4514, 3032, 170, 3122, 4636, 1564, 4517, 6031, 4519, 1657, 1566, 5963, 4441, 6061, 4548, 5890, 3090, 6032, 5967, 4477, 2952, 4515, 6000, 6001, 76, 3033, 3154, 1655, 3187, 231, 1494, 3087, 109, 3086, 3036, 37, 2995, 2956, 4607, 4448, 4609, 4603, 6029, 5968, 5962, 1631, 6, 2924, 4546, 6034, 5898, 107, 113, 4513, 6062, 6007, 1530, 106, 77, 2, 205, 2954, 4443, 6128, 3248, 5, 1493, 108, 3186, 3307, 6002, 1803, 261, 3247, 4483, 1597>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 619
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:42897
+INFO: Execution found
+56.26user 0.60system 0:56.97elapsed 99%CPU (0avgtext+0avgdata 88952maxresident)k
+8inputs+984outputs (0major+464346minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_15.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_15.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 25891
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_15.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <4733, 6219, 6189, 6132, 4611, 3224, 6246, 4640, 6133, 6162, 1752, 4580, 4735, 6160, 6065, 1722, 3253, 4609, 3125, 268, 3222, 1631, 4641, 3161, 170, 172, 1785, 3093, 1721, 203, 1723, 3128, 4762, 4736, 4642, 4668, 6275, 3124, 267, 1634, 173, 6247, 4672, 4638, 270, 1724, 3064, 144, 3096, 332, 4517, 4731, 6033, 3159, 1603, 1691, 6130, 1755, 202, 3066, 4578, 4793, 389, 6063, 1783, 237, 6276, 3225, 4550, 266, 299, 1787, 3063, 3223, 206, 6034, 6032, 208, 4514>
+INFO: Goal configuration: <2242, 2241, 2276, 2315, 763, 2314, 2316, 3737, 5241, 3703, 5240, 796, 3669, 906, 2274, 3701, 5111, 5242, 3839, 938, 764, 2317, 5239, 868, 2238, 2279, 3906, 702, 2353, 2319, 5277, 701, 3670, 6684, 965, 5310, 831, 2106, 2313, 795, 870, 6652, 5375, 2273, 829, 2351, 6584, 2137, 6549, 3876, 2405, 2173, 2206, 5142, 761, 2044, 6854, 3593, 3595, 6651, 5406, 5114, 5404, 6654, 3739, 6682, 3498, 3968, 3875, 3633, 5140, 5171, 5279, 6583, 2406, 6623, 4983, 5237, 636>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 25891
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:33338
+INFO: Execution found
+72.55user 0.57system 1:13.25elapsed 99%CPU (0avgtext+0avgdata 80368maxresident)k
+8inputs+984outputs (0major+354224minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_16.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_16.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 4002
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_16.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <2615, 1197, 4107, 5587, 4074, 2559, 1078, 1131, 2654, 2586, 2531, 1264, 4075, 1165, 1234, 1299, 1062, 4046, 2789, 2655, 2825, 2824, 5761, 2860, 1434, 5830, 5829, 1335, 4109, 2560, 2790, 7021, 2508, 1233, 5688, 4203, 4349, 7316, 1367, 4240, 4047, 1041, 2894, 7259, 2511, 7195, 4242, 1059, 7315, 5864, 4378, 7126, 2532, 5476, 2859, 7193, 4348, 2489, 5760, 6970, 2861, 2462, 7228, 5828, 7051, 5523, 1042, 4314, 4048, 5860, 2788, 7054, 2458, 2755, 1063, 5654, 2722, 4381, 5833>
+INFO: Goal configuration: <2477, 3972, 2476, 1027, 1029, 5440, 6884, 1026, 2443, 3908, 2446, 964, 2503, 3942, 966, 6821, 5441, 5372, 6791, 940, 3941, 5308, 5407, 5307, 5468, 2349, 3971, 2522, 2474, 3997, 1025, 2348, 3806, 5439, 938, 937, 5408, 1093, 5376, 6789, 3939, 3911, 2410, 3878, 5276, 4014, 2445, 5275, 3943, 2273, 2524, 5340, 2526, 6882, 2409, 3838, 5405, 3937, 2404, 5373, 2411, 3968, 1073, 3973, 995, 2480, 2353, 3996, 2346, 3909, 2379, 2313, 4013, 6880, 6790, 2552, 3839, 3944, 5311>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 4002
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:22989
+INFO: Execution found
+34.30user 0.02system 0:34.38elapsed 99%CPU (0avgtext+0avgdata 53696maxresident)k
+8inputs+992outputs (0major+14427minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_17.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_17.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 21824
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_17.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <3840, 5308, 6822, 6885, 5442, 5310, 5278, 6720, 3878, 6721, 6918, 3810, 3773, 3910, 6685, 3774, 3943, 5470, 2351, 5444, 6917, 5441, 5202, 3877, 869, 3876, 3845, 2406, 963, 3838, 6916, 830, 6914, 3881, 2353, 5341, 6939, 6886, 940, 868, 5374, 965, 3772, 829, 6755, 3738, 4015, 6653, 2277, 2312, 2523, 5140, 3632, 3705, 2379, 3999, 2313, 3637, 2503, 5488, 5371, 1052, 2315, 995, 5240, 2347, 3905, 6919, 2548, 2381, 941, 5346, 2142, 5443, 5242, 3880, 6753, 6752, 2273>
+INFO: Goal configuration: <1324, 2816, 2817, 4339, 4271, 1357, 5756, 5855, 4340, 7278, 5754, 7279, 5682, 7186, 4373, 1390, 7252, 5821, 5680, 4372, 7120, 5854, 1423, 2783, 1260, 7088, 1295, 1326, 7155, 1296, 1425, 2853, 2820, 1363, 1327, 2856, 1391, 5652, 1361, 1362, 7017, 5858, 4236, 4172, 4173, 4378, 4141, 2855, 1325, 5583, 2752, 5857, 1262, 1424, 4233, 6992, 4380, 1392, 4347, 5831, 4381, 5755, 7280, 5549, 1365, 1228, 1292, 1330, 4171, 4198, 1194, 7253, 4140, 2892, 7287, 4382, 5520, 4103, 7251>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 21824
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:13272
+INFO: Execution found
+55.87user 0.11system 0:56.06elapsed 99%CPU (0avgtext+0avgdata 59092maxresident)k
+8inputs+984outputs (0major+113964minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_18.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_18.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 27279
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_18.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <6487, 6520, 5043, 6461, 4982, 4947, 6430, 3432, 6394, 6393, 1985, 3430, 6521, 5045, 1950, 4945, 3399, 1949, 4979, 4984, 5010, 3529, 4877, 6363, 1987, 6551, 3431, 507, 5046, 4842, 3494, 3597, 4876, 543, 6482, 3469, 1921, 6359, 4880, 475, 5007, 6292, 5040, 4845, 441, 5112, 2108, 406, 3324, 3401, 703, 3323, 3560, 2044, 440, 6289, 6584, 6398, 3527, 439, 6365, 4811, 5073, 6291, 669, 404, 1824, 1955, 3526, 6288, 3466, 4951, 6483, 637, 2076, 4808, 408, 6488, 4949>
+INFO: Goal configuration: <3438, 4955, 4956, 4954, 6467, 3505, 5016, 6404, 3535, 3406, 3474, 2052, 3369, 513, 6526, 6436, 515, 6493, 4815, 484, 4886, 4850, 6333, 3407, 3370, 6370, 6332, 6437, 6298, 3304, 6402, 1830, 6266, 6438, 2051, 3372, 6372, 1995, 1994, 6301, 413, 414, 3476, 6264, 4786, 1798, 449, 4784, 643, 412, 6368, 6439, 5080, 3270, 448, 4990, 6267, 2021, 347, 322, 450, 4722, 3534, 6371, 4785, 4695, 1776, 3303, 3184, 3404, 3218, 1777, 1957, 1860, 4663, 324, 3439, 4630, 6185>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 27279
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:10507
+INFO: Execution found
+17.63user 0.04system 0:17.72elapsed 99%CPU (0avgtext+0avgdata 52716maxresident)k
+8inputs+984outputs (0major+12944minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_19.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_19.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 32024
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_19.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <2171, 2105, 2138, 3594, 3632, 2172, 735, 2204, 3666, 3665, 2075, 5108, 3701, 5072, 795, 2241, 2014, 3737, 6547, 667, 3699, 574, 2203, 2136, 5240, 2174, 5168, 3697, 3669, 5167, 3704, 5171, 3630, 1986, 3664, 2135, 5042, 2237, 5173, 2206, 2276, 5201, 6581, 5136, 509, 3671, 6719, 6582, 5277, 3841, 3638, 3738, 2242, 3670, 698, 764, 2111, 6620, 6649, 3808, 3807, 2015, 6757, 3695, 3627, 3636, 2313, 762, 5114, 575, 3908, 2109, 3592, 1923, 1989, 3940, 2078, 3433, 1990>
+INFO: Goal configuration: <5301, 6750, 5269, 5334, 2343, 6813, 5267, 6712, 930, 897, 987, 822, 2374, 2341, 5302, 6713, 5298, 6786, 6846, 3798, 5234, 6845, 5231, 6842, 6749, 6714, 3766, 2340, 5331, 5266, 928, 6646, 2344, 932, 5395, 5229, 6645, 3898, 2345, 2270, 6612, 5299, 2399, 2402, 6574, 3929, 3726, 2400, 899, 6673, 6648, 3724, 6748, 6785, 6843, 3760, 5100, 3689, 5064, 2303, 3767, 3762, 2232, 5196, 3586, 5367, 5190, 2165, 5003, 5001, 2193, 2194, 3584, 6904, 3799, 821, 750, 2397, 3765>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 32024
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:27255
+INFO: Execution found
+42.53user 0.03system 0:42.62elapsed 99%CPU (0avgtext+0avgdata 52684maxresident)k
+8inputs+984outputs (0major+12949minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_1.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_1.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 26332
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_1.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <5108, 5109, 6582, 5169, 5107, 3595, 2139, 2106, 2205, 3665, 6581, 3634, 5072, 5041, 5042, 3526, 6518, 5008, 6547, 3636, 2043, 6584, 3558, 6653, 5138, 636, 2202, 5006, 3592, 573, 3671, 2272, 6649, 2109, 6546, 6519, 3768, 3494, 2206, 5115, 5047, 826, 3593, 827, 3563, 639, 3672, 5043, 2141, 2144, 5012, 5009, 638, 6461, 602, 6550, 5141, 5142, 600, 2112, 641, 2079, 5075, 673, 669, 2273, 3497, 2173, 6515, 3706, 3638, 6514, 5106, 6523, 6462, 665, 2046, 2236, 733>
+INFO: Goal configuration: <1941, 3457, 3458, 3422, 497, 498, 1942, 1975, 531, 1909, 530, 1972, 3391, 427, 426, 1940, 394, 462, 1877, 496, 429, 395, 1937, 1977, 3385, 493, 396, 1874, 4974, 6421, 365, 336, 1938, 467, 564, 494, 4831, 1944, 6347, 3354, 2035, 463, 6456, 6281, 433, 430, 3318, 435, 4972, 1906, 532, 399, 1910, 6476, 6280, 2011, 3460, 6510, 1817, 6419, 465, 4767, 6283, 341, 3383, 4901, 3287, 307, 1845, 5064, 5132, 596, 1880, 1876, 6511, 5003, 400, 338, 3351>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 26332
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:6715
+INFO: Execution found
+23.92user 0.03system 0:24.00elapsed 99%CPU (0avgtext+0avgdata 52472maxresident)k
+8inputs+992outputs (0major+12941minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_2.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_2.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 7498
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_2.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <7210, 7178, 5743, 7274, 7245, 5849, 7243, 7208, 7145, 5671, 7334, 7111, 7301, 5782, 5817, 4224, 4301, 7213, 7303, 7305, 7215, 5716, 4260, 7146, 5710, 4225, 7209, 7250, 4193, 5741, 2774, 5746, 7336, 2844, 5678, 5677, 5752, 7206, 4263, 4166, 5781, 5785, 5676, 4368, 2646, 4302, 1156, 5850, 4367, 5820, 5887, 5812, 4228, 1320, 7307, 5889, 4196, 5645, 2608, 4370, 4167, 2913, 2808, 1154, 7211, 4369, 1318, 1099, 5579, 4405, 7149, 5814, 2739, 4227, 4136, 4332, 1255, 7118, 4101>
+INFO: Goal configuration: <2067, 2010, 2099, 2165, 2009, 3550, 4974, 6420, 2066, 594, 3520, 3625, 530, 2035, 6478, 3519, 4937, 2098, 4972, 3489, 626, 6421, 494, 2097, 6476, 3584, 659, 3421, 3488, 2166, 6422, 4971, 4903, 5066, 3622, 2233, 6419, 3349, 1906, 3659, 6475, 5064, 6571, 821, 1875, 6508, 3692, 3351, 861, 1873, 3623, 2164, 4801, 3424, 496, 2032, 3419, 6569, 2196, 657, 4835, 6542, 4973, 897, 860, 862, 3346, 726, 1938, 5100, 497, 6609, 534, 694, 3657, 4897, 6572, 1972, 1910>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 7498
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:127743
+INFO: Execution found
+220.82user 1.36system 3:42.52elapsed 99%CPU (0avgtext+0avgdata 90380maxresident)k
+8inputs+984outputs (0major+983938minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_3.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_3.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 5439
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_3.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <94, 1551, 1550, 64, 1516, 3049, 3108, 1484, 4532, 3016, 4594, 1584, 3050, 2981, 1482, 1644, 28, 4563, 3107, 5988, 2979, 1675, 4592, 1483, 1614, 4502, 6044, 3142, 27, 219, 6048, 157, 4624, 6075, 2943, 1736, 3017, 6109, 3138, 1586, 62, 4561, 6018, 1674, 214, 3173, 4433, 4558, 4500, 4464, 1768, 279, 4467, 1701, 3267, 3174, 6020, 3207, 2978, 3105, 5916, 3238, 4748, 4593, 5953, 4463, 249, 6260, 127, 1613, 4652, 283, 5987, 316, 1642, 186, 1583, 2976, 6288>
+INFO: Goal configuration: <4019, 1077, 2529, 4073, 4105, 5583, 4103, 4044, 1162, 1103, 5519, 4070, 7018, 4140, 4141, 6963, 6966, 6943, 1127, 1100, 4106, 6964, 4004, 4170, 4198, 1160, 4232, 5619, 6942, 7088, 5649, 2554, 5493, 1129, 4270, 5755, 5754, 1261, 2685, 4309, 7185, 2487, 1325, 3954, 5720, 3955, 2555, 7188, 1126, 5718, 5521, 3982, 4001, 4172, 4308, 5719, 2488, 7048, 4072, 7187, 3953, 1128, 4043, 4142, 2749, 6944, 4307, 5450, 3977, 4373, 2454, 1163, 2457, 6922, 7220, 5756, 2750, 7190, 5789>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 5439
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:15642
+INFO: Execution found
+28.17user 0.03system 0:28.25elapsed 99%CPU (0avgtext+0avgdata 52684maxresident)k
+8inputs+984outputs (0major+14236minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_4.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_4.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 30156
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_4.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <1017, 1018, 1048, 2519, 1020, 4032, 3964, 3992, 2500, 5431, 4056, 2437, 4121, 1019, 5397, 4033, 4059, 7007, 3963, 4088, 2472, 3996, 5600, 2403, 3991, 4119, 2599, 2433, 1145, 2570, 2471, 4117, 3901, 2571, 4087, 4125, 7033, 2469, 4034, 4090, 2543, 5602, 5631, 5567, 5400, 5539, 2435, 989, 4012, 2401, 5396, 933, 3872, 1090, 2400, 1023, 5630, 3932, 2499, 6847, 7104, 2468, 5596, 1091, 5599, 3966, 7070, 7032, 5564, 1049, 5434, 7031, 4061, 6978, 5665, 5664, 2592, 6907, 3935>
+INFO: Goal configuration: <2706, 4221, 1252, 4258, 2675, 2773, 2736, 4158, 1314, 4260, 4261, 1284, 5669, 7142, 1351, 5708, 2737, 7075, 5639, 7145, 4130, 7108, 2642, 5571, 2709, 4330, 7139, 5609, 4189, 1183, 4096, 4331, 2711, 4300, 2710, 7073, 2602, 2741, 4164, 1254, 2604, 2678, 4095, 5575, 2805, 5642, 1220, 5814, 7178, 5572, 4094, 4366, 7274, 4301, 5674, 2842, 1315, 4225, 5813, 1286, 5576, 2806, 7301, 2877, 5743, 1350, 1182, 5672, 2771, 5644, 4157, 7113, 5812, 7037, 7009, 2603, 5637, 2914, 2680>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 30156
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:9796
+INFO: Execution found
+17.65user 0.04system 0:17.72elapsed 99%CPU (0avgtext+0avgdata 52588maxresident)k
+8inputs+984outputs (0major+12942minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_5.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_5.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 14673
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_5.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <5215, 3711, 2254, 5251, 772, 5216, 2289, 880, 3643, 5119, 949, 3751, 3608, 5213, 708, 2150, 2290, 5150, 773, 677, 3820, 3710, 3610, 6629, 3612, 5088, 6560, 2256, 5053, 3749, 6563, 2253, 6697, 916, 6533, 5182, 2121, 5019, 2115, 2184, 3888, 5120, 6631, 5023, 2218, 2292, 3644, 652, 3542, 2090, 678, 3854, 617, 6495, 6562, 5289, 2215, 6441, 2288, 6470, 804, 882, 3786, 5353, 6440, 2151, 684, 5055, 3677, 2120, 3543, 4958, 3611, 3545, 2329, 775, 3951, 809, 6893>
+INFO: Goal configuration: <2183, 2149, 2086, 3644, 773, 2182, 647, 678, 2119, 2118, 645, 2115, 2088, 3539, 583, 711, 676, 3642, 613, 2184, 648, 2057, 3714, 650, 6664, 651, 5216, 5218, 5217, 2148, 3540, 713, 614, 5214, 3751, 3715, 552, 2256, 843, 5054, 2215, 653, 2122, 3615, 616, 744, 742, 5215, 2258, 6701, 517, 5081, 612, 615, 5083, 652, 2221, 654, 5123, 5213, 775, 2061, 5149, 3646, 3682, 709, 2027, 715, 3482, 708, 2089, 3677, 774, 2155, 519, 1999, 6563, 777, 3713>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 14673
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:54194
+INFO: Execution found
+76.43user 0.51system 1:17.06elapsed 99%CPU (0avgtext+0avgdata 97624maxresident)k
+8inputs+992outputs (0major+382832minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_6.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_6.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 31099
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_6.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <2553, 4067, 1098, 2608, 4100, 2646, 1224, 2645, 4099, 1221, 2712, 4228, 2579, 4136, 4227, 4163, 5674, 2679, 4166, 1122, 4101, 1223, 5645, 5748, 4097, 4226, 5543, 2577, 7041, 2606, 5817, 6986, 1289, 1226, 2647, 7084, 5746, 2576, 2575, 7303, 4168, 4167, 2524, 7078, 4334, 5815, 4063, 2713, 1154, 7117, 7076, 5611, 2552, 2680, 4368, 4225, 2847, 7043, 7183, 7079, 2812, 1385, 7146, 2677, 7118, 7149, 5711, 5781, 2707, 1220, 4041, 2605, 7215, 4129, 2580, 7211, 4335, 4102, 1256>
+INFO: Goal configuration: <3345, 1871, 421, 390, 1903, 4794, 1839, 1870, 4827, 4795, 460, 1809, 4793, 4761, 6248, 4826, 4736, 4733, 1810, 1902, 422, 334, 6249, 4765, 4734, 4732, 4760, 300, 3310, 488, 301, 1751, 459, 457, 3379, 3192, 524, 3254, 4763, 4894, 2003, 3450, 3381, 6277, 3161, 3341, 3252, 490, 4735, 4892, 3250, 6244, 3191, 1781, 1783, 4796, 4612, 3253, 4964, 486, 328, 3189, 4700, 6161, 333, 4822, 6411, 330, 1689, 485, 4581, 3255, 2026, 4702, 2002, 518, 6188, 1967, 4613>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 31099
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0mCommand terminated by signal 9
+296.47user 3.26system 5:00.20elapsed 99%CPU (0avgtext+0avgdata 105808maxresident)k
+8inputs+0outputs (0major+2429506minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_7.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_7.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 11656
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_7.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <6884, 3941, 2407, 2445, 3973, 6852, 3907, 2406, 2443, 3876, 1026, 6851, 6913, 2447, 967, 940, 2381, 1028, 908, 5408, 3880, 3998, 1053, 6883, 6789, 6885, 2382, 4014, 3839, 992, 2355, 906, 2348, 5374, 2523, 5440, 865, 5345, 6790, 993, 4037, 3841, 941, 5311, 5342, 6822, 2412, 902, 6857, 2478, 934, 5308, 3881, 2408, 2409, 3842, 3940, 5371, 2281, 3945, 5468, 5373, 833, 827, 3809, 2351, 5437, 6821, 2504, 2317, 904, 5375, 868, 6824, 6854, 2237, 6855, 799, 5281>
+INFO: Goal configuration: <4072, 2613, 2653, 4172, 1129, 1077, 2716, 5585, 5618, 1293, 1261, 5680, 5649, 2582, 1102, 4199, 4140, 7154, 2651, 2612, 5586, 1295, 2529, 4233, 4173, 5582, 4018, 2686, 5474, 7185, 2684, 2507, 1127, 1260, 1297, 5472, 2754, 1262, 5619, 6922, 7086, 5754, 1294, 7251, 1231, 7018, 1194, 5683, 6862, 5721, 4239, 4105, 5723, 2485, 4200, 6894, 7050, 5652, 7049, 7047, 4273, 7051, 7088, 4309, 2717, 2787, 4271, 2652, 5587, 6923, 2821, 1076, 5621, 7089, 4307, 5473, 5583, 3952, 1195>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 11656
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0mCommand terminated by signal 11
+54.22user 0.01system 0:54.51elapsed 99%CPU (0avgtext+0avgdata 52692maxresident)k
+8inputs+8outputs (0major+14157minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_8.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_8.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 19070
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_8.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <4964, 4929, 3510, 2059, 585, 3415, 3447, 4994, 4858, 3540, 4962, 4857, 4928, 6501, 6307, 3612, 6444, 3343, 5058, 1871, 4825, 3575, 3577, 2121, 4824, 6245, 390, 6447, 2154, 714, 6276, 3682, 3579, 3545, 3717, 2124, 2091, 6500, 3539, 4995, 2221, 3445, 3345, 5054, 3344, 3449, 6339, 5055, 1810, 3650, 2004, 3311, 6306, 3511, 4891, 616, 458, 5025, 651, 4792, 6530, 4930, 1964, 1839, 3580, 6247, 4793, 2093, 5093, 1786, 1807, 3224, 5056, 2153, 4701, 4640, 6308, 3616, 4895>
+INFO: Goal configuration: <5782, 7246, 7303, 5781, 5746, 5783, 7305, 4304, 5749, 4266, 5816, 4300, 7212, 2810, 4229, 4369, 2812, 1386, 4334, 4335, 1421, 4230, 2743, 1322, 5716, 4261, 5852, 7151, 1419, 7337, 5818, 4298, 7182, 4301, 2880, 5712, 7214, 2772, 2814, 7306, 2739, 1316, 4407, 5817, 5674, 7113, 5713, 1284, 2774, 4196, 5785, 5673, 5780, 7112, 1352, 2882, 2681, 7114, 2744, 1190, 2740, 5819, 7215, 5671, 2916, 4192, 2805, 5886, 2741, 4365, 2811, 1287, 7149, 2913, 5745, 7217, 1321, 7213, 2878>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 19070
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:22041
+INFO: Execution found
+32.24user 0.34system 0:32.64elapsed 99%CPU (0avgtext+0avgdata 69604maxresident)k
+8inputs+984outputs (0major+224237minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/small_obstacles_3d_agents79_9.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/small_obstacles_3d_agents79_9.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 14727
+INFO: Experience: cmarrt-data/small_obstacles_3d_agents79_9.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 7339
+TRACE: Number of edges: 40143
+TRACE: Number of agents: 79
+INFO: Start configuration: <1167, 2617, 4076, 2656, 2721, 2560, 1265, 2720, 5588, 7054, 2658, 1133, 2586, 2718, 1333, 5684, 4177, 2823, 4205, 2722, 2618, 1365, 5553, 4203, 1363, 2691, 4075, 1166, 1395, 2752, 1237, 1081, 4204, 1428, 1197, 1198, 5758, 2616, 4202, 4241, 7225, 2615, 4274, 4237, 7158, 1329, 4143, 7125, 7124, 2858, 1200, 4107, 6996, 5687, 7093, 1300, 2892, 2789, 4348, 4175, 6950, 4346, 4276, 5685, 1199, 2893, 5861, 1427, 5653, 5725, 4380, 1334, 2756, 4047, 1132, 5621, 2587, 1064, 2790>
+INFO: Goal configuration: <3795, 5227, 5228, 5262, 5264, 6779, 5230, 5327, 6807, 5190, 3759, 3728, 5193, 5229, 5328, 2230, 3688, 5195, 2225, 5261, 6674, 5296, 6783, 3686, 5163, 3619, 3831, 2334, 2191, 3724, 3656, 854, 6781, 3764, 5263, 2336, 893, 3832, 890, 895, 3796, 3896, 6677, 3693, 3626, 2224, 2162, 2393, 3722, 3725, 6743, 5061, 6741, 747, 6671, 786, 3618, 2165, 6840, 959, 5390, 5101, 3587, 2231, 726, 5092, 5191, 6670, 3690, 2158, 6900, 2431, 6811, 3620, 660, 2066, 3797, 6609, 2164>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 14727
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:31047
+INFO: Execution found
+33.34user 0.11system 0:33.53elapsed 99%CPU (0avgtext+0avgdata 96644maxresident)k
+8inputs+984outputs (0major+73889minor)pagefaults 0swaps

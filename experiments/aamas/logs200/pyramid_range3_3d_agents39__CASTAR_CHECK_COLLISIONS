@@ -1,0 +1,657 @@
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_0.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_0.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 26585
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_0.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <573, 778, 190, 760, 388, 979, 790, 519, 141, 140, 794, 369, 950, 727, 593, 154, 353, 531, 356, 368, 372, 377, 581, 104, 789, 948, 905, 759, 930, 721, 124, 134, 989, 974, 292, 968, 600, 773, 536>
+INFO: Goal configuration: <289, 487, 116, 288, 89, 502, 898, 92, 264, 347, 319, 666, 890, 500, 88, 586, 719, 148, 384, 671, 927, 55, 925, 869, 86, 336, 528, 457, 293, 37, 453, 290, 897, 460, 531, 278, 255, 544, 786>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 26585
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:17004
+INFO: Execution found
+14.22user 0.01system 0:14.30elapsed 99%CPU (0avgtext+0avgdata 21348maxresident)k
+8inputs+976outputs (0major+12986minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_10.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_10.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 25335
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_10.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <443, 32, 848, 860, 430, 617, 632, 246, 439, 50, 252, 406, 247, 30, 455, 27, 275, 230, 668, 450, 482, 262, 404, 461, 686, 851, 260, 287, 33, 825, 891, 46, 506, 699, 66, 679, 923, 626, 689>
+INFO: Goal configuration: <707, 489, 467, 878, 269, 264, 680, 671, 693, 266, 900, 255, 17, 871, 19, 457, 432, 928, 852, 862, 320, 78, 927, 478, 685, 353, 477, 2, 734, 529, 961, 202, 169, 153, 914, 386, 770, 335, 976>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 25335
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:7020
+INFO: Execution found
+12.47user 0.00system 0:12.49elapsed 99%CPU (0avgtext+0avgdata 18188maxresident)k
+8inputs+984outputs (0major+3790minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_11.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_11.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 1454
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_11.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <354, 189, 556, 917, 739, 193, 946, 357, 902, 740, 760, 727, 593, 596, 194, 139, 107, 170, 523, 534, 759, 341, 532, 589, 307, 918, 156, 543, 774, 160, 336, 785, 905, 195, 965, 945, 318, 291, 695>
+INFO: Goal configuration: <181, 380, 199, 378, 583, 163, 564, 731, 523, 110, 539, 991, 783, 358, 968, 339, 728, 141, 363, 710, 360, 555, 82, 387, 386, 563, 194, 144, 123, 970, 490, 178, 924, 492, 107, 724, 746, 376, 170>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 1454
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:8580
+INFO: Execution found
+7.63user 0.01system 0:07.65elapsed 99%CPU (0avgtext+0avgdata 18332maxresident)k
+8inputs+992outputs (0major+3793minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_12.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_12.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 27853
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_12.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <258, 36, 56, 656, 818, 220, 666, 460, 417, 3, 400, 862, 452, 454, 38, 21, 39, 280, 23, 77, 498, 674, 222, 101, 823, 399, 92, 822, 448, 897, 607, 623, 665, 887, 414, 76, 621, 208, 890>
+INFO: Goal configuration: <274, 495, 261, 296, 473, 73, 894, 330, 924, 920, 952, 461, 678, 781, 83, 796, 957, 82, 798, 59, 688, 874, 760, 779, 595, 742, 859, 663, 277, 801, 699, 990, 284, 988, 482, 655, 162, 378, 558>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 27853
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:57486
+INFO: Execution found
+73.14user 0.08system 1:13.32elapsed 99%CPU (0avgtext+0avgdata 27460maxresident)k
+8inputs+984outputs (0major+55422minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_13.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_13.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 11705
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_13.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <280, 305, 134, 705, 898, 896, 514, 87, 886, 913, 549, 302, 681, 875, 890, 131, 152, 504, 385, 106, 684, 499, 666, 567, 888, 694, 925, 370, 916, 145, 568, 864, 777, 292, 570, 884, 468, 79, 751>
+INFO: Goal configuration: <543, 329, 160, 379, 970, 127, 967, 743, 920, 726, 496, 966, 342, 142, 986, 286, 285, 125, 783, 283, 139, 373, 393, 389, 675, 892, 582, 950, 795, 110, 564, 883, 907, 536, 740, 667, 524, 581, 73>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 11705
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:3588
+INFO: Execution found
+5.25user 0.01system 0:05.27elapsed 99%CPU (0avgtext+0avgdata 18168maxresident)k
+8inputs+976outputs (0major+3789minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_14.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_14.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 27222
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_14.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <568, 146, 129, 566, 498, 772, 680, 547, 164, 149, 118, 898, 269, 288, 453, 51, 870, 531, 637, 78, 434, 414, 683, 546, 805, 369, 901, 704, 335, 929, 17, 317, 565, 100, 735, 790, 37, 222, 572>
+INFO: Goal configuration: <320, 281, 735, 91, 722, 368, 929, 721, 148, 944, 706, 63, 166, 517, 927, 566, 92, 913, 62, 475, 349, 945, 978, 77, 184, 347, 878, 792, 723, 279, 568, 118, 388, 550, 569, 705, 591, 468, 530>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 27222
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:8424
+INFO: Execution found
+10.06user 0.01system 0:10.09elapsed 99%CPU (0avgtext+0avgdata 18224maxresident)k
+8inputs+984outputs (0major+3791minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_15.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_15.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 24376
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_15.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <579, 194, 392, 556, 765, 921, 389, 990, 784, 743, 903, 140, 560, 354, 362, 179, 197, 599, 600, 154, 172, 738, 922, 986, 969, 507, 177, 715, 985, 758, 917, 891, 932, 724, 967, 580, 918, 543, 294>
+INFO: Goal configuration: <109, 310, 506, 919, 725, 509, 904, 496, 358, 525, 95, 519, 745, 125, 126, 763, 578, 390, 274, 157, 908, 287, 920, 111, 957, 935, 556, 461, 360, 988, 947, 490, 388, 891, 936, 939, 880, 716, 729>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 24376
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:10062
+INFO: Execution found
+7.24user 0.01system 0:07.27elapsed 99%CPU (0avgtext+0avgdata 22724maxresident)k
+8inputs+976outputs (0major+20497minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_16.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_16.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 26430
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_16.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <960, 546, 149, 941, 910, 115, 526, 148, 86, 691, 532, 164, 129, 353, 756, 901, 320, 90, 771, 926, 547, 589, 739, 517, 552, 787, 754, 385, 333, 466, 779, 531, 673, 306, 63, 513, 102, 145, 512>
+INFO: Goal configuration: <36, 237, 220, 415, 222, 221, 256, 258, 626, 804, 0, 436, 4, 622, 660, 417, 601, 625, 627, 656, 19, 438, 62, 457, 419, 41, 448, 606, 236, 403, 467, 210, 424, 202, 21, 414, 604, 637, 224>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 26430
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:8229
+INFO: Execution found
+6.69user 0.00system 0:06.71elapsed 99%CPU (0avgtext+0avgdata 18152maxresident)k
+8inputs+968outputs (0major+3798minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_17.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_17.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 15451
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_17.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <570, 148, 752, 103, 301, 941, 720, 737, 684, 280, 323, 898, 786, 133, 303, 351, 132, 886, 384, 586, 946, 909, 565, 569, 958, 474, 265, 365, 963, 187, 168, 318, 717, 146, 92, 292, 722, 793, 589>
+INFO: Goal configuration: <753, 975, 149, 514, 130, 119, 752, 147, 335, 974, 529, 749, 92, 367, 750, 166, 718, 502, 188, 70, 721, 133, 722, 567, 333, 116, 270, 152, 887, 468, 671, 692, 478, 666, 364, 457, 264, 693, 775>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 15451
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:4212
+INFO: Execution found
+6.21user 0.00system 0:06.24elapsed 99%CPU (0avgtext+0avgdata 18164maxresident)k
+8inputs+984outputs (0major+3790minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_18.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_18.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 3123
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_18.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <873, 676, 677, 471, 285, 860, 99, 695, 312, 95, 697, 507, 539, 832, 161, 855, 111, 935, 714, 712, 341, 66, 653, 49, 253, 308, 874, 965, 795, 326, 160, 392, 592, 231, 229, 429, 11, 521, 362>
+INFO: Goal configuration: <120, 152, 322, 570, 976, 518, 978, 942, 901, 928, 776, 794, 770, 369, 706, 734, 371, 367, 499, 154, 192, 553, 962, 350, 384, 577, 982, 887, 390, 579, 365, 759, 548, 749, 951, 954, 725, 507, 377>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 3123
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:18408
+INFO: Execution found
+17.93user 0.05system 0:18.01elapsed 99%CPU (0avgtext+0avgdata 26336maxresident)k
+8inputs+976outputs (0major+29629minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_19.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_19.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 7465
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_19.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <616, 815, 249, 47, 213, 427, 11, 653, 850, 450, 667, 631, 412, 247, 873, 29, 833, 231, 440, 66, 413, 14, 846, 482, 297, 214, 74, 96, 298, 211, 661, 907, 283, 430, 85, 679, 43, 937, 935>
+INFO: Goal configuration: <224, 401, 244, 839, 398, 607, 45, 405, 628, 25, 1, 613, 414, 807, 827, 417, 631, 420, 247, 21, 23, 418, 627, 243, 438, 440, 396, 10, 422, 834, 255, 13, 840, 857, 457, 443, 853, 818, 602>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 7465
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0mCommand terminated by signal 9
+299.57user 0.17system 5:00.15elapsed 99%CPU (0avgtext+0avgdata 28536maxresident)k
+8inputs+8outputs (0major+104950minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_1.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_1.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 750
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_1.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <613, 649, 846, 408, 443, 844, 32, 29, 407, 445, 450, 429, 441, 47, 832, 463, 616, 451, 828, 678, 668, 285, 46, 249, 446, 12, 480, 462, 405, 873, 843, 13, 232, 28, 815, 26, 428, 472, 880>
+INFO: Goal configuration: <722, 502, 733, 318, 527, 526, 717, 150, 484, 888, 465, 708, 319, 332, 168, 89, 488, 269, 501, 886, 76, 120, 529, 90, 942, 532, 738, 370, 145, 164, 104, 931, 530, 930, 151, 459, 875, 474, 757>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 750
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:9126
+INFO: Execution found
+12.73user 0.00system 0:12.76elapsed 99%CPU (0avgtext+0avgdata 18828maxresident)k
+8inputs+984outputs (0major+4246minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_2.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_2.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 24069
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_2.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <920, 539, 955, 328, 765, 597, 743, 950, 989, 903, 327, 948, 795, 711, 728, 505, 576, 123, 378, 582, 600, 580, 782, 761, 947, 343, 341, 376, 918, 143, 142, 298, 283, 388, 796, 598, 543, 724, 274>
+INFO: Goal configuration: <109, 282, 139, 578, 740, 581, 342, 357, 985, 983, 508, 95, 937, 778, 509, 883, 330, 954, 748, 562, 593, 390, 379, 511, 362, 782, 920, 72, 59, 951, 172, 181, 140, 375, 946, 881, 84, 313, 949>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 24069
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:12012
+INFO: Execution found
+9.51user 0.01system 0:09.54elapsed 99%CPU (0avgtext+0avgdata 18260maxresident)k
+8inputs+984outputs (0major+3793minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_3.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_3.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 20889
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_3.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <410, 230, 11, 654, 234, 229, 227, 244, 243, 208, 242, 45, 440, 811, 651, 247, 608, 437, 10, 427, 31, 48, 60, 628, 816, 59, 855, 411, 617, 442, 640, 252, 47, 233, 431, 631, 34, 6, 15>
+INFO: Goal configuration: <339, 779, 932, 558, 371, 590, 158, 173, 139, 978, 738, 984, 189, 355, 354, 358, 539, 756, 191, 588, 375, 763, 183, 352, 903, 386, 761, 156, 987, 137, 165, 552, 752, 979, 186, 728, 794, 569, 107>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 20889
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:16926
+INFO: Execution found
+17.33user 0.01system 0:17.38elapsed 99%CPU (0avgtext+0avgdata 18188maxresident)k
+8inputs+984outputs (0major+3839minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_4.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_4.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 13083
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_4.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <10, 227, 47, 27, 647, 43, 445, 12, 249, 405, 815, 655, 810, 662, 248, 413, 404, 842, 661, 211, 412, 410, 402, 675, 7, 643, 667, 46, 814, 26, 275, 401, 611, 435, 811, 260, 695, 646, 881>
+INFO: Goal configuration: <595, 577, 555, 574, 138, 553, 596, 559, 139, 522, 176, 344, 742, 375, 962, 525, 729, 309, 791, 982, 946, 368, 296, 178, 192, 321, 783, 578, 696, 509, 340, 366, 547, 184, 709, 777, 560, 873, 748>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 13083
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:31395
+INFO: Execution found
+30.99user 0.03system 0:31.06elapsed 99%CPU (0avgtext+0avgdata 20480maxresident)k
+8inputs+984outputs (0major+15789minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_5.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_5.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 17977
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_5.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <732, 733, 334, 721, 515, 960, 756, 788, 909, 350, 91, 364, 975, 685, 306, 531, 942, 384, 467, 478, 588, 269, 872, 790, 152, 468, 979, 321, 504, 751, 265, 532, 925, 335, 978, 264, 573, 134, 322>
+INFO: Goal configuration: <31, 445, 850, 231, 29, 412, 617, 441, 615, 16, 646, 46, 867, 14, 630, 248, 464, 217, 34, 483, 826, 688, 75, 44, 472, 25, 254, 811, 481, 611, 632, 470, 23, 400, 208, 855, 616, 662, 661>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 17977
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:31629
+INFO: Execution found
+40.53user 0.01system 0:40.61elapsed 99%CPU (0avgtext+0avgdata 20752maxresident)k
+8inputs+984outputs (0major+17990minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_6.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_6.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 997
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_6.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <656, 835, 453, 853, 602, 57, 235, 467, 671, 263, 61, 886, 601, 204, 80, 433, 622, 624, 805, 256, 692, 238, 513, 35, 292, 666, 701, 912, 400, 255, 222, 625, 836, 236, 435, 202, 19, 640, 819>
+INFO: Goal configuration: <975, 568, 133, 182, 586, 132, 565, 348, 790, 962, 941, 115, 145, 532, 753, 913, 940, 306, 899, 898, 977, 316, 334, 732, 717, 476, 961, 958, 544, 769, 682, 369, 719, 587, 293, 460, 366, 515, 259>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 997
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:11700
+INFO: Execution found
+16.37user 0.01system 0:16.42elapsed 99%CPU (0avgtext+0avgdata 18220maxresident)k
+8inputs+984outputs (0major+3790minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_7.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_7.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 18277
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_7.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <953, 540, 762, 577, 724, 143, 939, 507, 341, 376, 779, 934, 584, 767, 923, 345, 781, 343, 740, 725, 390, 893, 181, 964, 731, 481, 980, 494, 197, 920, 792, 965, 768, 564, 882, 550, 549, 697, 391>
+INFO: Goal configuration: <461, 64, 867, 868, 462, 469, 866, 493, 455, 893, 296, 446, 14, 520, 274, 257, 215, 492, 617, 126, 294, 261, 615, 113, 299, 728, 180, 329, 15, 83, 310, 480, 892, 920, 72, 668, 234, 698, 761>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 18277
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:22971
+INFO: Execution found
+14.73user 0.01system 0:14.77elapsed 99%CPU (0avgtext+0avgdata 28520maxresident)k
+8inputs+976outputs (0major+12405minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_8.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_8.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 21904
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_8.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <472, 463, 471, 661, 273, 663, 493, 507, 107, 254, 522, 284, 251, 137, 445, 922, 520, 741, 83, 729, 213, 84, 34, 867, 918, 212, 921, 296, 442, 75, 815, 907, 473, 138, 881, 375, 48, 233, 260>
+INFO: Goal configuration: <669, 865, 867, 679, 456, 74, 463, 112, 495, 908, 254, 469, 59, 110, 107, 860, 879, 859, 521, 445, 700, 410, 307, 725, 93, 260, 462, 892, 428, 748, 714, 768, 427, 689, 60, 163, 479, 308, 250>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 21904
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:14703
+INFO: Execution found
+14.79user 0.03system 0:14.84elapsed 99%CPU (0avgtext+0avgdata 21120maxresident)k
+8inputs+992outputs (0major+23247minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/pyramid_range3_3d_agents39_9.exp
+time cmapf-solver -a CASTAR -e cmarrt-data/pyramid_range3_3d_agents39_9.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 200 --verbose false --subsolver CASTAR --rs 30701
+INFO: Experience: cmarrt-data/pyramid_range3_3d_agents39_9.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 992
+TRACE: Number of edges: 5272
+TRACE: Number of agents: 39
+INFO: Start configuration: <264, 656, 682, 69, 466, 701, 76, 486, 86, 499, 690, 485, 103, 718, 460, 304, 116, 414, 100, 347, 256, 265, 301, 300, 133, 489, 704, 693, 566, 150, 900, 750, 569, 488, 51, 185, 787, 119, 449>
+INFO: Goal configuration: <981, 965, 780, 575, 554, 983, 154, 390, 577, 933, 934, 572, 762, 560, 563, 128, 113, 767, 742, 715, 337, 734, 143, 530, 741, 963, 947, 745, 98, 157, 311, 576, 306, 593, 553, 935, 943, 730, 922>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 30701
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 200
+INFO: Randomized shaking: 1
+TRACE: Solver created!
+[31mRun number 1
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:20163
+INFO: Execution found
+26.79user 0.11system 0:26.94elapsed 99%CPU (0avgtext+0avgdata 24432maxresident)k
+8inputs+984outputs (0major+67808minor)pagefaults 0swaps

@@ -1,0 +1,748 @@
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_0.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_0.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 1726 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_0.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 1726
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:4598
+INFO: Execution found
+55.31user 0.00system 0:55.87elapsed 99%CPU (0avgtext+0avgdata 12772maxresident)k
+0inputs+984outputs (0major+2717minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_10.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_10.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 19951 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_10.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 19951
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:4840
+INFO: Execution found
+297.70user 0.03system 4:59.99elapsed 99%CPU (0avgtext+0avgdata 13716maxresident)k
+0inputs+1024outputs (0major+6452minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_11.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_11.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 32439 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_11.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 32439
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:4004
+INFO: Execution found
+240.85user 0.02system 4:02.24elapsed 99%CPU (0avgtext+0avgdata 12792maxresident)k
+0inputs+1024outputs (0major+2694minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_12.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_12.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 23019 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_12.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 23019
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:8844
+INFO: Execution found
+210.23user 0.04system 3:31.57elapsed 99%CPU (0avgtext+0avgdata 14700maxresident)k
+0inputs+1016outputs (0major+12035minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_13.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_13.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 27289 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_13.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 27289
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:5126
+INFO: Execution found
+239.22user 0.01system 4:00.07elapsed 99%CPU (0avgtext+0avgdata 15248maxresident)k
+0inputs+1024outputs (0major+6117minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_14.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_14.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 10070 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_14.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 10070
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:2376
+INFO: Execution found
+154.88user 0.01system 2:35.43elapsed 99%CPU (0avgtext+0avgdata 13032maxresident)k
+0inputs+1008outputs (0major+2791minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_15.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_15.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 6366 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_15.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 6366
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0mCommand terminated by signal 9
+299.96user 0.02system 5:01.15elapsed 99%CPU (0avgtext+0avgdata 13432maxresident)k
+0inputs+48outputs (0major+6662minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_16.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_16.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 20950 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_16.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 20950
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0mCommand terminated by signal 9
+299.89user 0.09system 5:03.24elapsed 98%CPU (0avgtext+0avgdata 16080maxresident)k
+0inputs+56outputs (0major+11674minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_17.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_17.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 30253 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_17.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 30253
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0mCommand terminated by signal 9
+299.95user 0.03system 5:03.73elapsed 98%CPU (0avgtext+0avgdata 14464maxresident)k
+0inputs+56outputs (0major+8305minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_18.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_18.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 16589 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_18.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 16589
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:4488
+INFO: Execution found
+44.82user 0.05system 0:45.07elapsed 99%CPU (0avgtext+0avgdata 13852maxresident)k
+0inputs+984outputs (0major+4671minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_19.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_19.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 13820 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_19.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 13820
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:6160
+INFO: Execution found
+63.97user 0.01system 1:04.24elapsed 99%CPU (0avgtext+0avgdata 13404maxresident)k
+0inputs+984outputs (0major+3577minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_1.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_1.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 2333 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_1.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 2333
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0mCommand terminated by signal 9
+299.84user 0.15system 5:01.22elapsed 99%CPU (0avgtext+0avgdata 13448maxresident)k
+0inputs+56outputs (0major+4366minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_2.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_2.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 18038 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_2.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 18038
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0mCommand terminated by signal 9
+299.78user 0.19system 5:01.33elapsed 99%CPU (0avgtext+0avgdata 15428maxresident)k
+0inputs+48outputs (0major+8250minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_3.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_3.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 7721 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_3.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 7721
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:4356
+INFO: Execution found
+220.89user 0.16system 3:42.15elapsed 99%CPU (0avgtext+0avgdata 14368maxresident)k
+0inputs+1016outputs (0major+3363minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_4.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_4.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 4725 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_4.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 4725
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0mCommand terminated by signal 9
+299.73user 0.25system 5:01.38elapsed 99%CPU (0avgtext+0avgdata 15040maxresident)k
+0inputs+48outputs (0major+6792minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_5.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_5.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 19193 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_5.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 19193
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0mCommand terminated by signal 9
+299.72user 0.27system 5:01.29elapsed 99%CPU (0avgtext+0avgdata 17932maxresident)k
+0inputs+40outputs (0major+13522minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_6.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_6.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 22204 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_6.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 22204
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0mCommand terminated by signal 9
+299.71user 0.28system 5:01.30elapsed 99%CPU (0avgtext+0avgdata 14964maxresident)k
+0inputs+56outputs (0major+10094minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_7.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_7.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 13961 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_7.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 13961
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:5038
+INFO: Execution found
+294.33user 0.06system 4:55.86elapsed 99%CPU (0avgtext+0avgdata 13336maxresident)k
+0inputs+1032outputs (0major+3143minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_8.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_8.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 1802 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_8.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 1802
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[31mRun number 6
+ [0m[31mRun number 7
+ [0m[31mRun number 8
+ [0m[31mRun number 9
+ [0mCommand terminated by signal 9
+299.94user 0.03system 5:01.70elapsed 99%CPU (0avgtext+0avgdata 16024maxresident)k
+0inputs+56outputs (0major+9520minor)pagefaults 0swaps
+
+        
+>>>>> cmarrt-data/parallel_range1_agents22_9.exp
+time ./cmapf-solver -a CASTAR -e cmarrt-data/parallel_range1_agents22_9.exp -G graphs/ --collisions CHECK_COLLISIONS --nbst 100 --verbose false --subsolver CASTAR --rs 23455 --shake false
+INFO: Experience: cmarrt-data/parallel_range1_agents22_9.exp
+INFO: Graph Folder: graphs/
+INFO: Collisions:CHECK_COLLISIONS
+TRACE: Instance created!
+TRACE: Instance loaded!
+TRACE: Number of nodes: 1050
+TRACE: Number of edges: 4414
+TRACE: Number of agents: 22
+INFO: Start configuration: <75, 130, 173, 217, 218, 215, 331, 383, 429, 314, 175, 379, 415, 432, 385, 462, 249, 498, 531, 423, 171, 563>
+INFO: Goal configuration: <76, 131, 203, 199, 195, 236, 210, 300, 319, 214, 239, 268, 367, 447, 311, 360, 357, 438, 516, 417, 404, 375>
+INFO: Start and goal configurations are connected.
+INFO: Objective :SUM
+TRACE: Objective created!
+INFO: Heuristics:BIRDEYE
+INFO: Random seed: 23455
+INFO: Subsolver:CASTAR
+INFO: Window size:2
+INFO: Verbose: 0
+INFO: Algorithm:CASTAR
+INFO: Number of extension trials: 100
+INFO: Randomized shaking: 0
+TRACE: Solver created!
+[31mRun number 1
+ [0m[31mRun number 2
+ [0m[31mRun number 3
+ [0m[31mRun number 4
+ [0m[31mRun number 5
+ [0m[32mCA*-Shake solved the instance.
+[0mTRACE: Solver terminated!
+INFO: Execution cost:9614
+INFO: Execution found
+149.85user 0.05system 2:30.41elapsed 99%CPU (0avgtext+0avgdata 14200maxresident)k
+0inputs+1024outputs (0major+4520minor)pagefaults 0swaps

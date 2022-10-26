@@ -12,7 +12,7 @@ logfolder = "logs/"
 plottype = "success"
 caalone=False
 results={}
-
+nb_exp = None
 # hardcoded value: number of experiments per csv file``
 # max_lines = 60
 
@@ -51,7 +51,10 @@ def plot_success():
                     average_length /= float(success)
                     average_time /= float(success)
             # print(f"{exp} ; {absfile[0]} ; {success / float(max_lines)}; {average_length / int(nb_agents)} ; {average_time}")
-            print(f"{exp} ; {absfile[0]} ; {success / float(nb_lines)}")#; {average_length / int(nb_agents)} ; {average_time}")
+            if nb_exp is None:
+                print(f"{exp} ; {absfile[0]} ; {success / float(nb_lines)}")#; {average_length / int(nb_agents)} ; {average_time}")
+            else:
+                print(f"{exp} ; {absfile[0]} ; {success / float(nb_exp)}")#; {average_length / int(nb_agents)} ; {average_time}")
     elif plottype == "performance":
         print("Experiment ; nb_agents ; exp_no ; avg_cost ; avg_time ")
         # nb_agents x exp_no -> nb of rows
@@ -116,7 +119,7 @@ def plot_success():
                         print(f"{absfile[1]} ; {nb_agents} ; {cost} ; {time}")
 
 def main():
-    global alg, col, logfolder, prefix, caalone,plottype
+    global alg, col, logfolder, prefix, caalone, plottype, nb_exp
     parser = argparse.ArgumentParser(description="Given prefix, alg and collision mode, read all csv files in given log directory, produce summary.")
     parser.add_argument("-a", "--algorithm", type=str, dest="alg",
                         help="Algorithm",required=True)
@@ -128,6 +131,8 @@ def main():
                         help="log folder to read",required=False)
     parser.add_argument("-t",dest="plottype", type=str,
                         help="success or performance",required=True)
+    parser.add_argument("-n",dest="total_exp_nb", type=int,
+                        help="total nb of exps in each file",required=False)
     parser.add_argument("-q",dest="alone", type=bool,
                         help="whether to filter benchmarks that were not solved by ca* alone",required=False)
     args = parser.parse_args()
@@ -139,5 +144,6 @@ def main():
     prefix = args.prefix    
     plottype = args.plottype
     caalone = args.alone
+    nb_exp = args.total_exp_nb
     plot_success()
 main()

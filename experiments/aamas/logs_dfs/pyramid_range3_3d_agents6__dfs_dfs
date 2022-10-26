@@ -1,0 +1,709 @@
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_0.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_0.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_0.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198931.033461592]: Planner started[0m
+[0m[ INFO] [1666198931.835926459]: Plan found[0m
+[0m[ INFO] [1666198931.835969264]: Elapsed time: 0.804839 s[0m
+Computed plan: 
+Plan size: 33
+[470 58 481 859 65 696]
+[469 260 285 661 64 695]
+[479 455 83 668 72 710]
+[492 462 82 667 71 725]
+[491 461 96 676 273 725]
+[490 470 95 675 283 725]
+[506 469 94 873 282 742]
+[519 479 93 880 295 741]
+[537 492 108 879 294 740]
+[536 491 107 892 308 760]
+[557 490 123 891 307 759]
+[556 506 138 902 325 779]
+[555 519 156 919 324 778]
+[554 537 175 918 339 777]
+[554 536 174 917 356 776]
+[553 557 193 934 355 775]
+[552 556 192 933 354 774]
+[551 555 191 948 554 773]
+[550 575 190 964 553 789]
+[549 574 189 982 552 789]
+[570 573 188 981 551 789]
+[570 572 187 980 550 789]
+[570 776 186 979 571 789]
+[570 775 185 978 571 789]
+[570 774 184 977 571 789]
+[570 773 184 976 571 789]
+[570 961 184 975 571 789]
+[570 961 184 974 571 789]
+[367 961 184 974 570 789]
+[367 961 184 974 569 789]
+[570 961 184 974 568 789]
+[570 961 184 974 567 789]
+[570 961 184 974 566 789]
+real 2.37
+user 1.83
+sys 0.36
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_10.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_10.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_10.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198932.826393022]: Planner started[0m
+[0m[ INFO] [1666198933.022111332]: Plan found[0m
+[0m[ INFO] [1666198933.022141233]: Elapsed time: 0.197831 s[0m
+Computed plan: 
+Plan size: 24
+[450 451 33 232 257 277]
+[446 447 15 32 54 267]
+[253 254 14 13 50 262]
+[49 234 215 12 34 257]
+[33 217 214 11 16 254]
+[15 216 213 11 16 253]
+[14 15 409 11 16 252]
+[13 14 409 11 15 251]
+[12 13 409 11 14 232]
+[12 13 409 11 14 231]
+[12 13 409 11 14 230]
+[12 13 409 11 14 229]
+[12 13 409 11 14 426]
+[12 13 409 11 14 632]
+[12 13 409 11 14 830]
+[31 12 409 11 14 830]
+[30 12 409 11 14 830]
+[31 12 408 11 14 830]
+[31 12 409 10 14 830]
+[31 11 409 10 14 830]
+[12 11 409 10 14 830]
+[12 30 409 11 14 830]
+[12 29 409 11 14 830]
+[12 10 409 11 14 830]
+real 1.17
+user 0.93
+sys 0.23
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_11.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_11.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_11.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198933.990362640]: Planner started[0m
+[0m[ INFO] [1666198934.351331212]: Plan found[0m
+[0m[ INFO] [1666198934.351354920]: Elapsed time: 0.363361 s[0m
+Computed plan: 
+Plan size: 34
+[449 17 664 690 637 681]
+[256 18 660 680 638 672]
+[236 19 656 671 638 465]
+[237 20 635 664 639 269]
+[238 21 636 660 640 264]
+[239 22 637 656 641 258]
+[240 221 638 635 642 256]
+[240 222 639 636 436 236]
+[221 223 640 637 241 237]
+[222 224 641 638 242 238]
+[223 225 642 639 243 239]
+[224 225 436 640 244 240]
+[242 243 241 641 245 221]
+[242 244 241 642 246 222]
+[243 245 242 436 247 223]
+[244 246 243 241 248 224]
+[245 247 244 242 249 225]
+[246 248 245 243 250 225]
+[247 249 246 244 251 243]
+[248 250 247 245 252 244]
+[249 251 248 246 48 245]
+[250 252 249 247 49 246]
+[251 253 250 248 53 247]
+[252 446 251 249 59 248]
+[48 450 252 250 58 249]
+[49 456 48 251 65 250]
+[53 455 49 252 64 251]
+[59 462 53 48 72 252]
+[58 471 59 49 71 48]
+[58 471 66 50 71 49]
+[58 471 74 50 71 53]
+[58 471 74 50 71 54]
+[58 471 74 50 71 60]
+[58 471 74 50 71 67]
+real 1.32
+user 1.07
+sys 0.23
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_12.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_12.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_12.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198935.808328508]: Planner started[0m
+[0m[ INFO] [1666198936.990828614]: Plan found[0m
+[0m[ INFO] [1666198936.990869733]: Elapsed time: 1.18719 s[0m
+Computed plan: 
+Plan size: 37
+[51 449 666 452 280 878]
+[52 453 674 457 281 683]
+[56 454 674 458 292 476]
+[57 459 683 465 293 477]
+[259 460 684 466 305 478]
+[265 467 693 475 306 489]
+[266 468 705 476 322 502]
+[271 477 706 487 338 503]
+[272 478 707 488 353 517]
+[280 489 722 501 369 532]
+[281 502 736 515 370 550]
+[292 503 737 516 371 551]
+[293 517 738 531 372 552]
+[305 532 739 549 574 572]
+[321 550 758 549 778 572]
+[322 551 777 550 778 573]
+[338 552 777 551 778 574]
+[353 553 777 552 778 575]
+[551 554 777 553 778 576]
+[552 555 777 554 778 577]
+[553 556 777 555 778 594]
+[554 557 777 556 778 594]
+[555 536 777 557 778 594]
+[556 537 777 536 778 594]
+[760 519 777 537 778 594]
+[949 519 777 742 778 594]
+[949 519 777 725 778 594]
+[934 519 777 710 778 577]
+[934 519 777 711 778 577]
+[934 519 777 712 778 577]
+[934 519 777 712 779 594]
+[934 519 778 712 779 594]
+[917 519 778 712 759 594]
+[917 519 779 712 759 594]
+[917 519 780 712 759 594]
+[917 519 965 712 779 594]
+[917 519 965 712 778 594]
+real 2.64
+user 1.96
+sys 0.29
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_13.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_13.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_13.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198938.540179826]: Planner started[0m
+[0m[ INFO] [1666198939.056978576]: Plan found[0m
+[0m[ INFO] [1666198939.057017422]: Elapsed time: 0.520539 s[0m
+Computed plan: 
+Plan size: 17
+[173 339 577 983 357 779]
+[372 356 557 795 357 778]
+[371 355 556 780 356 777]
+[370 354 555 576 355 758]
+[369 372 554 575 354 757]
+[368 371 553 574 372 756]
+[367 370 552 573 371 755]
+[366 369 551 572 370 755]
+[365 368 550 572 369 755]
+[364 367 549 370 368 755]
+[364 366 548 369 367 755]
+[364 365 547 368 366 755]
+[364 568 546 367 365 755]
+[364 567 545 366 383 755]
+[364 566 544 366 587 755]
+[364 565 749 366 788 755]
+[364 585 940 366 788 755]
+real 2.06
+user 1.69
+sys 0.34
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_14.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_14.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_14.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198940.553161303]: Planner started[0m
+[0m[ INFO] [1666198941.203276126]: Plan found[0m
+[0m[ INFO] [1666198941.203308911]: Elapsed time: 0.653817 s[0m
+Computed plan: 
+Plan size: 17
+[575 154 136 934 120 152]
+[576 155 153 740 322 170]
+[577 355 154 741 338 171]
+[578 356 155 536 353 172]
+[579 357 355 537 369 153]
+[580 156 356 538 370 154]
+[581 157 357 539 371 155]
+[582 158 358 540 372 355]
+[583 159 359 343 574 356]
+[583 160 559 328 575 357]
+[599 161 560 329 576 358]
+[599 162 561 330 577 359]
+[599 163 765 330 578 359]
+[599 363 765 330 579 359]
+[599 380 766 330 580 359]
+[599 380 767 330 581 359]
+[599 380 768 330 783 359]
+real 2.14
+user 1.78
+sys 0.35
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_15.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_15.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_15.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198942.722739877]: Planner started[0m
+[0m[ INFO] [1666198943.501576839]: Plan found[0m
+[0m[ INFO] [1666198943.501609595]: Elapsed time: 0.782485 s[0m
+Computed plan: 
+Plan size: 33
+[64 96 479 675 111 471]
+[72 95 492 469 126 470]
+[71 94 491 479 125 469]
+[273 93 490 492 328 479]
+[283 108 506 491 327 492]
+[282 107 519 490 521 491]
+[295 123 537 506 520 490]
+[294 122 536 519 538 506]
+[308 137 557 537 559 519]
+[307 339 556 536 558 537]
+[325 356 555 557 558 536]
+[324 355 554 556 557 536]
+[339 354 553 555 556 557]
+[356 554 552 555 556 557]
+[355 553 551 554 555 556]
+[354 552 550 553 554 555]
+[354 551 532 552 553 554]
+[354 550 531 551 552 553]
+[554 549 530 550 551 534]
+[553 548 529 532 550 533]
+[534 547 528 531 755 738]
+[533 546 527 530 754 737]
+[738 545 526 529 753 736]
+[737 544 332 528 752 735]
+[736 544 332 527 751 734]
+[735 544 332 527 750 733]
+[721 544 332 527 749 719]
+[720 544 332 527 749 704]
+[719 544 332 527 749 692]
+[912 544 332 527 749 887]
+[911 544 332 527 749 886]
+[910 544 332 527 749 886]
+[909 544 332 527 749 886]
+real 2.29
+user 1.97
+sys 0.31
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_16.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_16.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_16.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198944.993929820]: Planner started[0m
+[0m[ INFO] [1666198945.262795724]: Plan found[0m
+[0m[ INFO] [1666198945.262828667]: Elapsed time: 0.272423 s[0m
+Computed plan: 
+Plan size: 9
+[151 337 502 517 723 901]
+[135 336 304 321 738 707]
+[134 335 292 337 533 503]
+[119 133 281 135 552 305]
+[118 132 280 135 551 304]
+[117 132 280 135 353 303]
+[103 132 280 135 152 303]
+[103 132 280 135 151 303]
+[103 132 280 135 150 303]
+real 1.75
+user 1.43
+sys 0.32
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_17.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_17.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_17.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198946.764685130]: Planner started[0m
+[0m[ INFO] [1666198947.241107963]: Plan found[0m
+[0m[ INFO] [1666198947.241141007]: Elapsed time: 0.4801 s[0m
+Computed plan: 
+Plan size: 19
+[864 477 88 68 268 101]
+[871 478 89 76 269 102]
+[878 489 90 77 270 103]
+[887 502 91 78 271 117]
+[888 503 92 79 272 118]
+[889 707 105 80 280 119]
+[890 707 106 81 281 134]
+[901 707 120 91 292 135]
+[915 707 322 92 293 337]
+[929 707 338 105 305 532]
+[929 707 353 106 306 532]
+[929 707 551 120 322 532]
+[929 707 756 120 338 532]
+[929 707 756 322 353 532]
+[929 707 756 338 369 532]
+[929 707 756 338 370 532]
+[929 707 756 338 371 532]
+[929 707 756 338 573 532]
+[929 707 756 338 591 532]
+real 1.97
+user 1.66
+sys 0.30
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_18.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_18.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_18.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198948.738221518]: Planner started[0m
+[0m[ INFO] [1666198949.588290414]: Plan found[0m
+[0m[ INFO] [1666198949.588321220]: Elapsed time: 0.853567 s[0m
+Computed plan: 
+Plan size: 27
+[580 800 782 560 987 390]
+[581 598 578 539 967 375]
+[561 582 558 521 953 358]
+[540 562 537 522 936 341]
+[541 563 519 508 921 326]
+[523 542 506 493 904 308]
+[509 524 490 480 893 294]
+[494 510 491 470 880 295]
+[481 495 492 461 881 282]
+[471 482 479 462 882 283]
+[472 482 469 455 883 273]
+[463 472 470 456 874 274]
+[463 472 461 450 867 275]
+[456 463 462 446 860 276]
+[450 456 455 430 854 472]
+[446 450 456 412 850 463]
+[430 446 450 411 849 456]
+[412 253 446 410 848 450]
+[411 252 253 409 848 446]
+[410 251 252 409 848 445]
+[410 250 251 409 848 444]
+[410 47 250 409 848 652]
+[410 47 250 409 848 651]
+[410 47 250 409 848 650]
+[410 47 250 409 848 649]
+[410 47 250 409 848 632]
+[410 47 250 409 848 830]
+real 2.34
+user 2.01
+sys 0.32
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_19.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_19.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_19.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198951.177723676]: Planner started[0m
+[0m[ INFO] [1666198951.579673598]: Plan found[0m
+[0m[ INFO] [1666198951.579704134]: Elapsed time: 0.406513 s[0m
+Computed plan: 
+Plan size: 17
+[856 465 886 263 864 476]
+[660 269 887 61 666 477]
+[452 270 692 68 460 488]
+[453 271 693 68 266 488]
+[454 69 705 68 271 693]
+[459 70 720 68 272 693]
+[466 80 734 76 70 693]
+[467 80 734 77 70 693]
+[468 80 734 78 70 693]
+[477 80 734 79 70 693]
+[478 80 734 89 70 693]
+[489 80 734 90 70 693]
+[502 80 734 90 70 693]
+[502 79 734 90 80 693]
+[502 79 734 90 81 693]
+[502 80 734 90 91 693]
+[502 80 734 90 92 693]
+real 1.99
+user 1.55
+sys 0.39
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_1.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_1.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_1.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198952.535723198]: Planner started[0m
+[0m[ INFO] [1666198953.039876055]: Plan found[0m
+[0m[ INFO] [1666198953.039902004]: Elapsed time: 0.506463 s[0m
+Computed plan: 
+Plan size: 28
+[407 612 404 10 841 47]
+[406 630 403 29 644 46]
+[405 629 402 28 643 249]
+[404 646 401 228 642 248]
+[403 645 400 227 641 247]
+[402 644 399 226 640 246]
+[401 644 398 245 639 246]
+[400 643 397 244 638 245]
+[399 642 396 243 637 244]
+[398 641 416 242 636 243]
+[397 640 415 241 657 225]
+[417 640 621 436 449 224]
+[416 639 636 642 453 223]
+[415 638 657 641 454 222]
+[621 637 853 640 459 221]
+[636 836 857 639 466 240]
+[657 835 863 638 475 239]
+[853 835 869 637 486 238]
+[857 853 870 636 486 237]
+[863 857 877 635 499 236]
+[869 863 886 656 499 256]
+[870 869 897 660 302 258]
+[877 672 897 664 302 259]
+[886 681 911 671 302 265]
+[897 691 911 680 302 270]
+[897 485 911 690 302 271]
+[897 498 911 701 302 279]
+[897 513 911 717 302 280]
+real 1.45
+user 1.25
+sys 0.19
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_2.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_2.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_2.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198953.957179749]: Planner started[0m
+[0m[ INFO] [1666198954.332242664]: Plan found[0m
+[0m[ INFO] [1666198954.332265855]: Elapsed time: 0.377645 s[0m
+Computed plan: 
+Plan size: 23
+[751 703 941 886 671 719]
+[546 499 750 887 672 720]
+[547 500 751 692 465 515]
+[548 501 752 487 466 516]
+[549 502 753 488 467 517]
+[550 503 754 489 468 532]
+[551 517 755 502 477 550]
+[552 532 756 503 478 551]
+[553 550 757 517 489 552]
+[554 551 758 532 502 553]
+[354 552 777 550 503 554]
+[355 553 778 551 517 555]
+[356 554 779 552 532 556]
+[357 555 780 553 550 557]
+[156 556 781 554 551 558]
+[157 557 781 555 552 559]
+[158 558 781 355 553 560]
+[158 558 781 356 554 561]
+[158 558 781 357 555 581]
+[158 558 781 358 556 581]
+[158 558 781 359 557 597]
+[158 558 781 376 761 597]
+[158 558 781 377 950 597]
+real 1.29
+user 1.10
+sys 0.18
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_3.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_3.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_3.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198955.246735442]: Planner started[0m
+[0m[ INFO] [1666198955.427912824]: Plan found[0m
+[0m[ INFO] [1666198955.427938584]: Elapsed time: 0.183605 s[0m
+Computed plan: 
+Plan size: 11
+[693 899 684 890 459 929]
+[488 705 477 889 466 736]
+[487 501 280 888 475 722]
+[476 488 280 887 486 707]
+[475 487 280 878 485 706]
+[475 291 280 871 484 705]
+[475 89 280 870 497 704]
+[475 89 280 869 497 703]
+[475 89 280 863 497 702]
+[475 89 280 863 497 691]
+[475 89 280 863 497 690]
+real 1.09
+user 0.87
+sys 0.21
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_4.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_4.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_4.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198956.334758091]: Planner started[0m
+[0m[ INFO] [1666198956.630199355]: Plan found[0m
+[0m[ INFO] [1666198956.630222111]: Elapsed time: 0.297863 s[0m
+Computed plan: 
+Plan size: 19
+[904 726 505 873 727 728]
+[712 520 307 880 521 727]
+[711 519 325 879 520 726]
+[507 537 324 686 519 725]
+[309 536 339 696 326 742]
+[308 557 356 695 325 741]
+[307 556 355 710 324 740]
+[325 555 354 725 339 760]
+[324 554 372 742 356 759]
+[339 553 371 741 355 779]
+[356 552 370 740 354 778]
+[355 551 369 760 372 777]
+[354 550 368 759 371 776]
+[372 549 367 779 370 775]
+[371 548 366 778 369 774]
+[370 547 384 777 368 773]
+[369 568 384 776 367 961]
+[368 568 384 775 385 960]
+[367 568 384 774 385 960]
+real 1.20
+user 0.98
+sys 0.21
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_5.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_5.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_5.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666198957.539536329]: Planner started[0m
+[0m[ INFO] [1666198957.907921204]: Plan found[0m
+[0m[ INFO] [1666198957.907945787]: Elapsed time: 0.371231 s[0m
+Computed plan: 
+Plan size: 31
+[812 409 442 12 48 647]
+[614 410 443 13 49 648]
+[615 411 650 214 253 649]
+[408 412 651 232 446 650]
+[409 430 652 251 450 651]
+[410 446 653 252 456 652]
+[411 450 654 253 455 444]
+[412 456 658 446 462 445]
+[430 455 662 450 461 446]
+[430 462 661 456 470 450]
+[446 461 668 455 480 456]
+[450 470 677 462 493 455]
+[456 469 687 461 508 462]
+[455 479 699 470 522 461]
+[462 492 698 469 521 470]
+[461 491 697 479 521 480]
+[470 490 696 492 539 493]
+[469 506 695 491 539 508]
+[479 710 695 490 539 522]
+[492 710 695 506 539 540]
+[491 710 695 519 539 561]
+[490 710 695 725 539 581]
+[506 710 695 919 539 581]
+[519 710 695 919 539 581]
+[537 710 695 919 539 581]
+[536 710 695 919 539 581]
+[536 506 710 919 539 581]
+[536 506 725 919 539 581]
+[536 710 742 919 539 581]
+[536 710 741 919 539 581]
+[536 710 740 919 539 581]
+real 1.27
+user 1.04
+sys 0.23
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_6.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_6.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_6.exp
+Algorithm:     dfs
+Time deadline: 300
+Command terminated by signal 9
+real 301.22
+user 300.02
+sys 0.44
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_7.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_7.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_7.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666199260.639054618]: Planner started[0m
+[0m[ INFO] [1666199261.372304754]: Plan found[0m
+[0m[ INFO] [1666199261.372339840]: Elapsed time: 0.737311 s[0m
+Computed plan: 
+Plan size: 25
+[978 793 758 575 354 339]
+[791 591 553 555 355 340]
+[775 387 554 556 356 341]
+[756 371 555 557 339 342]
+[757 372 556 357 324 359]
+[552 354 557 340 324 559]
+[553 355 536 341 325 560]
+[554 356 537 326 325 764]
+[354 339 519 308 326 764]
+[355 137 520 309 519 765]
+[356 138 521 310 520 954]
+[339 139 522 311 521 954]
+[137 140 508 312 522 954]
+[138 141 509 297 523 954]
+[139 142 509 297 523 954]
+[140 125 509 297 523 954]
+[124 126 509 297 523 954]
+[109 127 508 297 523 954]
+[94 128 508 297 523 954]
+[95 128 509 297 523 954]
+[96 128 509 297 523 954]
+[82 128 509 297 523 954]
+[83 128 509 297 523 954]
+[84 128 509 297 523 954]
+[85 128 509 297 523 954]
+real 2.24
+user 1.94
+sys 0.28
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_8.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_8.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_8.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666199262.879274478]: Planner started[0m
+[0m[ INFO] [1666199263.664193352]: Plan found[0m
+[0m[ INFO] [1666199263.664227543]: Elapsed time: 0.788607 s[0m
+Computed plan: 
+Plan size: 35
+[268 458 674 52 692 477]
+[269 459 467 56 487 478]
+[270 460 271 57 488 489]
+[466 467 69 259 501 489]
+[475 468 70 265 502 489]
+[476 477 80 266 503 502]
+[487 478 81 271 517 503]
+[488 489 91 272 532 517]
+[501 502 104 280 550 532]
+[515 503 119 281 551 550]
+[516 517 134 292 552 551]
+[531 532 135 304 553 552]
+[549 550 151 320 554 553]
+[549 551 152 321 555 554]
+[550 552 170 322 556 555]
+[551 553 171 338 557 556]
+[552 554 172 353 558 557]
+[553 555 173 551 559 536]
+[554 556 191 552 560 537]
+[555 557 192 553 561 538]
+[556 558 193 554 581 539]
+[557 559 194 555 581 744]
+[558 560 195 556 581 744]
+[559 561 195 557 581 744]
+[579 765 195 536 581 744]
+[596 783 195 537 581 744]
+[596 783 195 538 581 744]
+[596 783 195 539 581 744]
+[579 783 195 539 581 744]
+[596 765 195 539 581 744]
+[596 783 176 539 581 744]
+[596 783 195 521 581 744]
+[596 783 195 727 581 744]
+[596 783 195 921 581 744]
+[596 783 195 936 581 744]
+real 2.29
+user 1.95
+sys 0.33
+>>>>> cmarrt-data/pyramid_range3_3d_agents6_9.exp
+time -p rosrun connected_mrpp cmrpp_test -f cmarrt-data/pyramid_range3_3d_agents6_9.exp -c sum_shortest_path -H sum_shortest_path -a dfs -d 300 -S dummy -s poly --collisions true
+Experiment:    cmarrt-data/pyramid_range3_3d_agents6_9.exp
+Algorithm:     dfs
+Time deadline: 300
+[0m[ INFO] [1666199265.170842553]: Planner started[0m
+[0m[ INFO] [1666199265.457895448]: Plan found[0m
+[0m[ INFO] [1666199265.457929212]: Elapsed time: 0.290915 s[0m
+Computed plan: 
+Plan size: 14
+[681 666 691 665 875 660]
+[681 460 485 459 680 664]
+[691 467 289 466 690 671]
+[485 476 87 475 701 672]
+[289 487 77 486 717 681]
+[87 487 77 486 909 691]
+[87 487 77 486 909 485]
+[87 487 77 486 909 498]
+[87 487 77 486 909 513]
+[87 487 77 485 909 527]
+[87 486 77 485 909 527]
+[87 499 77 486 909 527]
+[87 498 77 486 909 527]
+[87 485 77 486 909 527]
+real 1.79
+user 1.45
+sys 0.33
