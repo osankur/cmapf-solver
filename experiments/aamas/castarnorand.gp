@@ -1,4 +1,4 @@
-set term png size 300, 200 crop
+set term png size 350, 200 crop
 
 set datafile separator ";"
 set pointsize 0.7

@@ -1,19 +1,12 @@
 #!/usr/bin/bash
 
-# Usage examples:
-#   run_all.sh CMARRT
-#   run_all.sh DFS
-#   run_all.sh CASTAR
-#   ...
-#
-
 # This is the set of prefix base names to be run
 benchmarks=()
-for i in {2..80}; do
+for i in {79..80}; do
 	#benchmarks=("${benchmarks[@]}" "small_obstacles_3d_agents${i}_")
-	#benchmarks=("${benchmarks[@]}" "offices_range1_agents${i}_")
+	benchmarks=("${benchmarks[@]}" "offices_range1_agents${i}_")
 	#benchmarks=("${benchmarks[@]}" "parallel_range1_agents${i}_")
-	benchmarks=("${benchmarks[@]}" "pyramid_range3_3d_agents${i}_")
+	#benchmarks=("${benchmarks[@]}" "pyramid_range3_3d_agents${i}_")
 done
 algo=$1 # CMARRT, COORD, DFS
 if [[ $algo = "" ]]; then

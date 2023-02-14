@@ -1,4 +1,5 @@
-set term png size 240, 140 crop
+#set term png size 240, 140 crop
+set term png size 300, 140 crop
 
 set datafile separator ";"
 set pointsize 0.7
@@ -12,7 +13,7 @@ set format y "%.0f%%"
 set xrange [2:80]
 
 
-     set key right top
+set key right top
 files="offices parallel pyramid obstacles"
 do for [i=1:words(files)] {
      if (i>1){
@@ -29,10 +30,15 @@ plot castar_filename using (100*$3) title 'WHCA*' with linespoints ls 1,\
 }
 
 
+files="offices parallel pyramid obstacles"
 set key right top
 do for [i=1:words(files)] {
-     if (i>1){
+     if (i==2){
           set key off
+     }
+     if (i==3){
+          set yrange [70:100]
+
      }
      set output word(files, i)."_100_300_success.png"
      castar100_filename="logs100/".word(files, i)."_success.csv"
@@ -44,6 +50,7 @@ plot castar100_filename using (100*$3) title '100' with linespoints ls 1,\
 }
 
 
+set yrange [0:100]
 set key center top
 set xtics 400
 do for [i=1:words(files)] {
