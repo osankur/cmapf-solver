@@ -22,19 +22,7 @@ Path::Path() : std::vector<Node>() {}
 
 Path::Path(const Path& rhs) : std::vector<Node>(rhs) {}
 
-//void Path::Resize(size_t time) { path_.resize(time); }
-
-// void Path::PushBack(Node node) { path_.push_back(node); }
-
 const Node& Path::getAtTimeOrLast(size_t time) const { return time < this->size() ? (*this)[time] : this->back(); }
-
-// Node& Path::operator[](size_t time) { return path_[time]; }
-
-// const Node& Path::operator[](size_t time) const { return path_[time]; }
-
-// size_t Path::size() const { return path_.size(); }
-
-// const Node& Path::at(size_t time) const { return path_[time]; }
 
 bool Path::isValid(const ExplicitGraph & graph) const {
   if (size() == 0) return true;
@@ -50,9 +38,6 @@ bool Path::isValid(const ExplicitGraph & graph) const {
   }
   return true;
 }
-
-
-// Friends
 
 std::ostream& operator<<(std::ostream& os, const Path& path) {
   os << "[";

@@ -142,55 +142,22 @@ namespace coordinated
         size_t getValue(const std::map<Agent, Node> &next_partial_conf)
         {
             assert(this->args_.size() <= this->instance_.nb_agents());
-            // std::cerr << "Computing value of the following next_partial_conf (size: "
-            //           <<  next_partial_conf.size() << "): ";
-            //  for(Node node : next_partial_conf){
-            //      std::cerr << node << " ";
-            //  }
-            //  std::cerr << "\n";
-            // std::cerr << "qf has arguments: ";
-            // for (auto agent : this->arguments())
-            // {
-            //     std::cerr << agent << " ";
-            // }
-            // std::cerr << "\n";
-            // std::cerr << "next_conf defined for: ";
-            // for (auto p : next_partial_conf){
-            //     std::cerr << p.first << " ";
-            // }
-            // std::cerr << "\n";
 
             Configuration our_nodes;
             for (auto agent : this->arguments())
             {
-                // if(next_partial_conf.find(agent) == next_partial_conf.end()){
-                //     std::cerr << "Agent " << agent << " must be defined for evaluating qf.\n";
-                //     exit(-1);
-                // }
                 our_nodes.push_back(next_partial_conf.find(agent)->second);
             }
             // LOG_DEBUG("Are they connected: " + std::to_string(this->isConnected(our_nodes)));
             if (!this->instance_.graph().communication().isConfigurationConnected(our_nodes)){
                 return INFINITY;
             }
-            // assert(this->isConnected(our_nodes) == this->instance_.graph().communication().isConfigurationConnected(our_nodes));
-            // if (!this->isConnected(our_nodes))
-            // {
-            //     return INFINITY;
-            // }
-            // else if (this->instance_.getCollisionMode() == CollisionMode::CHECK_COLLISIONS && !this->isCollisionless(our_nodes))
             else if (this->instance_.getCollisionMode() == CollisionMode::CHECK_COLLISIONS && our_nodes.hasCollisions())
             {
                 return INFINITY;
             }
             else
             {
-                // auto d = this->heuristics_.getHeuristic(next_partial_conf.find(agent_)->second, this->instance_.goal()[agent_]);
-                //  std::cout << "getValue called for " << next_partial_conf.find(agent_)->second << " to " <<
-                //        this->instance_.goal()[agent_] << "\n";
-                //  auto d1 = this->heuristics_.getFloyd()->getShortestPathDistance(next_partial_conf.find(agent_)->second,
-                //       this->instance_.goal()[agent_]);
-
                 size_t d = 0;
 
                 // h: heuristic values from successors to goal
@@ -211,15 +178,6 @@ namespace coordinated
                 // std::cout << "\n\ti.e. distance bwt " << next_partial_conf.find(agent_)->second << " and " << this->goal_conf_[agent_] << " (+1)";
                 std::cout << ") = " << d << "\n";
 #endif
-                // if (d1 != d2){
-                //     std::cout << "FW = " << d1 << " but heuristics = " << d2 << "\n";
-                //     std::cout << "source: " << next_partial_conf.find(agent_)->second;
-                //     std::cout << " target: " << this->instance_.goal()[agent_];
-                //     std::cout << "\n";
-                // }
-                // // LOG_DEBUG("Evaluating weight for node=" + std::to_string(agent_)
-                //     + ". Distance from node " + std::to_string(next_partial_conf.find(agent_)->second)
-                //     + " to node " + std::to_string(this->instance_.goal()[agent_]) + " = " + std::to_string(d));
                 return d;
             }
         }
@@ -332,12 +290,6 @@ namespace coordinated
                         sum += qf_value;
                     }
 
-                    // size_t g = 0;
-                    // for (size_t i = 0; i < args_.size(); i++){
-                    //     if (next_partial_conf[args_[i]] != this->getSourceConfiguration()[args_[i]]){
-                    //         g++;
-                    //     }
-                    // }
                     size_t added_g = 0;
                     if (next_node != this->getSourceConfiguration()[agent_to_eliminate_]){
                         added_g = 1;
@@ -355,13 +307,6 @@ namespace coordinated
                 }
                 std::sort(image.begin(), image.end());
 
-                // for(auto i : image){
-                //     std::cout << "(node=" << i.second << ", x=" <<
-                //     this->instance_.graph().movement().getPosition(i.second).first
-                //     << ", y=" << this->instance_.graph().movement().getPosition(i.second).second
-                //     << ", dist=" << i.first << ") ";
-                // }
-                // std::cout << "\n";
 
                 data_[next_partial_conf] = image;
             }
@@ -389,11 +334,6 @@ namespace coordinated
                 neighbors.push_back(n);
             }
 
-            // std::cerr << "Created local Q compound with args: ";
-            // for(auto i : arguments()){
-            //     std::cerr << i <<" ";
-            // }
-            // std::cerr << "\n";
             // Auxiliary fields for the recursive call to fill_data_rec
             std::vector<Node> next_partial_conf;
             std::map<Agent, Node> next_partial_conf_m;
@@ -575,12 +515,6 @@ namespace coordinated
                                                                        qfuncs_elim,
                                                                        agent_to_eliminate);
 
-            // std::cout << "After eliminating " << agent_to_eliminate << "\n";
-            // std::cout << "\tArguments of the compound: ";
-            // for (auto a : qf_comp->arguments()){
-            //     std::cout << a << " ";
-            // }
-            // std::cout << "\n";
             qfuncsAfterElim = qfuncs_rem;
             qfuncs_rem.push_back(compoundQFunc);
             qfuncs_ = qfuncs_rem;
@@ -748,22 +682,6 @@ namespace coordinated
                     #endif
 
 
-                    // size_t new_g = cnode.getG();
-                    // size_t suc_dist = p.first.first;
-                    // if (suc_node != source[agent]){
-                    //     new_g++;
-                    // }
-                    // CoordNode new_node(cnode.partial_conf, suc_dist, new_g);
-                    // new_node.partial_conf[agent] = suc_node;
-                    // open.push(new_node);
-
-                    // std::cout << "Adding new node: ";
-                    // for (auto p : new_node.partial_conf)
-                    // {
-                    //     std::cout << "Agent " << p.first << " @ " << p.second << ", ";
-                    // }
-                    // std::cout << "> with dist: " << new_node.getDistance() << " and g: " << new_node.getG() << "\n";
-
                 }
             }
             return false;
@@ -821,30 +739,6 @@ namespace coordinated
             assert(qfuncs_[0]->arguments().size() == 0);            
             assert((dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(qfuncs_[0].get()) != nullptr));
 
-            // Obtain a list of compound Q-functions in topological order
-            // (each qfunc depends only on the variables determined by the functions on its left)
-            // std::vector<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> linearized;
-            // std::queue<std::shared_ptr<LocalQCompound<GraphMove, GraphComm>>> open;
-            // open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove, GraphComm>>(qfuncs_[0]));
-            // while (!open.empty())
-            // {
-            //     std::shared_ptr<LocalQCompound<GraphMove, GraphComm>> qf = open.front();
-            //     open.pop();
-            //     linearized.push_back(qf);
-            //     assert(linearized.back() == f[linearized.size()-1]);
-            //     for (auto child_qf : qf->qfunctions())
-            //     {
-            //         if (dynamic_cast<LocalQCompound<GraphMove, GraphComm> *>(child_qf.get()) != nullptr)
-            //         {
-            //             // std::shared_ptr<B> bp = std::dynamic_pointer_cast<B>(ap);
-            //             open.push(std::dynamic_pointer_cast<LocalQCompound<GraphMove, GraphComm>>(child_qf));
-            //         }
-            //     }
-            // }
-
-            // // An agent is eliminated at each compound q-function, so there must be exactly nb_agents such objects
-            // assert(linearized.size() == this->instance().nb_agents());
-
             // Choose the best successor
             std::map<Agent, Node> partial_conf;
             std::set<Node> node_support;
@@ -866,10 +760,6 @@ namespace coordinated
             size_t cnear_be_dist = 0;
             size_t min_dist = INFINITY;
             size_t max_dist = 0;
-            // int xmax = 0;
-            // int xmin = INFINITY;
-            // int ymax = 0;
-            // int ymin = INFINITY;
             for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
             {
                 size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
@@ -881,19 +771,6 @@ namespace coordinated
                     max_dist = agt_sp_dist;
                 }
                 cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
-                // std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
-                // if (pos.first < xmin){
-                //     xmin = pos.first;
-                // }
-                // if (pos.first > xmax){
-                //     xmax = pos.first;
-                // }
-                // if (pos.second > ymax){
-                //     ymax = pos.second;
-                // }
-                // if (pos.second < ymin){
-                //     ymin = pos.second;
-                // }
             }
             if (cnear_sp_dist < this->current_sp_distance){
                 this->current_sp_distance = cnear_sp_dist;
@@ -1005,18 +882,6 @@ namespace coordinated
                         }
                         this->execution_.push_back(path);
                     }
-                    // print
-                    /*
-                    for(auto c : config_stack_){
-                        std::cerr << "[";
-                        for(int i = 0; i< c.size();i++){
-                            auto n = c[i];
-                            auto pos = this->instance_.graph().movement().get_position(n);
-                            std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
-                        }
-                        std::cerr << "]\n";
-                    }
-                    */
                     goal_reached = true;
                     break;
                 }
@@ -1048,37 +913,6 @@ namespace coordinated
                 bool success = true;
                 Configuration next = get_next_best(config_stack_.back(), this->instance_.goal(), success);
 
-                // std::cout << ANSI_YELLOW << next << ANSI_RESET << "\n";
-                // std::cout << "d(" << 981 << ", " << 982 << ") = " << this->heuristics_.getHeuristic(981, 982) <<"\n";
-                // std::cout << "d(" << 982 << ", " << 1658 << ") = " << this->heuristics_.getHeuristic(982, 1658) <<"\n";
-                // std::cout << "d(" << 981 << ", " << 1658 << ") = " << this->heuristics_.getHeuristic(981, 1658) <<"\n";
-
-                // exit(0);
-                // std::cout << "<";
-                // for(auto n : next){
-                //     std::cout << n << ", ";
-                // }
-                // std::cout << ">\n";
-                // if (_iterations % 20 == 0){
-                //     Execution ex;
-                //     std::vector<std::shared_ptr<Configuration>> paths;
-
-                //     for (auto c : config_stack_){
-                //         paths.push_back(std::make_shared<Configuration>(c));
-                //     }
-                //     ex.setPaths(paths);
-                //     std::cout << ex;
-                //     std::cout << "\n";
-                // }
-                /*
-                std::cerr << "Iteration " << _iterations << ": " << next << std::endl;
-                for(int i = 0; i< next.size();i++){
-                    auto n = next[i];
-                    auto pos = this->instance_.graph().movement().getPosition(n);
-                    std::cerr << "(node" << n << ", x=" << pos.second << ", y=" << pos.first << ") ";
-                }
-                std::cerr << "]\n";
-                */
                 if (!success)
                 {
                     if (config_stack_.size() == 1)
@@ -1139,112 +973,6 @@ namespace coordinated
         unsigned int getWindowSize() const
         {
             return this->window_size_;
-        }
-        void test()
-        {
-            /*
-            const Configuration & start = this->instance_.start();
-            const Configuration & goal = this->instance_.goal();
-            for (int i = 0; i < start.size(); i++){
-                std::cerr << "(" << start[i] << " -- ";
-                std::cerr << goal[i] << "), ";        }
-            std::cerr <<"\n";
-
-            this->initialize_qfuncs(this->instance_.start());
-            std::map<Agent,Node> next_conf;
-            next_conf[0] = start[0];
-            next_conf[1] = start[1];
-            next_conf[2] = start[2];
-            // next_conf[0] = goal[0];
-            // next_conf[1] = goal[1];
-            // next_conf[2] = goal[2];
-            std::cerr << "qfuncs size: " << qfuncs_.size() << "\n";
-            std::cerr << "qfuncs[0]->getValue: " << qfuncs_[0]->getValue(next_conf) << "\n";
-            std::cerr << "qfuncs[0]->getValue: " << qfuncs_[1]->getValue(next_conf) << "\n";
-            std::cerr << "qfuncs[0]->getValue: " << qfuncs_[2]->getValue(next_conf) << "\n";
-            std::vector<std::shared_ptr<LocalQ<GraphMove,GraphComm> > > my_qfuncs;
-            my_qfuncs.push_back(qfuncs_[0]);
-            my_qfuncs.push_back(qfuncs_[1]);
-            std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp =
-                std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                        qfuncs_[0]->getSourceConfiguration(),
-                                                        my_qfuncs,
-                                                        1,
-                                                        collision_mode_);
-            std::cerr << "qcomp has arguments: ";
-            for(auto i : qf_comp->arguments()){
-                std::cerr << i << " ";
-            }
-            std::cerr << "\n";
-            qf_comp->print();
-            std::cerr << "qcomp.getValue: " << qf_comp->getValue(next_conf) << "\n";
-
-            my_qfuncs.clear();
-            my_qfuncs.push_back(qf_comp);
-            my_qfuncs.push_back(qfuncs_[2]);
-            std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp2 =
-                std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                        qfuncs_[0]->getSourceConfiguration(),
-                                                        my_qfuncs,
-                                                        2,
-                                                        collision_mode_);
-            qf_comp2->print();
-            std::cerr << "qcomp.getValue: " << qf_comp2->getValue(next_conf) << "\n";
-
-            my_qfuncs.clear();
-            my_qfuncs.push_back(qf_comp2);
-            std::shared_ptr<LocalQCompound<GraphMove,GraphComm> >qf_comp3 =
-                std::make_shared<LocalQCompound<GraphMove,GraphComm> >(this->instance_, this->fw_,
-                                                        qfuncs_[0]->getSourceConfiguration(),
-                                                        my_qfuncs,
-                                                        0,
-                                                        collision_mode_);
-            qf_comp3->print();
-            std::cerr << "qcomp.getValue: " << qf_comp3->getValue(next_conf) << "\n";
-
-
-            std::map<Agent,Node> partial_conf;
-            std::pair<size_t,Node> best = qf_comp3->getValueVector(partial_conf)[0];
-            std::cerr << "Agent " << qf_comp3->agent_to_eliminate() << " -> Node " << best.second <<
-                " (with val=" << best.first << ")\n";
-            partial_conf[qf_comp3->agent_to_eliminate()] = best.second;
-
-            best = qf_comp2->getValueVector(partial_conf)[0];
-            std::cerr << "Agent " << qf_comp2->agent_to_eliminate() << " -> Node " << best.second <<
-                " (with val=" << best.first << ")\n";
-            partial_conf[qf_comp2->agent_to_eliminate()] = best.second;
-
-            best = qf_comp->getValueVector(partial_conf)[0];
-            std::cerr << "Agent " << qf_comp->agent_to_eliminate() << " -> Node " << best.second <<
-                " (with val=" << best.first << ")\n";
-            */
-
-            auto graph = this->instance_.graph().movement();
-            const Configuration &start = this->instance_.start();
-            const Configuration &goal = this->instance_.goal();
-            for (int i = 0; i < start.size(); i++)
-            {
-                std::cerr << "(" << start[i] << " -- ";
-                std::cerr << goal[i] << "), ";
-            }
-            std::cerr << "\n";
-            std::cerr << "Neighborhood of node " << start[0] << "\n";
-            auto neigh = graph.get_neighbors(start[0]);
-            for (auto n : neigh)
-            {
-                std::cerr << n << " ";
-            }
-            std::cerr << "\n";
-            /*
-            const std::vector<Agent> args ={0,1,2};
-            DijkstraSPCalculator<GraphMove,GraphComm> fw(this->instance_);
-            LocalQ<GraphMove,GraphComm> localQ(start, args, fw, this->instance_);
-            assert(localQ.isCollisionless(start));
-            assert(localQ.isCollisionless(goal));
-            assert(localQ.isConnected(start));
-            assert(localQ.isConnected(goal));
-            localQ.getValue(start);
-            */
         }
     };
 }

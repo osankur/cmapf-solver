@@ -25,9 +25,6 @@ public:
     this->resize(size);
   }
 
-  // void PushBack(Node n){
-  //   this->push_back(n);
-  // }
   bool operator==(const Configuration &) const;
   bool hasCollisions() const;
   // Friends

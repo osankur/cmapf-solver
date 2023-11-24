@@ -21,18 +21,7 @@ class Path : public std::vector<Node> {
  public:
   Path();
   Path(const Path&);
-  // void Resize(size_t);
-  // void PushBack(Node);
   const Node& getAtTimeOrLast(size_t) const;
   bool isValid(const ExplicitGraph & graph) const;
-  // Operators
-  // Node& operator[](size_t);
-  // const Node& operator[](size_t) const;
-
-  // Properties
-  // size_t size() const;
-  // const Node& at(size_t) const;
-
-  // Friends
   friend std::ostream& operator<<(std::ostream&, const Path&);
 };

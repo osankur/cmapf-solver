@@ -58,14 +58,8 @@ namespace coupled
               localView.push_back(c.at(i));
               if ( (i % (window_size-1)) == 0)
               {
-                  // std::cout << "Checking block: ";
-                  // for (auto n : localView){
-                  //     std::cout << n << " ";
-                  // }
-                  // std::cout << "\n";
                   if (!instance.graph().communication().isConfigurationConnected(localView))
                   {
-                      // std::cout << "Agent " << i << " is not connected to its block: ";
                       return false;
                   }
                   localView.clear();
@@ -101,13 +95,6 @@ namespace coupled
         size_t a_cost;
         size_t a_g;
         auto a = open_local.pop(a_g, a_cost);
-        if (this->iteration_count_ % 1000 == 0){
-          // std::cout << "Iteration: " << this->iteration_count_ << "\n";
-        }
-        //std::cout << "\n* FindBestConfiguration Iteration. Open.size(): " << open_local.size() << ". Popped: ";
-        // std::cout << *a;
-        // std::cout << "\twith g = " << a_g << " cost = " << a_cost << "\n";
-        // std::cout << "\n";
         if (this->max_iterations_ > 0 && this->iteration_count_ > this->max_iterations_){
           break;
         }
@@ -120,7 +107,6 @@ namespace coupled
                 this->instance().getCollisionMode() == CollisionMode::IGNORE_COLLISIONS
                 || std::set<Node>(a->begin(), a->end()).size() == this->instance().nb_agents()
             )
-            // && isConfigurationWindowConnected(*a, this->instance_, 2)
           )
         {
           if (verbose_ && this->iteration_count_ > 1000){
@@ -132,18 +118,11 @@ namespace coupled
             std::cout << "\ncost: " << a_cost << ", g=" << a_g << "\n";
             std::cout.flush();
           }
-          // auto cend = clock();
-          // std::cout << "\topen.size() == " << open_local.size() << " closed.size() == " << closed_.size() << "\n";
-          // std::cout << "\tElapsed time: " << (cend -cstart) / (float) CLOCKS_PER_SEC << "\n";
-          // std::cout.flush();
           return a;
         }
         else if (a->size() < pi->size())
         {
           Agent next_agt = (Agent)a->size();
-          // std::cout << "Agent " << next_agt << " (out of " << pi->size() << ") is at node " << pi->at(next_agt) << " and has "
-          //           << this->instance_.graph().movement().get_neighbors(pi->at(next_agt)).size()
-          //           << " neighbors\n";
 
           for (Node neighbor : this->instance_.graph().movement().get_neighbors(
                    pi->at(next_agt)))
@@ -166,70 +145,11 @@ namespace coupled
               completed_next.push_back(pi->at(agt));
             }
             open_local.insert(next, g, this->heuristics_.getHeuristic(completed_next, goal));
-            // std::cout << "\tAdded next with " << next->size() << " agents, total cost: " << g+ this->heuristics_.getHeuristic(*next) << "\n";
-            // std::cout << "Next: ";
-            // std::cout << *next;
-            // std::cout << "\n";
           }
         }
       }
       return nullptr;
     }
-        // bool doWeSwitchToDFS(Configuration & currentConfiguration){
-        //     bool use_dfs = true;
-        //     size_t cnear_sp_dist = 0;
-        //     size_t cnear_be_dist = 0;
-        //     size_t min_dist = INFINITY;
-        //     size_t max_dist = 0;
-        //     int xmax = 0;
-        //     int xmin = INFINITY;
-        //     int ymax = 0;
-        //     int ymin = INFINITY;
-        //     for (int agt = 0; agt < this->instance_.nb_agents(); agt++)
-        //     {
-        //         size_t agt_sp_dist = this->heuristics_.getShortestPathDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
-        //         cnear_sp_dist += agt_sp_dist;
-        //         if (agt_sp_dist < min_dist ){
-        //             min_dist = agt_sp_dist;
-        //         }
-        //         if (agt_sp_dist > max_dist){
-        //             max_dist = agt_sp_dist;
-        //         }
-        //         cnear_be_dist += this->heuristics_.getBirdEyeDistance(currentConfiguration.at(agt), this->instance_.goal().at(agt));
-        //         std::pair<int,int> pos = this->instance().graph().movement().getPosition(currentConfiguration.at(agt));
-        //         if (pos.first < xmin){
-        //             xmin = pos.first;
-        //         }
-        //         if (pos.first > xmax){
-        //             xmax = pos.first;
-        //         }
-        //         if (pos.second > ymax){
-        //             ymax = pos.second;
-        //         }
-        //         if (pos.second < ymin){
-        //             ymin = pos.second;
-        //         }
-        //     }
-
-        //     size_t stretch_threshold = this->instance().nb_agents() / 1.5;
-        //     if (stretch_threshold < 5) 
-        //         stretch_threshold = 5;
-        //     if (cnear_sp_dist >= cnear_be_dist * 1.2 
-        //         || min_dist > 5 
-        //         || (xmax -xmin)> stretch_threshold 
-        //         || (ymax-ymin) > stretch_threshold)
-        //     {
-        //         // std::cout << "* Not switching to DF: cnear_sp_dist / cnear_be_dist = " << cnear_sp_dist / (double) cnear_be_dist << " \n";
-        //         // std::cout << "* Min/Max Distance of agents to their goals: Min=" << ANSI_RED << min_dist << ANSI_RESET << ", max=" << ANSI_RED <<max_dist << ANSI_RESET << "\n";
-        //         // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin) << ANSI_RESET  << " y=" << ANSI_RESET << (ymax-ymin)  << ANSI_RESET << "\n";
-        //         use_dfs = false;
-        //     } else {
-        //         // std::cout << "* Switching to dfs: " << "cnear_sp_dist / cnear_be_dist = " << (cnear_sp_dist / (double) cnear_be_dist) << " <= 1.2\n";
-        //         // std::cout << "* Min/Max Distance of agents to their goals: Min=" << min_dist << ", max=" << max_dist << "\n";
-        //         // std::cout << "* Ecartement. x=" << ANSI_RED << (xmax-xmin)  << ANSI_RESET << " y=" << ANSI_RED << (ymax-ymin)  << ANSI_RESET << "\n";
-        //     }
-        //     return use_dfs;
-        // }
 
     /**
      * @brief execute one step of computation of DFS from [Tateo et al.] towards given custom goal
@@ -244,15 +164,6 @@ namespace coupled
       if ((*exec_.back()) == goal)
       {
         this->execution_.setPaths((exec_));
-        // for (size_t agt = 0; agt < this->instance_.nb_agents(); agt++)
-        // {
-        //   std::shared_ptr<Path> p_agt = std::make_shared<Path>();
-        //   for (size_t t = 0; t < exec_.size(); t++)
-        //   {
-        //     p_agt->push_back(exec_[t]->at(agt));
-        //   }
-        //   this->execution_.set_path(agt, p_agt);
-        // }
         return true;
       }
       this->iteration_count_ = 0;

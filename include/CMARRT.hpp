@@ -609,21 +609,6 @@ namespace cmarrt
         if (!this->towards_goal_becoming_redundant_)
           this->towards_goal_becoming_redundant_ = true;
         std::cout << ANSI_RED << "Cnew was already in the tree : " << *c_new << ANSI_RESET << " (use_dfs: " << use_dfs << ")\n";
-        // if (_verbose)
-        // {
-        //   if (*c_target == this->instance().goal()){
-        //     std::cout << "- Running solver again to move towards ";
-        //     std::cout << ANSI_CYAN << ANSI_BOLD << "RANDOM: " << ANSI_RESET << (*c_target) << "\n";
-        //     pathSegment = currentSubsolver->computeBoundedPathTowards(*c_nearest, *c_rand, this->_step_size, this->max_subsolver_iterations_);
-        //     if (pathSegment.size() > 0){
-        //       c_new = pathSegment.back();
-        //       if (not(this->treeContains(*c_new)))
-        //       {
-        //         addConfiguration(c_new, c_nearest, pathSegment);
-        //       }
-        //     }
-        //   }
-        // }
       }
 
       if (_cmarrtstar){
