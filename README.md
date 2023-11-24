@@ -1,7 +1,12 @@
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Build Status](https://travis-ci.org/arqueffe/cmapf-solver.svg?branch=main)](https://travis-ci.org/arqueffe/cmapf-solver)
-[![Coverage Status](https://coveralls.io/repos/github/arqueffe/cmapf-solver/badge.svg)](https://coveralls.io/github/arqueffe/cmapf-solver)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/79bddb1a5ae4490fa6152a48a3caec7e)](https://www.codacy.com/gh/arqueffe/cmapf-solver/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=arqueffe/cmapf-solver&amp;utm_campaign=Badge_Grade)
-[![License](https://img.shields.io/github/license/arqueffe/cmapf-solver)](https://github.com/arqueffe/cmapf-solver/blob/main/LICENSE)
-
 # cmapf-solver
+This is a solver fo the connected multi-agent path finding problem. The program has several solvers, including the one published in [the following paper](https://hal.science/hal-04075393).
+
+    Improved Complexity Results and an Efficient Solution for Connected Multi-Agent Path Finding
+    Isseïnie Calviac and Ocan Sankur and François Schwarzentruber
+    22nd International Conference on Autonomous Agents and Multiagent Systems (AAMAS'23) 2023
+
+
+## Contributors
+Arthur Queffelec
+Ocan Sankur
+Isseïnie Calviac
