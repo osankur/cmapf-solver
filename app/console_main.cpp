@@ -30,7 +30,7 @@
 
 using namespace boost::program_options;
 
-constexpr char DEFAULT_ALG[] = "CCBS";
+constexpr char DEFAULT_ALG[] = "CASTAR";
 constexpr char DEFAULT_OBJ[] = "SUM";
 constexpr char DEFAULT_HEURISTICS[] = "BIRDEYE";
 constexpr char DEFAULT_COLLISIONS[] = "CHECK_COLLISIONS";
@@ -43,7 +43,7 @@ int main(int argc, const char *argv[])
     options_description desc{"Options"};
     desc.add_options()("help,h", "Help screen")("experience,e", value<std::string>(), "The experience file to run.")(
         "graph-folder,G", value<std::string>(), "The graph folder.")(
-        "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run.")(
+        "algo,a", value<std::string>()->default_value(DEFAULT_ALG), "The algorthm to run: CASTAR, CASTARDFS, DFS, COORD, CMARRT, CMARRTSTAR")(
         "window,w", value<int>()->default_value(2), "Window size.")(
         "objective,O", value<std::string>()->default_value(DEFAULT_OBJ), "The objective to minimize")(
         "collisions,c", value<std::string>()->default_value(DEFAULT_COLLISIONS), "Whether to check for collisions: CHECK_COLLISIONS | IGNORE_COLLISIONS")(

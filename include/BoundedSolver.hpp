@@ -20,7 +20,7 @@ template <class GraphMove, class GraphComm>
 class BoundedSolver
 {
 public:
-    BoundedSolver<GraphMove, GraphComm>() = default;
+    // BoundedSolver<GraphMove, GraphComm>() {};
     /**
      * @brief compute an execution that goes
      * `steps` steps from source towards goal (but not necessary reaching the goal), and return the last configuration of this execution.
